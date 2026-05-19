@@ -1,0 +1,108 @@
+{
+  "name": "@ahokinson/press",
+  "version": "0.2.0",
+  "description": "Reusable Solid + opentui TUI primitives: theme, components, models, signals, async, context, format, icons, io, terminal, keyboard.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahokinson/press.git"
+  },
+  "exports": {
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./models": {
+      "types": "./dist/models/index.d.ts",
+      "import": "./dist/models/index.js"
+    },
+    "./signals": {
+      "types": "./dist/signals/index.d.ts",
+      "import": "./dist/signals/index.js"
+    },
+    "./async": {
+      "types": "./dist/async/index.d.ts",
+      "import": "./dist/async/index.js"
+    },
+    "./context": {
+      "types": "./dist/context/index.d.ts",
+      "import": "./dist/context/index.js"
+    },
+    "./format": {
+      "types": "./dist/format/index.d.ts",
+      "import": "./dist/format/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.js"
+    },
+    "./io": {
+      "types": "./dist/io/index.d.ts",
+      "import": "./dist/io/index.js"
+    },
+    "./terminal": {
+      "types": "./dist/terminal/index.d.ts",
+      "import": "./dist/terminal/index.js"
+    },
+    "./keyboard": {
+      "types": "./dist/keyboard/index.d.ts",
+      "import": "./dist/keyboard/index.js"
+    },
+    "./charts": {
+      "types": "./dist/charts/index.d.ts",
+      "import": "./dist/charts/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.1.0 <0.2.0",
+    "@opentui/solid": ">=0.1.0 <0.2.0",
+    "solid-js": "^1.8.0",
+    "zod": "^3.22.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@catppuccin/palette": "^1.7.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "@opentui/core": "latest",
+    "@opentui/solid": "latest",
+    "@types/bun": "latest",
+    "solid-js": "latest",
+    "tsup": "^8.3.0",
+    "typescript": "^5.5.0",
+    "zod": "latest"
+  },
+  "scripts": {
+    "build:js": "bun run build.ts",
+    "build:dts": "tsup",
+    "build": "bun run build:js && bun run build:dts",
+    "typecheck": "tsc --noEmit",
+    "format": "biome check --fix src",
+    "lint": "biome check src",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage --coverage-reporter=text --coverage-reporter=lcov",
+    "prepare": "bun run build",
+    "prepublishOnly": "bun run typecheck && bun run lint && bun run test && bun run build"
+  }
+}

@@ -1,0 +1,114 @@
+import { describe, expect, test } from "bun:test"
+import { Modal } from "@components/dialog/modal.tsx"
+import { testRender } from "@opentui/solid"
+import { Severity } from "@theme"
+
+describe("Modal", () => {
+  test("renders nothing while when() is false", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal when={() => false} title=" hidden ">
+          <text>body</text>
+        </Modal>
+      ),
+      { width: 40, height: 15 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).not.toContain("hidden")
+    expect(frame).not.toContain("body")
+  })
+
+  test("renders title and children when open", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal when={() => true} title=" add symbol ">
+          <text>type the ticker</text>
+        </Modal>
+      ),
+      { width: 60, height: 20 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("add symbol")
+    expect(frame).toContain("type the ticker")
+  })
+
+  test("renders children with the default severity when none is supplied", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal when={() => true} title=" default ">
+          <text>default body</text>
+        </Modal>
+      ),
+      { width: 40, height: 15 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("default body")
+  })
+
+  test("renders each severity bucket", async () => {
+    for (const sev of [Severity.Info, Severity.Success, Severity.Warning, Severity.Error, Severity.Neutral]) {
+      const { captureCharFrame, renderOnce } = await testRender(
+        () => (
+          <Modal when={() => true} severity={sev} title={` ${sev} `}>
+            <text>{`x-${sev}`}</text>
+          </Modal>
+        ),
+        { width: 40, height: 15 },
+      )
+      await renderOnce()
+      expect(captureCharFrame()).toContain(`x-${sev}`)
+    }
+  })
+
+  test("borderColor override wins over severity", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal when={() => true} severity={Severity.Error} borderColor="#abcdef" title=" custom ">
+          <text>raw</text>
+        </Modal>
+      ),
+      { width: 40, height: 15 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("raw")
+  })
+
+  test("backgroundColor / paddingX / paddingY / zIndex pass through", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal
+          when={() => true}
+          title=" sized "
+          width={30}
+          height={6}
+          top={1}
+          left={2}
+          paddingX={1}
+          paddingY={0}
+          zIndex={20}
+          backgroundColor="#101010"
+        >
+          <text>sized body</text>
+        </Modal>
+      ),
+      { width: 60, height: 20 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("sized body")
+  })
+
+  test("omits title when not supplied", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Modal when={() => true}>
+          <text>no title here</text>
+        </Modal>
+      ),
+      { width: 40, height: 15 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("no title here")
+  })
+})

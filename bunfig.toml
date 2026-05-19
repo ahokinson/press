@@ -1,0 +1,23 @@
+[test]
+# Bun's "node" condition resolves solid-js to server.js (no reactivity).
+# `@opentui/solid/preload` installs the bun plugin that swaps in the client
+# build so createSignal/createMemo/createEffect actually react during tests.
+preload = ["@opentui/solid/preload"]
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "coverage"
+coverageThreshold = { line = 0.80, function = 0.80 }
+coveragePathIgnorePatterns = [
+  "src/async/index.ts",
+  "src/charts/index.ts",
+  "src/components/index.ts",
+  "src/context/index.ts",
+  "src/io/index.ts",
+  "src/models/index.ts",
+  "src/theme/index.ts",
+  "src/charts/register.ts",
+  "build.ts",
+  "manifest.ts",
+  "tsup.config.ts",
+]
+coverageSkipTestFiles = true
