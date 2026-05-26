@@ -7,6 +7,7 @@ await rm("dist", { recursive: true, force: true })
 const result = await Bun.build({
   entrypoints,
   outdir: "dist",
+  root: "src",
   target: "bun",
   format: "esm",
   splitting: false,

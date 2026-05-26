@@ -1,6 +1,6 @@
 {
   "name": "@ahokinson/press",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Reusable Solid + opentui TUI primitives: async, charts, clipboard, components, context, format, icons, io, keyboard, link, markdown, models, signals, terminal, theme.",
   "license": "MIT",
   "type": "module",
