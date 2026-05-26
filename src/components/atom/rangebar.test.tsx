@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { RangeBar } from "@components/atom/range-bar.tsx"
+import { RangeBar } from "@components/atom/rangebar.tsx"
 import { RANGE_BAR_LEFT_CAP, RANGE_BAR_MARKER, RANGE_BAR_RIGHT_CAP, RANGE_BAR_TRACK } from "@format"
 import { testRender } from "@opentui/solid"
 

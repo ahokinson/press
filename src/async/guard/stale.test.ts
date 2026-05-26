@@ -3,40 +3,40 @@ import { createStaleGuard } from "@async/guard/stale.ts"
 
 describe("createStaleGuard", () => {
   test("stamp captures the current key", () => {
-    const ctx = "dev"
-    const guard = createStaleGuard(() => [ctx] as const)
+    const context = "dev"
+    const guard = createStaleGuard(() => [context] as const)
     const stamp = guard.stamp()
     expect(stamp.captured).toEqual(["dev"])
     expect(stamp.fresh()).toBe(true)
   })
 
   test("fresh() returns false once any tuple slot changes", () => {
-    const ctx = "dev"
-    let ns = "default"
-    const guard = createStaleGuard(() => [ctx, ns] as const)
+    const context = "dev"
+    let namespace = "default"
+    const guard = createStaleGuard(() => [context, namespace] as const)
     const stamp = guard.stamp()
     expect(stamp.fresh()).toBe(true)
-    ns = "kube-system"
+    namespace = "kube-system"
     expect(stamp.fresh()).toBe(false)
   })
 
   test("independent stamps track their own captured value", () => {
-    let ctx = "dev"
-    const guard = createStaleGuard(() => [ctx] as const)
+    let context = "dev"
+    const guard = createStaleGuard(() => [context] as const)
     const first = guard.stamp()
-    ctx = "stag"
+    context = "stag"
     const second = guard.stamp()
     expect(first.fresh()).toBe(false)
     expect(second.fresh()).toBe(true)
   })
 
   test("re-equalising the key revives an earlier stamp", () => {
-    let ctx = "dev"
-    const guard = createStaleGuard(() => [ctx] as const)
+    let context = "dev"
+    const guard = createStaleGuard(() => [context] as const)
     const stamp = guard.stamp()
-    ctx = "stag"
+    context = "stag"
     expect(stamp.fresh()).toBe(false)
-    ctx = "dev"
+    context = "dev"
     expect(stamp.fresh()).toBe(true)
   })
 

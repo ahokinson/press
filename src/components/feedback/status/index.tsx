@@ -1,5 +1,5 @@
+import { KeyChip } from "@components/atom/chip.tsx"
 import type { KeyHint } from "@keyboard"
-import { BOLD } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { For, type JSX, Show } from "solid-js"
 
@@ -14,8 +14,8 @@ export interface StatusBarProps {
 
 /**
  * One-row footer that paints contextual key→action hints on the left and an
- * optional trailing message (with optional spinner) on the right. Pure
- * prop-driven; consumer owns the hint logic.
+ * optional trailing message (with optional spinner) on the right. The
+ * consumer owns the hint logic.
  */
 export function StatusBar(props: StatusBarProps): JSX.Element {
   const theme = useTheme()
@@ -33,8 +33,7 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         <For each={props.hints()}>
           {(hint, index) => (
             <>
-              <span style={{ fg: theme.text, bg: theme.bgHighlight, attributes: BOLD }}>{` ${hint.key} `}</span>
-              <span style={{ fg: theme.dim }}>{` ${hint.action}`}</span>
+              <KeyChip hint={hint} />
               <Show when={index() < props.hints().length - 1}>
                 <span style={{ fg: theme.faint }}> · </span>
               </Show>

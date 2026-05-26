@@ -13,7 +13,8 @@ export interface HeaderProps {
 
 /**
  * One-row top bar with left/right JSX slots and a theme-aware background.
- * Both slots are optional; if neither is provided the bar is a blank strip.
+ * Both slots are optional. The bar renders as a blank strip when neither is
+ * set.
  */
 export function Header(props: HeaderProps): JSX.Element {
   const theme = useTheme()

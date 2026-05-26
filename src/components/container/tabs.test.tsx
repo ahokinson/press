@@ -129,7 +129,7 @@ describe("Tabs", () => {
     let clicked: string | null = null
     const { renderOnce, mockMouse } = await testRender(
       () => (
-        <Tabs tabs={() => TABS} active={() => "alpha"} onActivate={(k) => (clicked = k)}>
+        <Tabs tabs={() => TABS} active={() => "alpha"} onActivate={(key) => (clicked = key)}>
           <text>p</text>
         </Tabs>
       ),

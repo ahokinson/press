@@ -25,29 +25,29 @@ function mockRenderer(): MockRenderer {
 
 describe("createTerminalHandover", () => {
   test("suspends, runs the callback, and resumes once", async () => {
-    const r = mockRenderer()
-    const handover = createTerminalHandover(r as unknown as CliRenderer)
+    const renderer = mockRenderer()
+    const handover = createTerminalHandover(renderer as unknown as CliRenderer)
     const result = await handover(async () => 42)
     expect(result).toBe(42)
-    expect(r.suspended).toBe(1)
-    expect(r.resumed).toBe(1)
+    expect(renderer.suspended).toBe(1)
+    expect(renderer.resumed).toBe(1)
   })
 
   test("resumes even when the callback throws", async () => {
-    const r = mockRenderer()
-    const handover = createTerminalHandover(r as unknown as CliRenderer)
+    const renderer = mockRenderer()
+    const handover = createTerminalHandover(renderer as unknown as CliRenderer)
     await expect(
       handover(async () => {
         throw new Error("boom")
       }),
     ).rejects.toThrow("boom")
-    expect(r.suspended).toBe(1)
-    expect(r.resumed).toBe(1)
+    expect(renderer.suspended).toBe(1)
+    expect(renderer.resumed).toBe(1)
   })
 
   test("nested calls share a single suspend/resume cycle", async () => {
-    const r = mockRenderer()
-    const handover = createTerminalHandover(r as unknown as CliRenderer)
+    const renderer = mockRenderer()
+    const handover = createTerminalHandover(renderer as unknown as CliRenderer)
     const order: string[] = []
     const result = await handover(async () => {
       order.push("outer-start")
@@ -60,13 +60,13 @@ describe("createTerminalHandover", () => {
     })
     expect(result).toBe("deep")
     expect(order).toEqual(["outer-start", "inner", "outer-end"])
-    expect(r.suspended).toBe(1)
-    expect(r.resumed).toBe(1)
+    expect(renderer.suspended).toBe(1)
+    expect(renderer.resumed).toBe(1)
   })
 
   test("nested call resumes outer suspend even if inner throws", async () => {
-    const r = mockRenderer()
-    const handover = createTerminalHandover(r as unknown as CliRenderer)
+    const renderer = mockRenderer()
+    const handover = createTerminalHandover(renderer as unknown as CliRenderer)
     await expect(
       handover(async () => {
         await handover(async () => {
@@ -74,28 +74,28 @@ describe("createTerminalHandover", () => {
         })
       }),
     ).rejects.toThrow("inner-boom")
-    expect(r.suspended).toBe(1)
-    expect(r.resumed).toBe(1)
+    expect(renderer.suspended).toBe(1)
+    expect(renderer.resumed).toBe(1)
   })
 
   test("serializes concurrent (non-nested) calls", async () => {
-    const r = mockRenderer()
-    const handover = createTerminalHandover(r as unknown as CliRenderer)
+    const renderer = mockRenderer()
+    const handover = createTerminalHandover(renderer as unknown as CliRenderer)
     const order: string[] = []
-    const a = handover(async () => {
+    const first = handover(async () => {
       order.push("a-start")
       await Promise.resolve()
       order.push("a-end")
     })
-    const b = handover(async () => {
+    const second = handover(async () => {
       order.push("b-start")
       await Promise.resolve()
       order.push("b-end")
     })
-    await Promise.all([a, b])
+    await Promise.all([first, second])
     expect(order).toEqual(["a-start", "a-end", "b-start", "b-end"])
-    expect(r.suspended).toBe(2)
-    expect(r.resumed).toBe(2)
+    expect(renderer.suspended).toBe(2)
+    expect(renderer.resumed).toBe(2)
   })
 })
 

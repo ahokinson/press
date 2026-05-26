@@ -26,8 +26,8 @@ describe("matchKey", () => {
 describe("handleTextInput", () => {
   test("backspace pops a character; printable sequence appends", () => {
     let buffer = "abc"
-    const setter = (fn: (v: string) => string) => {
-      buffer = fn(buffer)
+    const setter = (update: (text: string) => string) => {
+      buffer = update(buffer)
     }
     expect(handleTextInput(setter, { name: "backspace" })).toBe(true)
     expect(buffer).toBe("ab")
@@ -37,8 +37,8 @@ describe("handleTextInput", () => {
 
   test("modified keys do not append; non-text keys return false", () => {
     let buffer = "x"
-    const setter = (fn: (v: string) => string) => {
-      buffer = fn(buffer)
+    const setter = (update: (text: string) => string) => {
+      buffer = update(buffer)
     }
     expect(handleTextInput(setter, { sequence: "c", ctrl: true })).toBe(false)
     expect(handleTextInput(setter, { name: "return" })).toBe(false)
@@ -51,15 +51,15 @@ describe("composeKeymap", () => {
     const log: string[] = []
     const dispatch = composeKeymap([
       {
-        handler: (e) => {
-          if (e.name === "a") {
+        handler: (event) => {
+          if (event.name === "a") {
             log.push("first")
             return true
           }
         },
       },
       {
-        handler: (_e) => {
+        handler: (_event) => {
           log.push("second")
         },
       },
@@ -169,7 +169,7 @@ describe("dispatchBindings", () => {
     const log: string[] = []
     const dispatch = dispatchBindings(() => [
       { match: { name: "return" }, run: () => log.push("return") },
-      { match: {}, run: (k) => log.push(`sink:${k.name ?? k.sequence ?? "?"}`) },
+      { match: {}, run: (key) => log.push(`sink:${key.name ?? key.sequence ?? "?"}`) },
     ])
     dispatch({ name: "return" })
     dispatch({ sequence: "x" })

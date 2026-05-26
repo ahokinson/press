@@ -1,14 +1,14 @@
 import { type Accessor, createMemo, createSignal } from "solid-js"
 
 /**
- * Validator returns `null` on success, an error message on failure.
- * Single-purpose functions chain via `createValidator` (first failure wins).
+ * Validator returns `null` on success, an error message on failure. Chain
+ * via `createValidator` (first failure wins).
  */
 export type ValidationRule<T> = (value: T) => string | null
 
 /**
- * Compose a list of rules into a single validator: returns the first non-null
- * message, or null when every rule passes.
+ * Compose rules into a single validator. Returns the first non-null message,
+ * or null when every rule passes.
  */
 export function createValidator<T>(rules: ReadonlyArray<ValidationRule<T>>): ValidationRule<T> {
   return (value) => {
@@ -51,7 +51,7 @@ export interface NumericRuleOptions {
 
 /**
  * Validate a string as a number with optional min/max bounds. Rejects NaN,
- * ±Infinity, and (by default) blanks. Use `allowBlank` to make the field
+ * ±Infinity, and blanks by default. Set `allowBlank` to make the field
  * optional while still validating non-empty input.
  */
 export function numeric(options: NumericRuleOptions = {}, message?: string): ValidationRule<string> {
@@ -82,7 +82,7 @@ export interface FieldState<T> {
   /** Current error, or null when valid. Always derived from `value`. */
   error: Accessor<string | null>
   touched: Accessor<boolean>
-  /** Mark the field as touched. Useful for deferring error display until blur. */
+  /** Mark the field as touched. For deferring error display until blur. */
   markTouched: () => void
   /** Convenience: `error() === null`. */
   valid: Accessor<boolean>
@@ -91,9 +91,9 @@ export interface FieldState<T> {
 }
 
 /**
- * Reactive bundle for a single form field: value + derived error + touched
- * flag. Hook a validator once at construction; the error memo recomputes on
- * every value change.
+ * Reactive bundle for a single form field: value, derived error, touched
+ * flag. Hook a validator at construction. The error memo recomputes on every
+ * value change.
  */
 export function createFieldState<T>(opts: FieldStateOptions<T>): FieldState<T> {
   const [value, setValue] = createSignal<T>(opts.initial)

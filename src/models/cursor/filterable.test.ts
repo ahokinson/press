@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import { createFilterableListState } from "@models/cursor/filterable.ts"
-import { createRoot, createSignal } from "solid-js"
+import { createRoot } from "solid-js"
 
-const tick = () => new Promise<void>((r) => queueMicrotask(r))
+const tick = () => new Promise<void>((resolve) => queueMicrotask(resolve))
 
 interface Row {
   name: string
@@ -24,7 +24,7 @@ const rows: Row[] = [
 function build() {
   return createFilterableListState<Row, SortField, FilterKey, GroupKey>({
     items: () => rows,
-    search: (item, q) => item.name.includes(q),
+    search: (item, query) => item.name.includes(query),
     sorts: {
       name: (a, b) => a.name.localeCompare(b.name),
       rank: (a, b) => a.rank - b.rank,
@@ -40,21 +40,21 @@ function build() {
 describe("createFilterableListState", () => {
   test("sorts items by default sort with section grouping", () => {
     createRoot(() => {
-      const s = build()
-      expect(s.visibleItems().map((i) => i.name)).toEqual(["alpha", "bravo", "charlie", "delta"])
+      const list = build()
+      expect(list.visibleItems().map((item) => item.name)).toEqual(["alpha", "bravo", "charlie", "delta"])
     })
   })
 
   test("filterText narrows via search predicate", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.setFilterText("a")
+        const list = build()
+        list.setFilterText("a")
         await tick()
-        expect(s.visibleItems().map((i) => i.name)).toEqual(["alpha", "bravo", "charlie", "delta"])
-        s.setFilterText("delta")
+        expect(list.visibleItems().map((item) => item.name)).toEqual(["alpha", "bravo", "charlie", "delta"])
+        list.setFilterText("delta")
         await tick()
-        expect(s.visibleItems().map((i) => i.name)).toEqual(["delta"])
+        expect(list.visibleItems().map((item) => item.name)).toEqual(["delta"])
         dispose()
         resolve()
       })
@@ -64,15 +64,15 @@ describe("createFilterableListState", () => {
   test("cycleSortBy steps through sortCycle and changes order within sections", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.cycleSortBy()
+        const list = build()
+        list.cycleSortBy()
         await tick()
-        expect(s.sortBy()).toBe("rank")
+        expect(list.sortBy()).toBe("rank")
         // group a: bravo(1) before alpha(3); group b: charlie(2) before delta(4)
-        expect(s.visibleItems().map((i) => i.name)).toEqual(["bravo", "alpha", "charlie", "delta"])
-        s.cycleSortBy()
+        expect(list.visibleItems().map((item) => item.name)).toEqual(["bravo", "alpha", "charlie", "delta"])
+        list.cycleSortBy()
         await tick()
-        expect(s.sortBy()).toBe("name")
+        expect(list.sortBy()).toBe("name")
         dispose()
         resolve()
       })
@@ -82,13 +82,13 @@ describe("createFilterableListState", () => {
   test("setStatusFilter applies the category filter; null clears it", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.setStatusFilter("high")
+        const list = build()
+        list.setStatusFilter("high")
         await tick()
-        expect(s.visibleItems().map((i) => i.name)).toEqual(["alpha", "delta"])
-        s.setStatusFilter(null)
+        expect(list.visibleItems().map((item) => item.name)).toEqual(["alpha", "delta"])
+        list.setStatusFilter(null)
         await tick()
-        expect(s.visibleItems().length).toBe(4)
+        expect(list.visibleItems().length).toBe(4)
         dispose()
         resolve()
       })
@@ -98,14 +98,14 @@ describe("createFilterableListState", () => {
   test("cycleStatusFilter wraps and resets cursor to 0", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.setCursor(3)
+        const list = build()
+        list.setCursor(3)
         await tick()
-        expect(s.cursor()).toBe(3)
-        s.cycleStatusFilter()
+        expect(list.cursor()).toBe(3)
+        list.cycleStatusFilter()
         await tick()
-        expect(s.statusFilter()).toBe("high")
-        expect(s.cursor()).toBe(0)
+        expect(list.statusFilter()).toBe("high")
+        expect(list.cursor()).toBe(0)
         dispose()
         resolve()
       })
@@ -115,14 +115,14 @@ describe("createFilterableListState", () => {
   test("toggleSection collapses items and updates visibleItems", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.toggleSection("a")
+        const list = build()
+        list.toggleSection("a")
         await tick()
-        expect(s.visibleItems().map((i) => i.name)).toEqual(["charlie", "delta"])
-        expect(s.collapsedSections().has("a")).toBe(true)
-        s.toggleSection("a")
+        expect(list.visibleItems().map((item) => item.name)).toEqual(["charlie", "delta"])
+        expect(list.collapsedSections().has("a")).toBe(true)
+        list.toggleSection("a")
         await tick()
-        expect(s.visibleItems().length).toBe(4)
+        expect(list.visibleItems().length).toBe(4)
         dispose()
         resolve()
       })
@@ -132,15 +132,15 @@ describe("createFilterableListState", () => {
   test("cursor clamps to visibleItems length when items shrink", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.setCursor(3)
+        const list = build()
+        list.setCursor(3)
         await tick()
-        expect(s.cursor()).toBe(3)
-        s.setStatusFilter("high") // shrinks to 2 items
+        expect(list.cursor()).toBe(3)
+        list.setStatusFilter("high") // shrinks to 2 items
         await tick()
-        s.setCursor((c) => c) // re-clamps
+        list.setCursor((current) => current) // re-clamps
         await tick()
-        expect(s.cursor()).toBeLessThanOrEqual(1)
+        expect(list.cursor()).toBeLessThanOrEqual(1)
         dispose()
         resolve()
       })
@@ -150,41 +150,39 @@ describe("createFilterableListState", () => {
   test("selectedItem tracks cursor over visibleItems", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        s.setCursor(0)
+        const list = build()
+        list.setCursor(0)
         await tick()
-        expect(s.selectedItem()?.name).toBe("alpha")
-        s.setCursor(2)
+        expect(list.selectedItem()?.name).toBe("alpha")
+        list.setCursor(2)
         await tick()
-        expect(s.selectedItem()?.name).toBe("charlie")
+        expect(list.selectedItem()?.name).toBe("charlie")
         dispose()
         resolve()
       })
     })
   })
 
-  test("scroll-sync accounts for section header + spacer rows", async () => {
+  test("scrollRow accounts for section header + spacer rows", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const [items, setItems] = createSignal<Row[]>(rows)
-        const scrolls: { x: number; y: number }[] = []
-        const s = createFilterableListState<Row, "name", "none", "a" | "b">({
-          items,
+        const list = createFilterableListState<Row, "name", "none", "a" | "b">({
+          items: () => rows,
           sorts: { name: (a, b) => a.name.localeCompare(b.name) },
           sortCycle: ["name"],
           defaultSort: "name",
           section: { key: (item) => item.group },
         })
-        s.setScrollRef({ scrollTo: (p) => scrolls.push(typeof p === "number" ? { x: 0, y: p } : p) })
-        s.setScrollViewportHeight(3)
         await tick()
         // visible layout: [hdr a][alpha][bravo][space][hdr b][charlie][delta]
-        // cursor 3 (delta) sits at row 6 → must scroll down.
-        s.setCursor(3)
+        // cursor 0 = first alpha = row 1 (just past the "a" header).
+        list.setCursor(0)
         await tick()
-        setItems([...rows])
+        expect(list.scrollRow()).toBe(1)
+        // cursor 3 = delta = row 6 (after a-hdr + 2 items + spacer + b-hdr + charlie).
+        list.setCursor(3)
         await tick()
-        expect(scrolls.some((p) => p.y > 0)).toBe(true)
+        expect(list.scrollRow()).toBe(6)
         dispose()
         resolve()
       })
@@ -194,14 +192,14 @@ describe("createFilterableListState", () => {
   test("positionLabel reflects cursor and visible count", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const s = build()
-        expect(s.positionLabel()).toBe("1/4")
-        s.setCursor(2)
+        const list = build()
+        expect(list.positionLabel()).toBe("1/4")
+        list.setCursor(2)
         await tick()
-        expect(s.positionLabel()).toBe("3/4")
-        s.setStatusFilter("high")
+        expect(list.positionLabel()).toBe("3/4")
+        list.setStatusFilter("high")
         await tick()
-        expect(s.positionLabel()).toMatch(/\/2$/)
+        expect(list.positionLabel()).toMatch(/\/2$/)
         dispose()
         resolve()
       })
@@ -210,31 +208,31 @@ describe("createFilterableListState", () => {
 
   test("cycleStatusFilter is a no-op when filterCycle is absent", () => {
     createRoot((dispose) => {
-      const s = createFilterableListState<Row, SortField, FilterKey, GroupKey>({
+      const list = createFilterableListState<Row, SortField, FilterKey, GroupKey>({
         items: () => rows,
         sorts: { name: (a, b) => a.name.localeCompare(b.name), rank: (a, b) => a.rank - b.rank },
         sortCycle: ["name"],
         defaultSort: "name",
         // intentionally no filterCycle
       })
-      expect(s.statusFilter()).toBeNull()
-      s.cycleStatusFilter()
-      expect(s.statusFilter()).toBeNull()
+      expect(list.statusFilter()).toBeNull()
+      list.cycleStatusFilter()
+      expect(list.statusFilter()).toBeNull()
       dispose()
     })
   })
 
   test("cycleStatusFilter is a no-op when filterCycle is empty", () => {
     createRoot((dispose) => {
-      const s = createFilterableListState<Row, SortField, FilterKey, GroupKey>({
+      const list = createFilterableListState<Row, SortField, FilterKey, GroupKey>({
         items: () => rows,
         sorts: { name: (a, b) => a.name.localeCompare(b.name), rank: (a, b) => a.rank - b.rank },
         sortCycle: ["name"],
         defaultSort: "name",
         filterCycle: [],
       })
-      s.cycleStatusFilter()
-      expect(s.statusFilter()).toBeNull()
+      list.cycleStatusFilter()
+      expect(list.statusFilter()).toBeNull()
       dispose()
     })
   })

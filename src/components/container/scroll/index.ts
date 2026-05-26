@@ -3,8 +3,8 @@ import type { Theme } from "@theme/palette.ts"
 
 /**
  * Theme-aware option bag for opentui's `<scrollbox>`. Disables arrow widgets,
- * tints the track to match the theme, and turns on the MacOS scroll-momentum
- * curve. Spread the result into the scrollbox element.
+ * tints the track to match the theme, and uses the MacOS scroll-momentum
+ * curve.
  */
 export function createScrollboxOptions(theme: Theme) {
   return {

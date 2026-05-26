@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { asKind, createOverlayState } from "@models/dialog/overlay.ts"
+import { createOverlayState } from "@models/dialog/overlay.ts"
 
 type Variant = { kind: "none" } | { kind: "menu"; items: string[] } | { kind: "modal"; title: string }
 
@@ -36,15 +36,22 @@ describe("createOverlayState", () => {
 
 describe("asKind", () => {
   test("returns the value when the discriminator matches", () => {
-    const v: Variant = { kind: "modal", title: "warn" }
-    const m = asKind(v, "modal")
+    const o = createOverlayState<Variant>({ kind: "modal", title: "warn" })
+    const m = o.asKind("modal")
     expect(m).not.toBeNull()
     expect(m?.title).toBe("warn")
   })
 
   test("returns null when the discriminator does not match", () => {
-    const v = { kind: "none" } as Variant
-    expect(asKind(v, "modal")).toBeNull()
-    expect(asKind(v, "menu")).toBeNull()
+    const o = createOverlayState<Variant>(closed)
+    expect(o.asKind("modal")).toBeNull()
+    expect(o.asKind("menu")).toBeNull()
+  })
+
+  test("reflects the current variant after set", () => {
+    const o = createOverlayState<Variant>(closed)
+    expect(o.asKind("modal")).toBeNull()
+    o.set({ kind: "modal", title: "x" })
+    expect(o.asKind("modal")?.title).toBe("x")
   })
 })

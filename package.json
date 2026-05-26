@@ -1,10 +1,13 @@
 {
   "name": "@ahokinson/press",
-  "version": "0.2.0",
-  "description": "Reusable Solid + opentui TUI primitives: theme, components, models, signals, async, context, format, icons, io, terminal, keyboard.",
+  "version": "0.0.1",
+  "description": "Reusable Solid + opentui TUI primitives: async, charts, clipboard, components, context, format, icons, io, keyboard, link, markdown, models, signals, terminal, theme.",
   "license": "MIT",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/charts/register.js",
+    "./dist/charts/index.js"
+  ],
   "files": [
     "dist",
     "README.md",
@@ -19,25 +22,21 @@
     "url": "git+https://github.com/ahokinson/press.git"
   },
   "exports": {
-    "./theme": {
-      "types": "./dist/theme/index.d.ts",
-      "import": "./dist/theme/index.js"
+    "./async": {
+      "types": "./dist/async/index.d.ts",
+      "import": "./dist/async/index.js"
+    },
+    "./charts": {
+      "types": "./dist/charts/index.d.ts",
+      "import": "./dist/charts/index.js"
+    },
+    "./clipboard": {
+      "types": "./dist/clipboard/index.d.ts",
+      "import": "./dist/clipboard/index.js"
     },
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js"
-    },
-    "./models": {
-      "types": "./dist/models/index.d.ts",
-      "import": "./dist/models/index.js"
-    },
-    "./signals": {
-      "types": "./dist/signals/index.d.ts",
-      "import": "./dist/signals/index.js"
-    },
-    "./async": {
-      "types": "./dist/async/index.d.ts",
-      "import": "./dist/async/index.js"
     },
     "./context": {
       "types": "./dist/context/index.d.ts",
@@ -55,17 +54,33 @@
       "types": "./dist/io/index.d.ts",
       "import": "./dist/io/index.js"
     },
-    "./terminal": {
-      "types": "./dist/terminal/index.d.ts",
-      "import": "./dist/terminal/index.js"
-    },
     "./keyboard": {
       "types": "./dist/keyboard/index.d.ts",
       "import": "./dist/keyboard/index.js"
     },
-    "./charts": {
-      "types": "./dist/charts/index.d.ts",
-      "import": "./dist/charts/index.js"
+    "./link": {
+      "types": "./dist/link/index.d.ts",
+      "import": "./dist/link/index.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown/index.d.ts",
+      "import": "./dist/markdown/index.js"
+    },
+    "./models": {
+      "types": "./dist/models/index.d.ts",
+      "import": "./dist/models/index.js"
+    },
+    "./signals": {
+      "types": "./dist/signals/index.d.ts",
+      "import": "./dist/signals/index.js"
+    },
+    "./terminal": {
+      "types": "./dist/terminal/index.d.ts",
+      "import": "./dist/terminal/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.js"
     },
     "./package.json": "./package.json"
   },

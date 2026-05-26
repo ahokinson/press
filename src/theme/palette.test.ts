@@ -30,9 +30,9 @@ describe("makeTheme", () => {
       "border",
       "crust",
     ] as const
-    for (const t of tokens) {
-      expect(typeof theme[t]).toBe("string")
-      expect(theme[t]).toMatch(/^#[0-9a-f]{6}$/i)
+    for (const token of tokens) {
+      expect(typeof theme[token]).toBe("string")
+      expect(theme[token]).toMatch(/^#[0-9a-f]{6}$/i)
     }
   })
 
@@ -52,19 +52,19 @@ describe("defaultTheme", () => {
 
 describe("createTheme", () => {
   test("merges extensions onto the default Frappé palette", () => {
-    const t = createTheme({ brand: "#deadbe" })
-    expect(t.brand).toBe("#deadbe")
-    expect(t.bg).toBe(flavors.frappe.colors.base.hex)
+    const theme = createTheme({ brand: "#deadbe" })
+    expect(theme.brand).toBe("#deadbe")
+    expect(theme.bg).toBe(flavors.frappe.colors.base.hex)
   })
 
   test("accepts a custom palette", () => {
-    const t = createTheme({ brand: "#abcdef" }, flavors.macchiato.colors)
-    expect(t.brand).toBe("#abcdef")
-    expect(t.bg).toBe(flavors.macchiato.colors.base.hex)
+    const theme = createTheme({ brand: "#abcdef" }, flavors.macchiato.colors)
+    expect(theme.brand).toBe("#abcdef")
+    expect(theme.bg).toBe(flavors.macchiato.colors.base.hex)
   })
 
   test("extension keys can shadow base tokens", () => {
-    const t = createTheme({ ok: "#000000" })
-    expect(t.ok).toBe("#000000")
+    const theme = createTheme({ ok: "#000000" })
+    expect(theme.ok).toBe("#000000")
   })
 })

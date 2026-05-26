@@ -1,4 +1,4 @@
-import { createClampedSetter, createCycler, createScrollSync, type ScrollRef } from "@signals"
+import { createCycler, createNavigationCursor } from "@signals"
 import { createMemo, createSignal } from "solid-js"
 
 export type SectionKey = string | number
@@ -7,7 +7,7 @@ export interface FilterableListSectionConfig<T, K extends SectionKey> {
   key: (item: T) => K
   /** Order sections in the visible list. Default: natural ascending (numeric or lexical). */
   order?: (a: K, b: K) => number
-  /** Rows that a section's header occupies on screen. Default: 1. Pass 0 for unlabeled sections. */
+  /** Rows that a section's header occupies. Default 1. */
   headerRows?: (key: K) => number
   /** Blank rows between adjacent sections. Default: 1. */
   spacerRows?: number
@@ -15,7 +15,7 @@ export interface FilterableListSectionConfig<T, K extends SectionKey> {
 
 export interface FilterableListConfig<T, S extends string, F extends string, K extends SectionKey = SectionKey> {
   items: () => readonly T[]
-  /** Text-filter predicate. Receives the lowercased query (empty string ⇒ no text filter applied). */
+  /** Text-filter predicate. Receives the lowercased query. Empty string applies no text filter. */
   search?: (item: T, query: string) => boolean
   sorts: Record<S, (a: T, b: T) => number>
   sortCycle: readonly S[]
@@ -24,23 +24,23 @@ export interface FilterableListConfig<T, S extends string, F extends string, K e
   filterCycle?: readonly F[]
   defaultFilter?: F | null
   section?: FilterableListSectionConfig<T, K>
-  scrollContextRows?: number
 }
 
 export interface FilterableListState<T, S extends string, F extends string, K extends SectionKey = SectionKey> {
+  /** Raw input from `config.items`. */
+  items: () => readonly T[]
   cursor: () => number
-  setCursor: (v: number | ((p: number) => number)) => void
+  setCursor: (value: number | ((previous: number) => number)) => void
   filterText: () => string
-  setFilterText: (v: string) => void
+  setFilterText: (value: string) => void
   sortBy: () => S
-  setSortBy: (v: S) => void
+  setSortBy: (value: S) => void
   cycleSortBy: () => void
   statusFilter: () => F | null
-  setStatusFilter: (v: F | null) => void
+  setStatusFilter: (value: F | null) => void
   /**
-   * Advance through `config.filterCycle`. No-op when `filterCycle` is absent or
-   * empty — keystrokes wired to this won't crash, they'll just have no effect.
-   * Resets `cursor` to 0 on a successful cycle.
+   * Advance through `config.filterCycle`. No-op when `filterCycle` is absent
+   * or empty. Resets `cursor` to 0 on a successful cycle.
    */
   cycleStatusFilter: () => void
   collapsedSections: () => ReadonlySet<K>
@@ -49,10 +49,12 @@ export interface FilterableListState<T, S extends string, F extends string, K ex
   visibleItems: () => T[]
   selectedItem: () => T | undefined
   positionLabel: () => string
-  scrollRef: () => ScrollRef | null
-  setScrollRef: (ref: ScrollRef | null) => void
-  scrollViewportHeight: () => number
-  setScrollViewportHeight: (h: number) => void
+  /**
+   * Y position of the cursor in scrollbox row-coordinate space. Accounts for
+   * section header rows and inter-section spacers when `config.section` is
+   * set. Feed to `createScrollboxSync` to keep the active row in view.
+   */
+  scrollRow: () => number
 }
 
 function defaultOrder<K extends SectionKey>(a: K, b: K): number {
@@ -62,28 +64,29 @@ function defaultOrder<K extends SectionKey>(a: K, b: K): number {
 }
 
 /**
- * Reactive list pipeline: text filter → category filter → sort → section group →
- * collapse → cursor → scroll sync. The caller supplies predicates and
- * comparators; the primitive owns the signals and the scroll math.
+ * Reactive list pipeline: text filter → category filter → sort → section
+ * group → collapse → cursor → scroll sync. The caller supplies predicates
+ * and comparators. The primitive owns the signals and the scroll math.
  *
  * Section model: items with the same `section.key(item)` form a section.
  * Sections are ordered by `section.order` (default: natural ascending).
- * Within a section, items keep their post-sort order. Toggling a section into
- * `collapsedSections` hides its rows from `visibleItems` and the scroll math.
+ * Within a section, items keep their post-sort order. Toggling a section
+ * into `collapsedSections` hides its rows from `visibleItems` and the
+ * scroll math.
  *
- * Scroll math accounts for header rows and spacer rows so the cursor stays in
- * the viewport even when section headers shift content down.
+ * Scroll math accounts for header and spacer rows so the cursor stays in
+ * the viewport when headers shift content down.
  */
-export function createFilterableListState<T, S extends string, F extends string, K extends SectionKey = SectionKey>(
-  config: FilterableListConfig<T, S, F, K>,
-): FilterableListState<T, S, F, K> {
-  const [cursor, setCursorRaw] = createSignal(0)
+export function createFilterableListState<
+  T,
+  const S extends string,
+  const F extends string,
+  K extends SectionKey = SectionKey,
+>(config: FilterableListConfig<T, S, F, K>): FilterableListState<T, S, F, K> {
   const [filterText, setFilterText] = createSignal("")
   const [sortBy, setSortBy] = createSignal<S>(config.defaultSort)
   const [statusFilter, setStatusFilter] = createSignal<F | null>(config.defaultFilter ?? null)
   const [collapsedSections, setCollapsedSections] = createSignal<ReadonlySet<K>>(new Set<K>())
-  const [scrollRef, setScrollRef] = createSignal<ScrollRef | null>(null)
-  const [scrollViewportHeight, setScrollViewportHeight] = createSignal(0)
 
   const sectionOrder = config.section?.order ?? defaultOrder<K>
   const headerRows = config.section?.headerRows ?? (() => 1)
@@ -106,9 +109,9 @@ export function createFilterableListState<T, S extends string, F extends string,
       if (config.section) {
         const sectionKey = config.section.key
         result.sort((a, b) => {
-          const sa = sectionKey(a)
-          const sb = sectionKey(b)
-          if (sa !== sb) return sectionOrder(sa, sb)
+          const sectionA = sectionKey(a)
+          const sectionB = sectionKey(b)
+          if (sectionA !== sectionB) return sectionOrder(sectionA, sectionB)
           return compare(a, b)
         })
       } else {
@@ -124,6 +127,10 @@ export function createFilterableListState<T, S extends string, F extends string,
     const sectionKey = config.section.key
     return filteredItems().filter((item) => !collapsed.has(sectionKey(item)))
   })
+
+  const nav = createNavigationCursor({ length: () => visibleItems().length, wrap: false })
+  const cursor = nav.cursor
+  const setCursor = nav.setCursor
 
   const positionLabel = createMemo(() => {
     const total = visibleItems().length
@@ -143,32 +150,28 @@ export function createFilterableListState<T, S extends string, F extends string,
     let sectionsSoFar = 0
     let lastKey: K | undefined
 
-    for (let i = 0; i <= cursorIndex && i < visible.length; i++) {
-      const key = sectionKey(visible[i] as T)
+    for (let index = 0; index <= cursorIndex && index < visible.length; index++) {
+      const key = sectionKey(visible[index] as T)
       if (key !== lastKey) {
         if (sectionsSoFar > 0) row += spacerRows
         row += headerRows(key)
         sectionsSoFar++
         lastKey = key
       }
-      if (i === cursorIndex) return row
+      if (index === cursorIndex) return row
       row++
     }
     return row
   })
 
-  createScrollSync(scrollRow, scrollRef, scrollViewportHeight, config.scrollContextRows)
-
-  const setCursor = createClampedSetter(setCursorRaw, () => visibleItems().length - 1)
-
   function toggleSection(id: K) {
-    setCollapsedSections((prev) => {
-      const next = new Set(prev)
+    setCollapsedSections((previous) => {
+      const next = new Set(previous)
       if (next.has(id)) next.delete(id)
       else next.add(id)
       return next
     })
-    setCursor((c) => c)
+    setCursor((current) => current)
   }
 
   const cycleSortBy = createCycler<S>(config.sortCycle, sortBy, (value) => setSortBy(() => value))
@@ -187,6 +190,7 @@ export function createFilterableListState<T, S extends string, F extends string,
   })()
 
   return {
+    items: config.items,
     cursor,
     setCursor,
     filterText,
@@ -203,9 +207,6 @@ export function createFilterableListState<T, S extends string, F extends string,
     visibleItems,
     selectedItem,
     positionLabel,
-    scrollRef,
-    setScrollRef,
-    scrollViewportHeight,
-    setScrollViewportHeight,
+    scrollRow,
   }
 }

@@ -11,9 +11,8 @@ export interface CardProps {
 
 /**
  * Bordered rounded box with a coloured title row and an optional dim
- * description row. Use for action buttons, option callouts, or any focal
- * card-like surface. `color` paints both the border and the title text by
- * default; pass a JSX `title` if you need finer-grained styling.
+ * description row. `color` paints both the border and the title text. Pass
+ * a JSX `title` for finer styling.
  */
 export function Card(props: CardProps): JSX.Element {
   const theme = useTheme()

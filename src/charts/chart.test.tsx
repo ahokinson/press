@@ -6,7 +6,7 @@ import "@charts/register.ts"
 
 describe("Chart (renderable)", () => {
   test("renders an axis and braille line for sample data", async () => {
-    const values = Array.from({ length: 50 }, (_, i) => Math.sin(i / 5) + 1)
+    const values = Array.from({ length: 50 }, (_, index) => Math.sin(index / 5) + 1)
     const { captureCharFrame, renderOnce } = await testRender(() => <chart values={values} width={40} height={10} />, {
       width: 50,
       height: 12,
@@ -51,7 +51,9 @@ describe("Chart (renderable)", () => {
     const values = [1, 2, 3]
     const timestamps = [100, 200, 300]
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <chart values={values} timestamps={timestamps} width={30} height={8} xLabel={(ts) => `t${ts}`} />,
+      () => (
+        <chart values={values} timestamps={timestamps} width={30} height={8} xLabel={(timestamp) => `t${timestamp}`} />
+      ),
       { width: 40, height: 10 },
     )
     await renderOnce()
@@ -79,15 +81,15 @@ describe("Chart (renderable)", () => {
     const [yMax, setYMax] = createSignal<number | undefined>(undefined)
     const [refLines, setRefLines] = createSignal<{ value: number; color: string }[]>([])
     const [markers, setMarkers] = createSignal<{ index: number; value: number; glyph: string; color: string }[]>([])
-    const [xLabel, setXLabel] = createSignal<(ts: number) => string>((ts) => String(ts))
-    const [yLabel, setYLabel] = createSignal<(v: number) => string>((v) => v.toFixed(2))
+    const [xLabel, setXLabel] = createSignal<(timestamp: number) => string>((timestamp) => String(timestamp))
+    const [yLabel, setYLabel] = createSignal<(value: number) => string>((value) => value.toFixed(2))
 
     let chartRef: ChartRenderable | undefined
     const { renderOnce } = await testRender(
       () => (
         <chart
-          ref={(el) => {
-            chartRef = el
+          ref={(element) => {
+            chartRef = element
           }}
           values={values()}
           timestamps={timestamps()}
@@ -129,8 +131,8 @@ describe("Chart (renderable)", () => {
     setYMax(10)
     setRefLines([{ value: 5, color: "#0000ff" }])
     setMarkers([{ index: 0, value: 4, glyph: "▲", color: "#ffff00" }])
-    setXLabel(() => (ts: number) => `t${ts}`)
-    setYLabel(() => (v: number) => `$${v}`)
+    setXLabel(() => (timestamp: number) => `t${timestamp}`)
+    setYLabel(() => (value: number) => `$${value}`)
     await renderOnce()
 
     expect(chartRef!.values).toEqual([4, 5, 6])

@@ -10,93 +10,93 @@ beforeEach(() => {
 
 describe("createRateLimiter", () => {
   test("fresh limiter exposes full capacity per window", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [
         { windowMs: 60_000, capacity: 8 },
         { windowMs: 86_400_000, capacity: 800 },
       ],
       now,
     })
-    expect(l.remaining(0)).toBe(8)
-    expect(l.remaining(1)).toBe(800)
-    expect(l.canSpend(8)).toBe(true)
-    expect(l.canSpend(9)).toBe(false)
+    expect(limiter.remaining(0)).toBe(8)
+    expect(limiter.remaining(1)).toBe(800)
+    expect(limiter.canSpend(8)).toBe(true)
+    expect(limiter.canSpend(9)).toBe(false)
   })
 
   test("spend decrements every window", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [
         { windowMs: 60_000, capacity: 8 },
         { windowMs: 86_400_000, capacity: 800 },
       ],
       now,
     })
-    l.spend(3)
-    expect(l.remaining(0)).toBe(5)
-    expect(l.remaining(1)).toBe(797)
+    limiter.spend(3)
+    expect(limiter.remaining(0)).toBe(5)
+    expect(limiter.remaining(1)).toBe(797)
   })
 
   test("entries age out of their window exactly at the boundary", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [{ windowMs: 60_000, capacity: 2 }],
       now,
     })
-    l.spend(2)
-    expect(l.remaining(0)).toBe(0)
+    limiter.spend(2)
+    expect(limiter.remaining(0)).toBe(0)
     clock += 59_999
-    expect(l.remaining(0)).toBe(0)
+    expect(limiter.remaining(0)).toBe(0)
     clock += 1
-    expect(l.remaining(0)).toBe(2)
+    expect(limiter.remaining(0)).toBe(2)
   })
 
   test("nextAvailableAt picks the longer of all window waits", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [
         { windowMs: 60_000, capacity: 1 },
         { windowMs: 86_400_000, capacity: 1 },
       ],
       now,
     })
-    l.spend(1)
-    expect(l.nextAvailableAt(1)).toBe(86_400_000)
+    limiter.spend(1)
+    expect(limiter.nextAvailableAt(1)).toBe(86_400_000)
   })
 
   test("nextAvailableAt returns 0 when already affordable", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [{ windowMs: 60_000, capacity: 8 }],
       now,
     })
-    expect(l.nextAvailableAt(1)).toBe(0)
+    expect(limiter.nextAvailableAt(1)).toBe(0)
   })
 
   test("nextAvailableAt reports per-window wait", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [{ windowMs: 60_000, capacity: 2 }],
       now,
     })
-    l.spend(1)
+    limiter.spend(1)
     clock += 10_000
-    l.spend(1)
-    expect(l.nextAvailableAt(1)).toBe(50_000)
+    limiter.spend(1)
+    expect(limiter.nextAvailableAt(1)).toBe(50_000)
   })
 
   test("remaining(out-of-range) returns 0 without throwing", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [{ windowMs: 60_000, capacity: 8 }],
       now,
     })
-    expect(l.remaining(5)).toBe(0)
+    expect(limiter.remaining(5)).toBe(0)
   })
 
   test("supports a single window only", () => {
-    const l = createRateLimiter({ windows: [{ windowMs: 1_000, capacity: 3 }], now })
-    expect(l.canSpend(3)).toBe(true)
-    l.spend(3)
-    expect(l.canSpend(1)).toBe(false)
+    const limiter = createRateLimiter({ windows: [{ windowMs: 1_000, capacity: 3 }], now })
+    expect(limiter.canSpend(3)).toBe(true)
+    limiter.spend(3)
+    expect(limiter.canSpend(1)).toBe(false)
   })
 
   test("supports three or more windows", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [
         { windowMs: 1_000, capacity: 2 },
         { windowMs: 60_000, capacity: 10 },
@@ -104,18 +104,18 @@ describe("createRateLimiter", () => {
       ],
       now,
     })
-    expect(l.remaining(0)).toBe(2)
-    expect(l.remaining(1)).toBe(10)
-    expect(l.remaining(2)).toBe(100)
-    l.spend(2)
-    expect(l.canSpend(1)).toBe(false) // 1s window exhausted
+    expect(limiter.remaining(0)).toBe(2)
+    expect(limiter.remaining(1)).toBe(10)
+    expect(limiter.remaining(2)).toBe(100)
+    limiter.spend(2)
+    expect(limiter.canSpend(1)).toBe(false) // 1s window exhausted
   })
 
   test("uses Date.now by default", () => {
-    const l = createRateLimiter({ windows: [{ windowMs: 60_000, capacity: 1 }] })
-    expect(l.remaining(0)).toBe(1)
-    l.spend(1)
-    expect(l.canSpend(1)).toBe(false)
+    const limiter = createRateLimiter({ windows: [{ windowMs: 60_000, capacity: 1 }] })
+    expect(limiter.remaining(0)).toBe(1)
+    limiter.spend(1)
+    expect(limiter.canSpend(1)).toBe(false)
   })
 
   test("throws when constructed with no windows", () => {
@@ -123,17 +123,17 @@ describe("createRateLimiter", () => {
   })
 
   test("prunes spends older than the longest window", () => {
-    const l = createRateLimiter({
+    const limiter = createRateLimiter({
       windows: [
         { windowMs: 1_000, capacity: 5 },
         { windowMs: 10_000, capacity: 10 },
       ],
       now,
     })
-    l.spend(5)
+    limiter.spend(5)
     clock += 11_000
-    expect(l.remaining(0)).toBe(5)
-    expect(l.remaining(1)).toBe(10)
+    expect(limiter.remaining(0)).toBe(5)
+    expect(limiter.remaining(1)).toBe(10)
   })
 })
 

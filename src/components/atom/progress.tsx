@@ -13,9 +13,8 @@ export interface ProgressProps {
 }
 
 /**
- * Single-row text-mode progress bar. Two coloured spans: filled run + unfilled
- * run. `max <= 0` paints fully filled. Pure paint — caller supplies the
- * numerator/denominator as accessors.
+ * Single-row text-mode progress bar. Two coloured spans: filled and unfilled.
+ * `max <= 0` paints fully filled.
  */
 export function Progress(props: ProgressProps): JSX.Element {
   const theme = useTheme()

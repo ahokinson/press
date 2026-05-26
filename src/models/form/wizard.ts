@@ -6,11 +6,11 @@ export interface WizardState<TStep extends string> {
   index: Accessor<number>
   isFirst: Accessor<boolean>
   isLast: Accessor<boolean>
-  /** Advance one step; no-op on the last step. */
+  /** Advance one step. No-op on the last step. */
   next: () => void
-  /** Retreat one step; no-op on the first step. */
+  /** Retreat one step. No-op on the first step. */
   prev: () => void
-  /** Jump to a specific step; unknown steps are silently ignored. */
+  /** Jump to a specific step. Unknown steps are silently ignored. */
   goto: (step: TStep) => void
   /** Return to the initial step. */
   reset: () => void
@@ -22,13 +22,11 @@ export interface WizardOptions<TStep extends string> {
 }
 
 /**
- * Step-machine for multi-stage forms / flows. The caller defines an `enum`
- * (per the project convention of enums over union literals) and passes
- * `Object.values(MyEnum)` as `steps`; the wizard tracks the current step and
- * exposes next/prev/goto/reset plus first/last accessors.
+ * Step-machine for multi-stage forms or flows. The caller defines an `enum`
+ * and passes `Object.values(MyEnum)` as `steps`. The wizard tracks the
+ * current step and exposes next/prev/goto/reset plus first/last accessors.
  *
- * Pure state — no UI. Pair with `<WizardRail>` for a visual step indicator,
- * or roll your own renderer keyed on `state.step()`.
+ * Pure state. No UI.
  */
 export function createWizard<TStep extends string>(
   steps: readonly TStep[],

@@ -11,8 +11,8 @@ export interface TreeRenderContext<T> {
 export interface TreeProps<T> {
   state: TreeState<T>
   /**
-   * Render the right-hand side of a row (label + any badges). Indent and
-   * chevron are owned by the component; the caller paints the data.
+   * Render the right-hand side of a row (label and any badges). The component
+   * owns indent and chevron.
    */
   render: (ctx: TreeRenderContext<T>) => JSX.Element
 }
@@ -23,10 +23,9 @@ const LEAF = " "
 const INDENT = "  "
 
 /**
- * Renderer for `createTreeState`. Walks the flattened `visible()` rows and
- * paints depth indent + chevron + caller-supplied label. The current cursor
- * row is highlighted; keyboard navigation is the caller's responsibility
- * (wire `state.focusNext` / `state.focusPrev` into your keymap).
+ * Renderer for `createTreeState`. Walks `visible()` and paints depth indent,
+ * chevron, and the caller-supplied label. Highlights the current cursor row.
+ * Keyboard navigation is the caller's responsibility.
  */
 export function Tree<T>(props: TreeProps<T>): JSX.Element {
   const theme = useTheme()

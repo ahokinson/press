@@ -1,15 +1,16 @@
+import type { Dimension, DimensionFixed } from "@terminal/dimension.ts"
 import { useTheme } from "@theme/provider.tsx"
 import type { JSX, ParentProps } from "solid-js"
 
 export interface PaneProps extends ParentProps {
   title?: string
   focused?: () => boolean
-  /** Override the border colour explicitly; bypasses the focused/unfocused derivation. */
+  /** Override the border colour. Bypasses focus derivation. */
   borderColor?: string
   flexGrow?: number
-  flexBasis?: number | "auto"
-  width?: number | `${number}%` | "auto"
-  height?: number | `${number}%` | "auto"
+  flexBasis?: DimensionFixed
+  width?: Dimension
+  height?: Dimension
   padding?: number
   paddingX?: number
   paddingY?: number
@@ -18,8 +19,8 @@ export interface PaneProps extends ParentProps {
 
 /**
  * Bordered container with a focus-aware border colour and optional title.
- * Pass `borderColor` to bypass focus derivation (useful for status-driven
- * panes). Padding accepts a uniform `padding` or per-axis `paddingX`/`paddingY`.
+ * Pass `borderColor` to bypass focus derivation. Padding accepts a uniform
+ * `padding` or per-axis `paddingX`/`paddingY`.
  */
 export function Pane(props: PaneProps): JSX.Element {
   const theme = useTheme()

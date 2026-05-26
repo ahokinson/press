@@ -28,18 +28,18 @@ describe("resample", () => {
   })
 
   test("upsamples a monotone ramp into a monotone ramp", () => {
-    const out = resample([0, 1, 2, 3], 7)
-    expect(out).toHaveLength(7)
-    expect(out[0]).toBe(0)
-    expect(out[6]).toBe(3)
-    for (let i = 1; i < out.length; i++) {
-      expect(out[i]).toBeGreaterThanOrEqual(out[i - 1]!)
+    const result = resample([0, 1, 2, 3], 7)
+    expect(result).toHaveLength(7)
+    expect(result[0]).toBe(0)
+    expect(result[6]).toBe(3)
+    for (let index = 1; index < result.length; index++) {
+      expect(result[index]).toBeGreaterThanOrEqual(result[index - 1]!)
     }
   })
 
   test("downsamples preserve endpoints", () => {
-    const out = resample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 3)
-    expect(out[0]).toBe(0)
-    expect(out[out.length - 1]).toBe(9)
+    const result = resample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 3)
+    expect(result[0]).toBe(0)
+    expect(result[result.length - 1]).toBe(9)
   })
 })

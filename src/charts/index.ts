@@ -1,5 +1,6 @@
 export { BRAILLE_BASE, type BrailleGrid, rasterize, rowToString } from "@charts/braille.ts"
-export { type ChartMarker, type ChartOptions, ChartRenderable, type RefLine } from "@charts/chart.tsx"
+export { type ChartMarker, type ChartOptions, ChartRenderable, MarkerSide, type RefLine } from "@charts/chart.tsx"
+export { findPivots, type Pivot, PivotKind, type PivotOptions } from "@charts/pivots.ts"
 export { registerChartElements } from "@charts/register.ts"
 export { resample } from "@charts/series.ts"
 export { type SparklineOptions, SparklineRenderable } from "@charts/sparkline.tsx"

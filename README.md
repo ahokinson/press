@@ -11,20 +11,23 @@ Nothing else looked right. Press is for people who care how the terminal feels.
 
 ## What's in the box
 
-Each module is a separate import path; pull only what you use.
+Each module is a separate import path. Pull only what you use.
 
-- **`press/theme`** — Catppuccin-based palette, a Solid `ThemeProvider`, and a `useTheme` hook. Build custom themes with `createTheme` / `makeTheme`.
-- **`press/components`** — Rendered building blocks: atoms (Badge, Empty, Highlight, Progress, RangeBar, Skeleton, Spinner, Truncated), containers (Card, Header, List, Pane, Section, Sections, Separated, Table, scrollbox helpers), controls (Field, InputBar), and feedback surfaces (Banner, Callout, ConfirmDialog, Json, StatusBar).
-- **`press/models`** — Headless state machines for recurring UI shapes: confirm dialogs, hierarchical navigation, status lines, collapsible groups, overlays, toggle sets, filterable lists, numeric editors.
-- **`press/signals`** — Reactive helpers: viewport-aware scroll sync, cumulative row offsets, value cyclers, clamped setters.
-- **`press/async`** — A polling controller with active/paused/disabled modes that coalesces overlapping ticks, plus a stale-stamp guard for cancelling out-of-date in-flight work.
-- **`press/context`** — `createSimpleContext`, a factory that bundles a Solid `Provider` and `use()` hook into one call.
-- **`press/format`** — Terminal-aware string utilities: column-width measurement (East Asian wide aware), truncate / pad / clip, compact number and relative-age formatting, range bars, search-match segmentation, progress-bar parts.
-- **`press/icons`** — Nerd Font glyph constants tagged with their column width, plus a placeholder generator.
-- **`press/io`** — Atomic file writes and JSON load/save with optional zod validation and structured failure reasons.
-- **`press/terminal`** — A `useResponsiveLayout` breakpoint hook keyed to terminal width, and `createTerminalHandover` for suspending the renderer while a subprocess (editor, pager) takes the screen.
-- **`press/keyboard`** — Key-event matching, declarative binding dispatch with optional status-bar hints, modal keymap layers, and a text-input helper for free-form fields.
-- **`press/charts`** — A braille-cell rasterizer, sparkline, and a full chart renderable that registers as an opentui element.
+- **`press/async`** — Polling controller with active/paused/disabled modes, plus stale-stamp and coalesce guards for race-prone work.
+- **`press/charts`** — Braille rasterizer, sparkline, and a chart renderable that registers as an opentui element.
+- **`press/clipboard`** — `copy(text)` with a discriminated `CopyResult`. OSC 52 first when stdout is a TTY (works over SSH), platform-native command otherwise. Size-capped.
+- **`press/components`** — Rendered building blocks. Atoms, containers, controls, dialogs, and feedback surfaces. No app logic.
+- **`press/context`** — `createRequiredContext`: a Solid `Provider` and `use()` hook bundled together. `use()` throws outside its `Provider`.
+- **`press/format`** — Terminal-aware string utilities. Column-width, truncate/pad, compact numbers, relative time, range bars.
+- **`press/icons`** — Nerd Font glyph constants with their column widths. Plus a placeholder generator.
+- **`press/io`** — Atomic file writes and JSON load/save with optional zod validation.
+- **`press/keyboard`** — Key matching, binding dispatch, modal keymap layers, and a cheatsheet projection into the help overlay.
+- **`press/link`** — Themed `Link` component, plus `wrapOsc8` / `supportsOsc8` for clickable terminal hyperlinks.
+- **`press/markdown`** — A `Markdown` component, a parser, and word-wrap helpers. ATX headings, paragraphs, fenced code, lists, blockquotes, and the usual inline forms.
+- **`press/models`** — Headless state machines: filterable lists, fuzzy pickers, tree expansion, table sort/filter, confirm dialogs, undo/redo, focus rings, numeric editors.
+- **`press/signals`** — Reactive helpers around scroll sync, value cycling, and clamped cursors.
+- **`press/terminal`** — Responsive layout, screen-stack navigation, and renderer handover for subprocesses (editors, pagers).
+- **`press/theme`** — Catppuccin-based palette, `ThemeProvider`, `useTheme`. Build your own with `createTheme`.
 
 ## Install
 

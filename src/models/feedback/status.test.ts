@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import { composeTrailing, createStatusState } from "@models/feedback/status.ts"
+import { createRoot } from "solid-js"
 
-const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
+const sleep = (milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds))
 
 describe("createStatusState", () => {
   test("showMessage sets message and trail; busy starts inactive", () => {
@@ -51,6 +52,20 @@ describe("createStatusState", () => {
     await sleep(80)
     // Without dispose the timer would have nulled `message` by now.
     expect(state.message()).toBe("pending")
+  })
+
+  test("inside a Solid owner, timers are cleared automatically on dispose", async () => {
+    let state: ReturnType<typeof createStatusState>
+    const dispose = createRoot((disposeRoot) => {
+      state = createStatusState()
+      state.showMessage("pending", 50)
+      return disposeRoot
+    })
+    expect(state!.message()).toBe("pending")
+    dispose()
+    await sleep(80)
+    // Owner cleanup ran on dispose() — timers were cancelled, message stays put.
+    expect(state!.message()).toBe("pending")
   })
 })
 

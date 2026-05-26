@@ -1,3 +1,4 @@
+import { Strip } from "@components/atom/strip.tsx"
 import { BOLD } from "@theme"
 import { type JSX, type ParentProps, Show } from "solid-js"
 
@@ -8,13 +9,13 @@ export interface CalloutProps extends ParentProps {
 }
 
 /**
- * One-row coloured strip with optional leading icon. Used for inline alerts,
- * notices, or status callouts inside a pane. Foreground colour is supplied —
- * caller picks from the theme palette (e.g. `theme.warn`, `theme.err`).
+ * One-row coloured strip with optional leading icon. For inline alerts,
+ * notices, or status callouts inside a pane. The caller supplies the
+ * foreground colour (e.g. `theme.warn`, `theme.err`).
  */
 export function Callout(props: CalloutProps): JSX.Element {
   return (
-    <box flexDirection="row" height={1}>
+    <Strip>
       <Show when={props.icon}>
         <text fg={props.color} attributes={BOLD}>{`${props.icon}  `}</text>
       </Show>
@@ -25,6 +26,6 @@ export function Callout(props: CalloutProps): JSX.Element {
       ) : (
         props.children
       )}
-    </box>
+    </Strip>
   )
 }

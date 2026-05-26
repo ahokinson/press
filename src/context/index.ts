@@ -1,1 +1,1 @@
-export { createSimpleContext, type SimpleContext } from "@context/simple.tsx"
+export { createRequiredContext, type RequiredContext } from "@context/required.tsx"

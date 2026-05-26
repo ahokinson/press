@@ -49,7 +49,7 @@ describe("Sections (render)", () => {
           cursor={() => 0}
           renderItem={(item) => <text>{item}</text>}
           loading={() => true}
-          skeleton={{ rows: () => 2, renderRow: (i) => <text>{`skel-${i}`}</text> }}
+          skeleton={{ rows: () => 2, renderRow: (index) => <text>{`skel-${index}`}</text> }}
         />
       ),
       { width: 30, height: 10 },

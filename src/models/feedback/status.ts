@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js"
+import { createSignal, getOwner, onCleanup } from "solid-js"
 
 export interface BusyHandle {
   active: () => boolean
@@ -13,9 +13,11 @@ export interface StatusState {
   showMessage: (message: string, durationMilliseconds?: number) => void
   busy: BusyHandle
   /**
-   * Cancel any pending dismiss/trail timers. Safe to call repeatedly. Use when
-   * tearing down a StatusState outside Solid's reactive owner (tests, ad-hoc
-   * scripts) — Solid components should rely on `onCleanup` instead.
+   * Cancel any pending dismiss/trail timers. Safe to call repeatedly.
+   *
+   * Called automatically via `onCleanup` when `createStatusState` runs inside
+   * a Solid reactive owner (component body, `createRoot`). Outside an owner,
+   * call this on teardown.
    */
   dispose: () => void
 }
@@ -23,13 +25,14 @@ export interface StatusState {
 const TRAIL_LENGTH = 3
 
 /**
- * Pair of two unrelated signals that share the same status line:
+ * Two unrelated signals that share the same status line:
+ *
  * - a transient `message` that auto-dismisses with a shrinking trail
  * - a `busy` reason that stays put until the caller clears it
  *
- * Callers wire `message`/`trail`/`busy.reason()` into `StatusBar`'s
- * `trailing` slot and `busy.active()` into its `busy` flag. The component
- * never owns timing; this primitive does.
+ * Wire `message`/`trail`/`busy.reason()` into `StatusBar`'s `trailing` slot
+ * and `busy.active()` into its `busy` flag. The component never owns timing.
+ * This primitive does.
  */
 export function createStatusState(): StatusState {
   const [message, setMessage] = createSignal<string | null>(null)
@@ -43,7 +46,7 @@ export function createStatusState(): StatusState {
       clearTimeout(dismissTimer)
       dismissTimer = undefined
     }
-    for (const t of trailTimers) clearTimeout(t)
+    for (const timer of trailTimers) clearTimeout(timer)
     trailTimers = []
   }
 
@@ -53,11 +56,11 @@ export function createStatusState(): StatusState {
     setTrail(` ${"┄".repeat(TRAIL_LENGTH)}`)
 
     const step = durationMilliseconds / TRAIL_LENGTH
-    for (let i = 1; i <= TRAIL_LENGTH; i++) {
+    for (let index = 1; index <= TRAIL_LENGTH; index++) {
       trailTimers.push(
         setTimeout(() => {
-          setTrail(` ${"┄".repeat(TRAIL_LENGTH - i)}`)
-        }, step * i),
+          setTrail(` ${"┄".repeat(TRAIL_LENGTH - index)}`)
+        }, step * index),
       )
     }
 
@@ -79,19 +82,23 @@ export function createStatusState(): StatusState {
     clearTimers()
   }
 
+  if (getOwner() !== null) onCleanup(dispose)
+
   return { message, trail, showMessage, busy, dispose }
 }
 
 /**
  * Standard precedence for a `StatusBar` trailing slot:
+ *
  *   transient message (with shrinking trail) > busy reason > caller fallback
- * Pure composition over `StatusState`; the result plugs straight into
+ *
+ * Pure composition over `StatusState`. Plug into
  * `<StatusBar trailing={composeTrailing(status, fallback)} />`.
  */
 export function composeTrailing(status: StatusState, fallback: () => string): () => string {
   return () => {
-    const msg = status.message()
-    if (msg) return msg + status.trail()
+    const message = status.message()
+    if (message) return message + status.trail()
     const reason = status.busy.reason()
     if (reason) return reason
     return fallback()

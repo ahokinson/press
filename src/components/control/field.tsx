@@ -11,8 +11,7 @@ export interface FieldProps extends ParentProps {
 
 /**
  * One-row label/value pair. Renders a fixed-width dim label cell beside the
- * provided value (children). Designed for stacked detail views — wrap several
- * `Field`s in a column box.
+ * provided value (children).
  */
 export function Field(props: FieldProps): JSX.Element {
   const theme = useTheme()

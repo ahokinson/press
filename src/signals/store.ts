@@ -12,11 +12,7 @@ export interface IndexedStore<K extends string, V extends object> {
   set: (key: K, value: V) => void
   /** Shallow-merge into the entry at `key`. No-op when the key is missing. */
   update: (key: K, partial: Partial<V>) => void
-  /**
-   * Insert-or-merge: when the key is missing, behaves like `set`; when present,
-   * shallow-merges like `update`. Matches the common "fetch then apply" shape
-   * for symbol-/id-indexed caches.
-   */
+  /** Insert-or-merge: `set` when the key is missing, shallow-merge when present. */
   upsert: (key: K, value: V) => void
   /** Delete an entry. No-op when key is missing. */
   remove: (key: K) => void
@@ -27,13 +23,8 @@ export interface IndexedStore<K extends string, V extends object> {
 }
 
 /**
- * Reactive wrapper around `createStore<Record<K, V>>()` for the common
- * "indexed by key" pattern (quote-by-symbol, holding-by-symbol, request-by-id).
- *
- * `set` overwrites; `update` shallow-merges into an existing entry (no-op if
- * missing). Reactive reads go through `entries()` / `keys()` / `size()`; the
- * underlying store is hidden so callers don't accidentally mutate it via
- * shared reference.
+ * Reactive wrapper around `createStore<Record<K, V>>()` for key-indexed maps.
+ * The inner store stays private. Read through `entries()`, `keys()`, `size()`.
  */
 export function createIndexedStore<K extends string, V extends object>(
   initial: Record<K, V> = {} as Record<K, V>,
@@ -82,8 +73,8 @@ export function createIndexedStore<K extends string, V extends object>(
   function replace(next: Record<K, V>): void {
     setState(
       produce((draft) => {
-        for (const k of Object.keys(draft) as K[]) {
-          delete draft[k]
+        for (const key of Object.keys(draft) as K[]) {
+          delete draft[key]
         }
         Object.assign(draft, next)
       }),
@@ -93,8 +84,8 @@ export function createIndexedStore<K extends string, V extends object>(
   function clear(): void {
     setState(
       produce((draft) => {
-        for (const k of Object.keys(draft) as K[]) {
-          delete draft[k]
+        for (const key of Object.keys(draft) as K[]) {
+          delete draft[key]
         }
       }),
     )

@@ -2,6 +2,23 @@ import { BOLD } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { createMemo, For, type JSX, Show } from "solid-js"
 
+export interface JsonColors {
+  /** Object keys (left of `:`). */
+  key: string
+  /** String literals. */
+  str: string
+  /** Number and bigint literals. */
+  num: string
+  /** Boolean literals. */
+  bool: string
+  /** `null` and `undefined`. */
+  nul: string
+  /** Non-plain objects rendered via their `String(...)` form. */
+  type: string
+  /** Punctuation: braces, brackets, commas, colons. */
+  punct: string
+}
+
 export interface JsonProps {
   value: () => unknown
   /** Maximum nesting depth to expand before collapsing further with `…`. Default 8. */
@@ -10,6 +27,8 @@ export interface JsonProps {
   maxStringLength?: number
   /** Number of spaces per indent level. Default 2. */
   indent?: number
+  /** Override the role-to-token mapping. Unset roles use theme defaults. */
+  colors?: Partial<JsonColors>
 }
 
 interface Line {
@@ -18,56 +37,55 @@ interface Line {
 }
 
 /**
- * Pretty-prints any JS value as colored, indented text lines. Renders
- * BSON-style values (objects with constructor names other than `Object`/`Array`)
- * via their string form. Read-only; no collapse / expand interaction in this
- * version.
+ * Pretty-prints any JS value as colored, indented text lines. Non-plain
+ * objects (constructors other than `Object`/`Array`) render via their string
+ * form. Read-only.
  */
 export function Json(props: JsonProps): JSX.Element {
   const theme = useTheme()
   const maxDepth = () => props.maxDepth ?? 8
-  const maxStr = () => props.maxStringLength ?? 200
+  const maxStringChars = () => props.maxStringLength ?? 200
   const indentStep = () => props.indent ?? 2
 
-  const colors = {
-    key: theme.lavender,
-    str: theme.ok,
-    num: theme.peach,
-    bool: theme.maroon,
-    nul: theme.dim,
-    type: theme.teal,
-    punct: theme.faint,
+  const colors: JsonColors = {
+    key: props.colors?.key ?? theme.lavender,
+    str: props.colors?.str ?? theme.ok,
+    num: props.colors?.num ?? theme.peach,
+    bool: props.colors?.bool ?? theme.maroon,
+    nul: props.colors?.nul ?? theme.dim,
+    type: props.colors?.type ?? theme.teal,
+    punct: props.colors?.punct ?? theme.faint,
   }
 
-  function formatPrimitive(v: unknown): { text: string; color: string } {
-    if (v === null) return { text: "null", color: colors.nul }
-    if (v === undefined) return { text: "undefined", color: colors.nul }
-    switch (typeof v) {
+  function formatPrimitive(value: unknown): { text: string; color: string } {
+    if (value === null) return { text: "null", color: colors.nul }
+    if (value === undefined) return { text: "undefined", color: colors.nul }
+    switch (typeof value) {
       case "string": {
-        const s = v.length > maxStr() ? `${v.slice(0, maxStr())}…` : v
-        return { text: JSON.stringify(s), color: colors.str }
+        const truncated = value.length > maxStringChars() ? `${value.slice(0, maxStringChars())}…` : value
+        return { text: JSON.stringify(truncated), color: colors.str }
       }
       case "number":
       case "bigint":
-        return { text: String(v), color: colors.num }
+        return { text: String(value), color: colors.num }
       case "boolean":
-        return { text: String(v), color: colors.bool }
+        return { text: String(value), color: colors.bool }
       default:
-        return { text: String(v), color: colors.type }
+        return { text: String(value), color: colors.type }
     }
   }
 
-  function isPlainContainer(v: unknown): v is Record<string, unknown> | unknown[] {
-    if (Array.isArray(v)) return true
-    if (v === null || typeof v !== "object") return false
-    const proto = Object.getPrototypeOf(v)
+  function isPlainContainer(value: unknown): value is Record<string, unknown> | unknown[] {
+    if (Array.isArray(value)) return true
+    if (value === null || typeof value !== "object") return false
+    const proto = Object.getPrototypeOf(value)
     return proto === Object.prototype || proto === null
   }
 
   function build(value: unknown, depth: number, indent: number, prefix: { text: string; color: string }[]): Line[] {
     if (!isPlainContainer(value)) {
-      const f = formatPrimitive(value)
-      return [{ indent, segments: [...prefix, { text: f.text, color: f.color }] }]
+      const formatted = formatPrimitive(value)
+      return [{ indent, segments: [...prefix, { text: formatted.text, color: formatted.color }] }]
     }
     if (depth >= maxDepth()) {
       return [{ indent, segments: [...prefix, { text: Array.isArray(value) ? "[…]" : "{…}", color: colors.punct }] }]
@@ -78,12 +96,12 @@ export function Json(props: JsonProps): JSX.Element {
         return [{ indent, segments: [...prefix, { text: "[]", color: colors.punct }] }]
       }
       lines.push({ indent, segments: [...prefix, { text: "[", color: colors.punct }] })
-      for (let i = 0; i < value.length; i++) {
-        const trailing = i < value.length - 1 ? "," : ""
-        const child = build(value[i], depth + 1, indent + indentStep(), [])
+      for (let index = 0; index < value.length; index++) {
+        const trailing = index < value.length - 1 ? "," : ""
+        const child = build(value[index], depth + 1, indent + indentStep(), [])
         const last = child[child.length - 1]
         if (last && trailing) last.segments.push({ text: trailing, color: colors.punct })
-        for (const l of child) lines.push(l)
+        for (const line of child) lines.push(line)
       }
       lines.push({ indent, segments: [{ text: "]", color: colors.punct }] })
       return lines
@@ -93,17 +111,17 @@ export function Json(props: JsonProps): JSX.Element {
       return [{ indent, segments: [...prefix, { text: "{}", color: colors.punct }] }]
     }
     lines.push({ indent, segments: [...prefix, { text: "{", color: colors.punct }] })
-    for (let i = 0; i < entries.length; i++) {
-      const [k, v] = entries[i]!
-      const trailing = i < entries.length - 1 ? "," : ""
+    for (let index = 0; index < entries.length; index++) {
+      const [key, entryValue] = entries[index]!
+      const trailing = index < entries.length - 1 ? "," : ""
       const keyPrefix = [
-        { text: JSON.stringify(k), color: colors.key, bold: true },
+        { text: JSON.stringify(key), color: colors.key, bold: true },
         { text: ": ", color: colors.punct },
       ]
-      const child = build(v, depth + 1, indent + indentStep(), keyPrefix)
+      const child = build(entryValue, depth + 1, indent + indentStep(), keyPrefix)
       const last = child[child.length - 1]
       if (last && trailing) last.segments.push({ text: trailing, color: colors.punct })
-      for (const l of child) lines.push(l)
+      for (const line of child) lines.push(line)
     }
     lines.push({ indent, segments: [{ text: "}", color: colors.punct }] })
     return lines
@@ -120,7 +138,9 @@ export function Json(props: JsonProps): JSX.Element {
               <span style={{ fg: colors.punct }}>{" ".repeat(line.indent)}</span>
             </Show>
             <For each={line.segments}>
-              {(seg) => <span style={{ fg: seg.color, attributes: seg.bold ? BOLD : 0 }}>{seg.text}</span>}
+              {(segment) => (
+                <span style={{ fg: segment.color, attributes: segment.bold ? BOLD : 0 }}>{segment.text}</span>
+              )}
             </For>
           </text>
         )}

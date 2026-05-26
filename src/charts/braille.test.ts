@@ -12,10 +12,10 @@ describe("rasterize", () => {
   })
 
   test("non-positive dimensions return empty grid", () => {
-    const a = rasterize([1, 2, 3], 0, 2)
-    expect(a.cells.length).toBe(0)
-    const b = rasterize([1, 2, 3], 4, 0)
-    expect(b.cells.length).toBe(0)
+    const zeroWidth = rasterize([1, 2, 3], 0, 2)
+    expect(zeroWidth.cells.length).toBe(0)
+    const zeroHeight = rasterize([1, 2, 3], 4, 0)
+    expect(zeroHeight.cells.length).toBe(0)
   })
 
   test("single value populates and reports flat min/max", () => {
@@ -23,11 +23,11 @@ describe("rasterize", () => {
     expect(grid.min).toBe(5)
     expect(grid.max).toBe(5)
     // At least one cell should carry braille bits.
-    expect(grid.cells.some((c) => c !== 0)).toBe(true)
+    expect(grid.cells.some((cell) => cell !== 0)).toBe(true)
   })
 
   test("monotone ramp produces a low→high path", () => {
-    const values = Array.from({ length: 64 }, (_, i) => i)
+    const values = Array.from({ length: 64 }, (_, index) => index)
     const grid = rasterize(values, 8, 2)
     expect(grid.min).toBe(0)
     expect(grid.max).toBe(63)
@@ -63,11 +63,11 @@ describe("rowToString", () => {
 
   test("populated cells fall in the braille block", () => {
     const grid = rasterize([0, 1, 2, 3, 4, 5, 6, 7], 4, 2)
-    for (let r = 0; r < grid.height; r++) {
-      for (const ch of rowToString(grid, r)) {
-        const code = ch.charCodeAt(0)
+    for (let rowIndex = 0; rowIndex < grid.height; rowIndex++) {
+      for (const character of rowToString(grid, rowIndex)) {
+        const code = character.charCodeAt(0)
         // Either a space or a braille glyph in U+2800..U+28FF.
-        expect(ch === " " || (code >= BRAILLE_BASE && code <= BRAILLE_BASE + 0xff)).toBe(true)
+        expect(character === " " || (code >= BRAILLE_BASE && code <= BRAILLE_BASE + 0xff)).toBe(true)
       }
     }
   })

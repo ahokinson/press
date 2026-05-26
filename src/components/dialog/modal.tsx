@@ -1,45 +1,42 @@
+import type { Dimension } from "@terminal/dimension.ts"
 import { Severity, severityColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type JSX, type ParentProps, Show } from "solid-js"
 
-export type ModalDimension = number | `${number}%` | "auto"
-
 export interface ModalProps extends ParentProps {
-  /** Render only while this returns true; the dialog is conditionally mounted. */
+  /** Render only while this returns true. */
   when: () => boolean
-  /** Title strip rendered into the top border (with leading/trailing spaces in caller). */
+  /** Title strip rendered into the top border. */
   title?: string
   /**
-   * Semantic colour bucket — paints the border. Defaults to `Severity.Info`.
-   * Ignored if `borderColor` is supplied.
+   * Semantic colour bucket for the border. Defaults to `Severity.Info`.
+   * Ignored when `borderColor` is set.
    */
   severity?: Severity
   /** Raw colour override for the border. Wins over `severity` when set. */
   borderColor?: string
-  /** Override the panel background. Defaults to `theme.bg`. */
+  /** Panel background. Defaults to `theme.bg`. */
   backgroundColor?: string
-  /** Box sizing; pass-through to opentui. Defaults: "50%" / 12 rows. */
-  width?: ModalDimension
-  height?: ModalDimension
-  /** Position offsets; pass-through to opentui. Defaults centre the modal at 25%/25%. */
-  top?: ModalDimension
-  left?: ModalDimension
-  /** Inner padding on the long axis. Defaults to 2. */
+  /** Box sizing. Defaults to "50%" wide and 12 rows tall. */
+  width?: Dimension
+  height?: Dimension
+  /** Position offsets. Default centres the modal at 25%/25%. */
+  top?: Dimension
+  left?: Dimension
+  /** Inner padding on the long axis. Default 2. */
   paddingX?: number
-  /** Inner padding on the short axis. Defaults to 1. */
+  /** Inner padding on the short axis. Default 1. */
   paddingY?: number
-  /** Stack order. Defaults to 10. Raise for nested modals. */
+  /** Stack order. Default 10. Raise for nested modals. */
   zIndex?: number
 }
 
 /**
- * Generalised overlay frame: rounded border, themed colour by severity (or
- * explicit `borderColor`), background fill, and a children slot for content.
- * No keybinding logic — wire enter/esc in your keymap layer and toggle
- * `when()` from there.
+ * Overlay frame: rounded border, themed colour by severity (or explicit
+ * `borderColor`), background fill, children slot. No keybinding logic; wire
+ * enter/esc in your keymap layer and toggle `when()` from there.
  *
- * Pairs naturally with `createOverlayState` (discriminated `kind` ⇒ a Switch
- * picks the modal). For confirm prompts specifically, prefer `ConfirmDialog`.
+ * For confirm prompts, prefer `ConfirmDialog`.
  */
 export function Modal(props: ModalProps): JSX.Element {
   const theme = useTheme()

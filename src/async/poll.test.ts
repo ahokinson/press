@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test"
 import { createPollController, PollMode } from "@async/poll.ts"
 import { createRoot } from "solid-js"
 
-function wait(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms))
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
 describe("createPollController", () => {
@@ -25,7 +25,7 @@ describe("createPollController", () => {
   test("does not schedule when Disabled, force still runs", async () => {
     await createRoot(async (dispose) => {
       let ticks = 0
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 20,
         initialMode: PollMode.Disabled,
         onTick: () => {
@@ -34,7 +34,7 @@ describe("createPollController", () => {
       })
       await wait(60)
       expect(ticks).toBe(0)
-      await c.force()
+      await controller.force()
       expect(ticks).toBe(1)
       dispose()
     })
@@ -43,7 +43,7 @@ describe("createPollController", () => {
   test("coalesces overlapping ticks", async () => {
     await createRoot(async (dispose) => {
       let entered = 0
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 10_000,
         initialMode: PollMode.Disabled,
         onTick: async () => {
@@ -51,9 +51,9 @@ describe("createPollController", () => {
           await wait(50)
         },
       })
-      void c.force()
-      void c.force()
-      void c.force()
+      void controller.force()
+      void controller.force()
+      void controller.force()
       await wait(80)
       dispose()
       expect(entered).toBe(1)
@@ -62,14 +62,14 @@ describe("createPollController", () => {
 
   test("lastTickAt updates after a tick", async () => {
     await createRoot(async (dispose) => {
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 10_000,
         initialMode: PollMode.Disabled,
         onTick: () => {},
       })
-      expect(c.lastTickAt()).toBeNull()
-      await c.force()
-      expect(typeof c.lastTickAt()).toBe("number")
+      expect(controller.lastTickAt()).toBeNull()
+      await controller.force()
+      expect(typeof controller.lastTickAt()).toBe("number")
       dispose()
     })
   })
@@ -77,7 +77,7 @@ describe("createPollController", () => {
   test("Paused mode skips scheduled ticks", async () => {
     await createRoot(async (dispose) => {
       let ticks = 0
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 20,
         initialMode: PollMode.Paused,
         onTick: () => {
@@ -86,7 +86,7 @@ describe("createPollController", () => {
       })
       await wait(80)
       expect(ticks).toBe(0)
-      c.setMode(PollMode.Active)
+      controller.setMode(PollMode.Active)
       await wait(60)
       dispose()
       expect(ticks).toBeGreaterThanOrEqual(1)
@@ -96,7 +96,7 @@ describe("createPollController", () => {
   test("Paused → Active fires a tick immediately (no intervalMs wait)", async () => {
     await createRoot(async (dispose) => {
       let ticks = 0
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 10_000,
         initialMode: PollMode.Paused,
         onTick: () => {
@@ -105,7 +105,7 @@ describe("createPollController", () => {
       })
       await wait(20)
       expect(ticks).toBe(0)
-      c.setMode(PollMode.Active)
+      controller.setMode(PollMode.Active)
       await wait(20)
       dispose()
       expect(ticks).toBe(1)
@@ -115,7 +115,7 @@ describe("createPollController", () => {
   test("Active → Paused stops further ticks", async () => {
     await createRoot(async (dispose) => {
       let ticks = 0
-      const c = createPollController({
+      const controller = createPollController({
         intervalMs: 15,
         onTick: () => {
           ticks++
@@ -124,7 +124,7 @@ describe("createPollController", () => {
       await wait(50)
       const snapshot = ticks
       expect(snapshot).toBeGreaterThanOrEqual(2)
-      c.setMode(PollMode.Paused)
+      controller.setMode(PollMode.Paused)
       await wait(80)
       dispose()
       expect(ticks).toBe(snapshot)

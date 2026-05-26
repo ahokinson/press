@@ -43,59 +43,59 @@ export function rasterize(
     return { cells, width, height, min: 0, max: 0 }
   }
 
-  const subW = width * 2
-  const subH = height * 4
+  const subPixelWidth = width * 2
+  const subPixelHeight = height * 4
 
-  const ys = resample(values, subW)
+  const sampledValues = resample(values, subPixelWidth)
 
-  let min = ys[0]!
-  let max = ys[0]!
-  for (const v of ys) {
-    if (v < min) min = v
-    if (v > max) max = v
+  let minimum = sampledValues[0]!
+  let maximum = sampledValues[0]!
+  for (const value of sampledValues) {
+    if (value < minimum) minimum = value
+    if (value > maximum) maximum = value
   }
 
-  const floor = rangeMin ?? min
-  const ceil = rangeMax ?? max
-  const span = ceil - floor || 1
+  const floor = rangeMin ?? minimum
+  const ceiling = rangeMax ?? maximum
+  const span = ceiling - floor || 1
 
-  // Map each sub-x to a sub-y (0 = top, subH-1 = bottom).
-  const subY = new Int16Array(subW)
-  for (let i = 0; i < subW; i++) {
-    const frac = (ys[i]! - floor) / span
-    subY[i] = subH - 1 - Math.round(frac * (subH - 1))
+  // Map each sub-x to a sub-y (0 = top, subPixelHeight-1 = bottom).
+  const subPixelYs = new Int16Array(subPixelWidth)
+  for (let column = 0; column < subPixelWidth; column++) {
+    const fraction = (sampledValues[column]! - floor) / span
+    subPixelYs[column] = subPixelHeight - 1 - Math.round(fraction * (subPixelHeight - 1))
   }
 
   // Plot a connected line by stepping along x and drawing vertical segments
-  // between consecutive sample y's. Width is exactly subW samples → 1 sample
-  // per sub-x column, so no x-interpolation needed.
-  for (let x = 0; x < subW; x++) {
-    const y0 = subY[x]!
-    const yPrev = x === 0 ? y0 : subY[x - 1]!
-    const lo = Math.min(yPrev, y0)
-    const hi = Math.max(yPrev, y0)
-    for (let y = lo; y <= hi; y++) plot(cells, width, x, y)
+  // between consecutive sample y's. Width is exactly subPixelWidth samples,
+  // one sample per sub-x column.
+  for (let x = 0; x < subPixelWidth; x++) {
+    const yStart = subPixelYs[x]!
+    const previousY = x === 0 ? yStart : subPixelYs[x - 1]!
+    const lowerY = Math.min(previousY, yStart)
+    const upperY = Math.max(previousY, yStart)
+    for (let y = lowerY; y <= upperY; y++) plot(cells, width, x, y)
   }
 
-  return { cells, width, height, min: floor, max: ceil }
+  return { cells, width, height, min: floor, max: ceiling }
 }
 
-function plot(cells: Uint16Array, width: number, sx: number, sy: number): void {
-  const cx = sx >> 1
-  const cy = sy >> 2
-  const col = sx & 1
-  const row = sy & 3
-  const bit = BIT_TABLE[row]![col]!
-  cells[cy * width + cx]! |= bit
+function plot(cells: Uint16Array, width: number, subPixelX: number, subPixelY: number): void {
+  const cellX = subPixelX >> 1
+  const cellY = subPixelY >> 2
+  const columnInCell = subPixelX & 1
+  const rowInCell = subPixelY & 3
+  const bitMask = BIT_TABLE[rowInCell]![columnInCell]!
+  cells[cellY * width + cellX]! |= bitMask
 }
 
 /** Convert a row of bitmasks → an array of braille characters (empty cells stay as " "). */
 export function rowToString(grid: BrailleGrid, row: number): string {
-  let out = ""
+  let result = ""
   const base = row * grid.width
   for (let x = 0; x < grid.width; x++) {
-    const bits = grid.cells[base + x]!
-    out += bits === 0 ? " " : String.fromCharCode(BRAILLE_BASE | bits)
+    const bitMask = grid.cells[base + x]!
+    result += bitMask === 0 ? " " : String.fromCharCode(BRAILLE_BASE | bitMask)
   }
-  return out
+  return result
 }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { DEFAULT_SPINNER_FRAMES, Spinner } from "@components/atom/spinner.tsx"
+import { Spinner, Spinners } from "@components/atom/spinner.tsx"
 import { testRender } from "@opentui/solid"
 
 describe("Spinner", () => {
@@ -12,7 +12,7 @@ describe("Spinner", () => {
     const frame = captureCharFrame()
     expect(frame).toContain("loading")
     // First frame is one of the defaults
-    const seen = DEFAULT_SPINNER_FRAMES.some((g) => frame.includes(g))
+    const seen = Spinners.DEFAULT_FRAMES.some((frameGlyph) => frame.includes(frameGlyph))
     expect(seen).toBe(true)
   })
 
@@ -34,6 +34,6 @@ describe("Spinner", () => {
     await renderOnce()
     const frame = captureCharFrame()
     expect(frame).toContain("hi")
-    expect(["X", "Y", "Z"].some((g) => frame.includes(g))).toBe(true)
+    expect(["X", "Y", "Z"].some((frameGlyph) => frame.includes(frameGlyph))).toBe(true)
   })
 })

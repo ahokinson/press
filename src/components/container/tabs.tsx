@@ -18,7 +18,7 @@ export interface TabsProps {
   tabs: () => ReadonlyArray<TabDescriptor>
   active: () => string
   orientation?: TabOrientation
-  /** Optional click/key handler — caller wires up keyboard rotation. */
+  /** Optional click/key handler. The caller wires keyboard rotation. */
   onActivate?: (key: string) => void
   /**
    * Custom renderer for a tab cell. Replaces the built-in label+badge layout.
@@ -30,9 +30,8 @@ export interface TabsProps {
 }
 
 /**
- * Tab strip + panel slot. Caller owns `active()` (and its update logic); this
- * component only renders the strip and the children panel underneath/beside
- * it. Pair with `createCycler` from `@signals` for left/right rotation:
+ * Tab strip + panel slot. The caller owns `active()` and its update logic.
+ * This component renders the strip and the children panel.
  *
  *   const cycle = createCycler(keys, activeKey, setActiveKey)
  */

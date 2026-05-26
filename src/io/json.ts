@@ -10,7 +10,7 @@ export enum LoadFailureReason {
   Invalid = "invalid",
 }
 
-/** ZodError issue array — works on both zod 3 and zod 4 ("issues" is public in both). */
+/** ZodError issue array. Works on zod 3 and zod 4. */
 export type ZodIssues = z.ZodError["issues"]
 
 export type LoadResult<T> =
@@ -20,21 +20,19 @@ export type LoadResult<T> =
 
 function errnoCode(err: unknown): string | undefined {
   if (err && typeof err === "object" && "code" in err) {
-    const c = (err as { code?: unknown }).code
-    return typeof c === "string" ? c : undefined
+    const code = (err as { code?: unknown }).code
+    return typeof code === "string" ? code : undefined
   }
   return undefined
 }
 
 /**
- * Read a JSON file and validate it against a Zod schema. Distinguishes the
- * four failure modes so callers can choose how to respond — e.g. treat
- * `Missing` as "first run", surface `Io` as a recoverable system error,
- * `Parse` as corruption, and `Invalid` to the user as a schema problem.
+ * Read a JSON file and validate it against a Zod schema. Distinguishes four
+ * failure modes (`Missing`, `Io`, `Parse`, `Invalid`) so callers can pick
+ * recovery per case.
  *
- * On `Invalid`, `issues` carries the full `ZodIssue[]` so the caller can
- * render field-level validation errors. `error` keeps the human-readable
- * message for quick logging.
+ * On `Invalid`, `issues` carries the full `ZodIssue[]`. `error` is a
+ * human-readable summary.
  */
 export async function loadJson<T>(filePath: string, schema: z.ZodType<T>): Promise<LoadResult<T>> {
   let raw: string

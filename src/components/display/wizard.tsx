@@ -37,12 +37,12 @@ const DEFAULT_GLYPHS: Required<WizardGlyphs> = {
 
 /**
  * One-row visual step indicator (`● ─ ◉ ─ ○`) with the current step bolded.
- * Pass `glyphs` to swap any of the four marks — e.g. numeric (`1`/`2`/`3`),
- * icon-based, or ASCII (`x`/`o`/`-`). Drive `current` from `createWizard`.
+ * Pass `glyphs` to swap any of the four marks. Drive `current` from
+ * `createWizard`.
  */
 export function WizardRail<TStep extends string>(props: WizardRailProps<TStep>): JSX.Element {
   const theme = useTheme()
-  const currentIndex = (): number => props.steps.findIndex((s) => s.key === props.current())
+  const currentIndex = (): number => props.steps.findIndex((step) => step.key === props.current())
   const glyphs = (): Required<WizardGlyphs> => ({ ...DEFAULT_GLYPHS, ...(props.glyphs ?? {}) })
 
   return (
@@ -50,21 +50,21 @@ export function WizardRail<TStep extends string>(props: WizardRailProps<TStep>):
       <For each={props.steps}>
         {(step, index) => {
           const status = (): StepStatus => {
-            const i = index()
-            const c = currentIndex()
-            if (i < c) return StepStatus.Done
-            if (i === c) return StepStatus.Active
+            const stepIndex = index()
+            const activeIndex = currentIndex()
+            if (stepIndex < activeIndex) return StepStatus.Done
+            if (stepIndex === activeIndex) return StepStatus.Active
             return StepStatus.Pending
           }
           const glyph = (): string => {
-            const g = glyphs()
+            const glyphSet = glyphs()
             switch (status()) {
               case StepStatus.Done:
-                return g.done
+                return glyphSet.done
               case StepStatus.Active:
-                return g.active
+                return glyphSet.active
               case StepStatus.Pending:
-                return g.pending
+                return glyphSet.pending
             }
           }
           const color = (): string => {

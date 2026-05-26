@@ -1,7 +1,8 @@
+import { createNavigationCursor } from "@signals"
 import { type Accessor, batch, createMemo, createSignal } from "solid-js"
 
 export interface HierarchyLevelConfig {
-  /** Reactive accessor — how many items live at this level given the current selection above. */
+  /** How many items live at this level given the current selection above. Reactive. */
   length: () => number
 }
 
@@ -15,32 +16,33 @@ export interface HierarchyState {
   focusNext: () => void
   focusPrev: () => void
   /**
-   * Clamped index at `level` — reads `lengthAt` reactively, so deletions snap into range.
-   * Out-of-range levels return a stable `() => 0` accessor (non-reactive).
+   * Clamped index at `level`. Reads `lengthAt` reactively, so deletions snap
+   * into range. Out-of-range levels return a stable `() => 0` accessor
+   * (non-reactive).
    */
   indexAt: (level: number) => Accessor<number>
   /**
-   * Update the index at `level`. Mutating a level resets every deeper level to 0
-   * (cascade reset) — selecting a new parent should reveal the first child, not
-   * an arbitrary stale offset. Out-of-range levels are silently ignored.
+   * Update the index at `level`. Mutating a level resets every deeper level
+   * to 0 (cascade reset), so a new parent reveals the first child rather than
+   * a stale offset. Out-of-range levels are silently ignored.
    */
-  setIndexAt: (level: number, fn: (prev: number) => number) => void
+  setIndexAt: (level: number, update: (previous: number) => number) => void
 }
 
-function clamp(n: number, max: number): number {
+function clamp(value: number, max: number): number {
   if (max <= 0) return 0
-  return Math.max(0, Math.min(n, max - 1))
+  return Math.max(0, Math.min(value, max - 1))
 }
 
 const ZERO_ACCESSOR: Accessor<number> = () => 0
 
 /**
- * N-level cursor with cascade reset. The classic shape for tree-pane TUIs
- * (db → coll → doc; ns → pod → envvar): each level has its own clamped index;
- * setting a parent resets children to 0.
+ * N-level cursor with cascade reset. The shape for tree-pane TUIs
+ * (db → coll → doc, ns → pod → envvar). Each level has its own clamped
+ * index. Setting a parent resets children to 0.
  *
- * Lengths are reactive accessors supplied by the caller — the state primitive
- * doesn't own the data, just the cursor.
+ * Lengths are reactive accessors supplied by the caller. The state primitive
+ * owns the cursor, not the data.
  */
 export function createHierarchyState(levels: HierarchyLevelConfig[]): HierarchyState {
   if (levels.length === 0) {
@@ -48,44 +50,36 @@ export function createHierarchyState(levels: HierarchyLevelConfig[]): HierarchyS
   }
 
   const raws = levels.map(() => createSignal(0))
-  const [focus, setFocusRaw] = createSignal(0)
+  const focusNav = createNavigationCursor({ length: () => levels.length })
 
-  const memos: Accessor<number>[] = levels.map((cfg, i) => {
-    const [read] = raws[i]!
-    return createMemo(() => clamp(read(), cfg.length()))
+  const memos: Accessor<number>[] = levels.map((config, index) => {
+    const [read] = raws[index]!
+    return createMemo(() => clamp(read(), config.length()))
   })
 
   function setFocus(level: number): void {
     if (level < 0 || level >= levels.length) return
-    setFocusRaw(level)
+    focusNav.setCursor(level)
   }
 
-  function focusNext(): void {
-    setFocusRaw((p) => (p + 1) % levels.length)
-  }
-
-  function focusPrev(): void {
-    setFocusRaw((p) => (p - 1 + levels.length) % levels.length)
-  }
-
-  function setIndexAt(level: number, fn: (prev: number) => number): void {
+  function setIndexAt(level: number, update: (previous: number) => number): void {
     if (level < 0 || level >= levels.length) return
     batch(() => {
       const [read, write] = raws[level]!
       const max = levels[level]!.length()
-      write(clamp(fn(read()), max))
-      for (let i = level + 1; i < levels.length; i++) {
-        raws[i]![1](0)
+      write(clamp(update(read()), max))
+      for (let deeperLevel = level + 1; deeperLevel < levels.length; deeperLevel++) {
+        raws[deeperLevel]![1](0)
       }
     })
   }
 
   return {
     levelCount: levels.length,
-    focus,
+    focus: focusNav.cursor,
     setFocus,
-    focusNext,
-    focusPrev,
+    focusNext: focusNav.next,
+    focusPrev: focusNav.prev,
     indexAt: (level) => memos[level] ?? ZERO_ACCESSOR,
     setIndexAt,
   }

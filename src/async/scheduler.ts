@@ -8,9 +8,9 @@ export enum SchedulerPhase {
 }
 
 export enum ExecuteOutcome {
-  /** Task completed; scheduler continues to the next task. */
+  /** Task completed. Scheduler continues to the next task. */
   Ok = "ok",
-  /** Caller hit a rate limit or transient block; scheduler stops the current tick and backs off. */
+  /** Caller hit a rate limit or transient block. Scheduler stops the current tick. */
   Backoff = "backoff",
 }
 
@@ -26,14 +26,13 @@ export interface SchedulerTask {
 export interface SchedulerOptions<TTask extends SchedulerTask> {
   /**
    * Gate that approves each task's cost before it runs. Defaults to
-   * `noopRateGate` (unlimited). Pass `createRateLimiter`/`createCreditLimiter`
-   * for sliding-window quotas, or supply your own `RateGate` (concurrency
-   * semaphore, custom policy, …).
+   * `noopRateGate` (unlimited). For sliding-window quotas use
+   * `createRateLimiter` or `createCreditLimiter`.
    */
   limiter?: RateGate
   /** Build the next queue from current state. Called at every tick start. */
   buildQueue: () => TTask[]
-  /** Execute one task; return Backoff to halt the current tick. */
+  /** Execute one task. Return `Backoff` to halt the current tick. */
   onExecute: (task: TTask) => Promise<ExecuteOutcome> | ExecuteOutcome
   /** Idle interval between ticks while running. Default 5_000 ms. */
   intervalMs?: number
@@ -45,7 +44,7 @@ export interface Scheduler<TTask extends SchedulerTask> {
   phase: Accessor<SchedulerPhase>
   queue: Accessor<readonly TTask[]>
   currentTask: Accessor<string | null>
-  /** Begin scheduling; safe to call when already started. */
+  /** Begin scheduling. Safe to call when already started. */
   start: () => void
   /** Stop scheduling and clear current task. */
   stop: () => void
@@ -55,7 +54,7 @@ export interface Scheduler<TTask extends SchedulerTask> {
 
 /**
  * Prioritised task queue driven by a credit limiter. The caller defines what
- * tasks exist (`buildQueue`) and how to execute one (`onExecute`); this
+ * tasks exist (`buildQueue`) and how to execute one (`onExecute`). This
  * primitive handles ordering, credit checks, coalescing, and inter-tick
  * scheduling.
  *
@@ -65,8 +64,8 @@ export interface Scheduler<TTask extends SchedulerTask> {
  *   Paused  — entered when a tick produces no executable tasks (queue empty
  *             or all over budget). Re-enters Running on the next tick.
  *
- * Coalescing: overlapping `force()` calls are deduped (a second call while a
- * tick runs is a no-op promise that resolves when the in-flight tick finishes).
+ * Coalescing: overlapping `force()` calls are deduped. A second call while a
+ * tick is running gets the in-flight tick's promise.
  */
 export function createScheduler<TTask extends SchedulerTask>(opts: SchedulerOptions<TTask>): Scheduler<TTask> {
   const intervalMs = opts.intervalMs ?? 5_000

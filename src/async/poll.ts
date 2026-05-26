@@ -9,7 +9,7 @@ export enum PollMode {
 export interface PollControllerOptions {
   intervalMs: number
   initialMode?: PollMode
-  /** Offset (ms) before the first tick fires. Used to stagger pickup tasks. */
+  /** Offset (ms) before the first tick fires. */
   initialDelayMs?: number
   onTick: () => Promise<void> | void
 }
@@ -25,14 +25,14 @@ export interface PollController {
 /**
  * Drives a single periodic task. Coalesces overlapping ticks by skipping
  * scheduled runs while one is still executing. `force()` runs immediately if
- * not already running; returns the promise so the UI can await/spin.
+ * not already running and returns the tick's promise.
  *
  * Mode semantics:
  * - `Active`   — periodic ticks scheduled.
- * - `Paused`   — timer is cleared; no wakeups consumed. Transitioning back to
- *                `Active` fires a tick immediately (no `intervalMs` wait).
- * - `Disabled` — same as `Paused` for the timer; conventional opt-out for
- *                callers that only ever use `force()`.
+ * - `Paused`   — timer is cleared. Transitioning back to `Active` fires a
+ *                tick immediately (no `intervalMs` wait).
+ * - `Disabled` — same as `Paused` for the timer. Conventional opt-out for
+ *                callers that only use `force()`.
  */
 export function createPollController(opts: PollControllerOptions): PollController {
   const [mode, setMode] = createSignal<PollMode>(opts.initialMode ?? PollMode.Active)

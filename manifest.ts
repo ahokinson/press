@@ -3,18 +3,21 @@
 // updating this file plus `package.json` exports.
 
 export const subpaths = [
-  "theme",
-  "components",
-  "models",
-  "signals",
   "async",
+  "charts",
+  "clipboard",
+  "components",
   "context",
   "format",
   "icons",
   "io",
-  "terminal",
   "keyboard",
-  "charts",
+  "link",
+  "markdown",
+  "models",
+  "signals",
+  "terminal",
+  "theme",
 ] as const
 
 export type Subpath = (typeof subpaths)[number]

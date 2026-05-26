@@ -18,11 +18,11 @@ describe("groupBySection", () => {
   test("groups contiguous items into sections with sequential startIndex", () => {
     const sections = groupBySection<Row, "a" | "b" | "c">({
       items: rows,
-      sectionKey: (r) => r.group,
+      sectionKey: (row) => row.group,
       collapsedSections: new Set(),
     })
-    expect(sections.map((s) => s.id)).toEqual(["a", "b", "c"])
-    expect(sections.map((s) => s.startIndex)).toEqual([0, 2, 4])
+    expect(sections.map((section) => section.id)).toEqual(["a", "b", "c"])
+    expect(sections.map((section) => section.startIndex)).toEqual([0, 2, 4])
     expect(sections[0]!.items.length).toBe(2)
     expect(sections[1]!.items.length).toBe(2)
     expect(sections[2]!.items.length).toBe(1)
@@ -31,7 +31,7 @@ describe("groupBySection", () => {
   test("collapsed sections show zero visible items but retain count", () => {
     const sections = groupBySection<Row, "a" | "b" | "c">({
       items: rows,
-      sectionKey: (r) => r.group,
+      sectionKey: (row) => row.group,
       collapsedSections: new Set(["a"]),
     })
     expect(sections[0]!.collapsed).toBe(true)
@@ -45,17 +45,17 @@ describe("groupBySection", () => {
   test("sectionOrder reorders entries", () => {
     const sections = groupBySection<Row, "a" | "b" | "c">({
       items: rows,
-      sectionKey: (r) => r.group,
+      sectionKey: (row) => row.group,
       collapsedSections: new Set(),
       sectionOrder: (a, b) => (a > b ? -1 : a < b ? 1 : 0),
     })
-    expect(sections.map((s) => s.id)).toEqual(["c", "b", "a"])
+    expect(sections.map((section) => section.id)).toEqual(["c", "b", "a"])
   })
 
   test("sectionLabel callback drives the label", () => {
     const sections = groupBySection<Row, "a" | "b" | "c">({
       items: rows,
-      sectionKey: (r) => r.group,
+      sectionKey: (row) => row.group,
       collapsedSections: new Set(),
       sectionLabel: (key, count) => `${key.toUpperCase()} (${count})`,
     })
@@ -64,14 +64,14 @@ describe("groupBySection", () => {
   })
 
   test("counts derive from allItems when filtering hides some items", () => {
-    const filtered = rows.filter((r) => r.group !== "c")
+    const filtered = rows.filter((row) => row.group !== "c")
     const sections = groupBySection<Row, "a" | "b" | "c">({
       items: filtered,
       allItems: rows,
-      sectionKey: (r) => r.group,
+      sectionKey: (row) => row.group,
       collapsedSections: new Set(),
     })
-    expect(sections.map((s) => s.id)).toEqual(["a", "b"])
+    expect(sections.map((section) => section.id)).toEqual(["a", "b"])
     expect(sections[0]!.count).toBe(2)
     expect(sections[1]!.count).toBe(2)
   })

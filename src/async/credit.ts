@@ -5,23 +5,20 @@ export interface CreditLimiterOptions {
   perMinute: number
   /** Credits per rolling 24-hour window. */
   perDay: number
-  /** Injectable clock — defaults to `Date.now`. Use a fake in tests. */
+  /** Injectable clock. Defaults to `Date.now`. */
   now?: () => number
 }
 
 /**
- * Two-window convenience over `createRateLimiter` for the very common
- * "N per minute, M per day" shape (API quotas, polite-poller budgets).
- *
- * Read remaining capacity via the wrapped accessors (`minuteRemaining`,
- * `dailyRemaining`); everything else (`canSpend`, `spend`, `nextAvailableAt`)
- * comes from the underlying `RateLimiter`.
+ * Two-window convenience over `createRateLimiter` for the common "N per
+ * minute, M per day" shape. `minuteRemaining` and `dailyRemaining` expose
+ * per-window capacity. The rest comes from the underlying `RateLimiter`.
  */
 export interface CreditLimiter extends RateLimiter {
   minuteRemaining: () => number
   dailyRemaining: () => number
   /** @deprecated Use `nextAvailableAt`. Kept for backwards compatibility. */
-  nextCreditAt: (n: number) => number
+  nextCreditAt: (cost: number) => number
 }
 
 const MINUTE_MS = 60_000
@@ -39,6 +36,6 @@ export function createCreditLimiter(opts: CreditLimiterOptions): CreditLimiter {
     ...inner,
     minuteRemaining: () => inner.remaining(0),
     dailyRemaining: () => inner.remaining(1),
-    nextCreditAt: (n) => inner.nextAvailableAt(n),
+    nextCreditAt: (cost) => inner.nextAvailableAt(cost),
   }
 }

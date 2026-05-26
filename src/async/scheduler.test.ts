@@ -18,22 +18,22 @@ describe("createScheduler", () => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       const executed: string[] = []
       let calls = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => (calls++ === 0 ? [TASK_B, TASK_A] : []),
-        onExecute: (t) => {
-          executed.push(t.id)
+        onExecute: (task) => {
+          executed.push(task.id)
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toEqual(["a", "b"])
-      expect(s.phase()).toBe(SchedulerPhase.Running)
-      await s.force()
-      expect(s.phase()).toBe(SchedulerPhase.Paused)
+      expect(scheduler.phase()).toBe(SchedulerPhase.Running)
+      await scheduler.force()
+      expect(scheduler.phase()).toBe(SchedulerPhase.Paused)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -41,20 +41,20 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       const executed: string[] = []
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_A, TASK_B],
-        onExecute: (t) => {
-          executed.push(t.id)
-          return t.id === "a" ? ExecuteOutcome.Backoff : ExecuteOutcome.Ok
+        onExecute: (task) => {
+          executed.push(task.id)
+          return task.id === "a" ? ExecuteOutcome.Backoff : ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toEqual(["a"])
       expect(limiter.minuteRemaining()).toBe(10)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -62,19 +62,19 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 2, perDay: 10 })
       const executed: string[] = []
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_A, TASK_C],
-        onExecute: (t) => {
-          executed.push(t.id)
+        onExecute: (task) => {
+          executed.push(task.id)
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toEqual(["a"])
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -83,7 +83,7 @@ describe("createScheduler", () => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       let ticks = 0
       const blockHandle: { resolve: (() => void) | null } = { resolve: null }
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => {
           ticks++
@@ -94,15 +94,15 @@ describe("createScheduler", () => {
             blockHandle.resolve = () => resolve(ExecuteOutcome.Ok)
           }),
       })
-      s.start()
-      const first = s.force()
-      const second = s.force()
+      scheduler.start()
+      const first = scheduler.force()
+      const second = scheduler.force()
       expect(ticks).toBe(1)
       blockHandle.resolve?.()
       await Promise.all([first, second])
       expect(ticks).toBe(1)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -110,20 +110,20 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       const seen: Array<string | null> = []
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_A],
         onExecute: () => {
-          seen.push(s.currentTask())
+          seen.push(scheduler.currentTask())
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(seen).toEqual(["a"])
-      expect(s.currentTask()).toBeNull()
+      expect(scheduler.currentTask()).toBeNull()
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -131,7 +131,7 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       let executed = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_A],
         onExecute: () => {
@@ -139,13 +139,13 @@ describe("createScheduler", () => {
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toBe(1)
-      s.stop()
-      expect(s.phase()).toBe(SchedulerPhase.Idle)
-      expect(s.currentTask()).toBeNull()
-      await s.force()
+      scheduler.stop()
+      expect(scheduler.phase()).toBe(SchedulerPhase.Idle)
+      expect(scheduler.currentTask()).toBeNull()
+      await scheduler.force()
       expect(executed).toBe(1)
       dispose()
     })
@@ -155,7 +155,7 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       let executed = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => (executed === 0 ? [TASK_A] : []),
         onExecute: () => {
@@ -163,12 +163,12 @@ describe("createScheduler", () => {
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      s.start() // second start has no effect
-      await s.force()
+      scheduler.start()
+      scheduler.start() // second start has no effect
+      await scheduler.force()
       expect(executed).toBe(1)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -176,7 +176,7 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
       let executed = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_A],
         onExecute: () => {
@@ -184,49 +184,49 @@ describe("createScheduler", () => {
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
-      s.stop()
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
+      scheduler.stop()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toBe(2)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
   test("queue accessor reflects the most recent build", async () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [TASK_C, TASK_A],
         onExecute: () => ExecuteOutcome.Ok,
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       // sorted ascending by priority: A (0) then C (2)
-      expect(s.queue().map((t) => t.id)).toEqual(["a", "c"])
+      expect(scheduler.queue().map((task) => task.id)).toEqual(["a", "c"])
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
   test("respects custom intervalMs and minTickMs (constructor wiring)", async () => {
     await createRoot(async (dispose) => {
       const limiter = createCreditLimiter({ perMinute: 10, perDay: 100 })
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter,
         buildQueue: () => [],
         onExecute: () => ExecuteOutcome.Ok,
         intervalMs: 10_000,
         minTickMs: 5_000,
       })
-      s.start()
-      await s.force()
-      expect(s.phase()).toBe(SchedulerPhase.Paused)
+      scheduler.start()
+      await scheduler.force()
+      expect(scheduler.phase()).toBe(SchedulerPhase.Paused)
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -234,18 +234,18 @@ describe("createScheduler", () => {
     await createRoot(async (dispose) => {
       const executed: string[] = []
       let calls = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         buildQueue: () => (calls++ === 0 ? [TASK_C, TASK_C, TASK_C] : []),
-        onExecute: (t) => {
-          executed.push(t.id)
+        onExecute: (task) => {
+          executed.push(task.id)
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toEqual(["c", "c", "c"])
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -254,28 +254,28 @@ describe("createScheduler", () => {
       const spends: number[] = []
       let allowed = 2
       const gate: RateGate = {
-        canSpend: (n) => allowed >= n,
-        spend: (n) => {
-          spends.push(n)
-          allowed -= n
+        canSpend: (cost) => allowed >= cost,
+        spend: (cost) => {
+          spends.push(cost)
+          allowed -= cost
         },
       }
       const executed: string[] = []
       let calls = 0
-      const s = createScheduler<Task>({
+      const scheduler = createScheduler<Task>({
         limiter: gate,
         buildQueue: () => (calls++ === 0 ? [TASK_A, TASK_A, TASK_A] : []),
-        onExecute: (t) => {
-          executed.push(t.id)
+        onExecute: (task) => {
+          executed.push(task.id)
           return ExecuteOutcome.Ok
         },
       })
-      s.start()
-      await s.force()
+      scheduler.start()
+      await scheduler.force()
       expect(executed).toEqual(["a", "a"])
       expect(spends).toEqual([1, 1])
       dispose()
-      s.stop()
+      scheduler.stop()
     })
   })
 
@@ -286,7 +286,7 @@ describe("createScheduler", () => {
       createRoot(async (dispose) => {
         disposeRoot = dispose
         const limiter = createCreditLimiter({ perMinute: 100, perDay: 1000 })
-        const s = createScheduler<Task>({
+        const scheduler = createScheduler<Task>({
           limiter,
           buildQueue: () => {
             ticks++
@@ -296,12 +296,12 @@ describe("createScheduler", () => {
           intervalMs: 10,
           minTickMs: 10,
         })
-        s.start()
-        await s.force()
+        scheduler.start()
+        await scheduler.force()
         await new Promise((resolve) => setTimeout(resolve, 80))
         const afterAuto = ticks
         expect(afterAuto).toBeGreaterThan(1)
-        s.stop()
+        scheduler.stop()
         await new Promise((resolve) => setTimeout(resolve, 50))
         expect(ticks).toBe(afterAuto)
         done()

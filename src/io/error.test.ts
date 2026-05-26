@@ -21,7 +21,7 @@ describe("formatError", () => {
   })
 
   test("stops walking when cause is not an Error", () => {
-    const e = new Error("top", { cause: "plain string" })
-    expect(formatError(e)).toBe("top")
+    const error = new Error("top", { cause: "plain string" })
+    expect(formatError(error)).toBe("top")
   })
 })

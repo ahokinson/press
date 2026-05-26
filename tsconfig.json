@@ -32,7 +32,13 @@
       "@keyboard": ["src/keyboard/index.ts"],
       "@keyboard/*": ["src/keyboard/*"],
       "@charts": ["src/charts/index.ts"],
-      "@charts/*": ["src/charts/*"]
+      "@charts/*": ["src/charts/*"],
+      "@markdown": ["src/markdown/index.ts"],
+      "@markdown/*": ["src/markdown/*"],
+      "@link": ["src/link/index.ts"],
+      "@link/*": ["src/link/*"],
+      "@clipboard": ["src/clipboard/index.ts"],
+      "@clipboard/*": ["src/clipboard/*"]
     },
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

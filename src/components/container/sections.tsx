@@ -8,11 +8,10 @@ import { useTheme } from "@theme/provider.tsx"
 import { createMemo, For, type JSX, Show } from "solid-js"
 
 /**
- * Snapshot of one section's rendered slice. Treat as immutable: `<Sections>`
- * reacts to identity changes on the array returned by `props.sections()`, so
- * a `SectionEntry` whose `collapsed` flag is flipped in place (without a new
- * array) will not re-render. Always rebuild via `groupBySection` on state
- * change rather than mutating an existing entry.
+ * Snapshot of one section's rendered slice. Treat as immutable. `<Sections>`
+ * reacts to identity changes on the array returned by `props.sections()`. A
+ * `SectionEntry` whose `collapsed` flag is flipped in place will not
+ * re-render; always rebuild via `groupBySection` on state change.
  */
 export interface SectionEntry<T, K extends SectionKey> {
   id: K
@@ -31,8 +30,8 @@ export interface SectionsProps<T, K extends SectionKey> {
   setScrollRef?: (ref: ScrollRef | null) => void
   renderItem: (item: T, globalIndex: number, selected: boolean) => JSX.Element
   /**
-   * Override the section header. Default uses press's `Section` component when
-   * `label` is non-null; return `null` to skip the header for an entry.
+   * Override the section header. Default uses press's `Section` component
+   * when `label` is non-null. Return `null` to skip the header for an entry.
    */
   renderSectionHeader?: (entry: SectionEntry<T, K>) => JSX.Element
   /** Rendered when `sections()` is empty or has zero total items. */
@@ -46,12 +45,10 @@ export interface SectionsProps<T, K extends SectionKey> {
 
 /**
  * Collapsible-sections scrollbox. Consumes a precomputed `sections` accessor
- * (use `groupBySection` or `createFilterableListState`'s outputs) and renders
- * one row per item plus an optional header per section.
+ * and renders one row per item plus an optional header per section.
  *
- * The component does NOT bind keys. The caller drives `cursor` (typically from
- * `createFilterableListState`) and routes selection highlighting through
- * `renderItem(item, index, selected)`.
+ * The component doesn't bind keys. The caller drives `cursor` and routes
+ * selection highlighting through `renderItem(item, index, selected)`.
  */
 export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): JSX.Element {
   const theme = useTheme()
@@ -122,15 +119,15 @@ export interface GroupBySectionConfig<T, K extends SectionKey> {
 }
 
 /**
- * Slice an item list into `SectionEntry` records suitable for `<Sections>`.
- * The input `items` should already be sorted such that all items sharing a
- * section key are contiguous (`createFilterableListState` arranges this).
+ * Slice an item list into `SectionEntry` records for `<Sections>`. The input
+ * `items` must already be sorted so that items sharing a section key are
+ * contiguous (`createFilterableListState` arranges this).
  *
- * `startIndex` is computed against the visible (post-collapse) list so it lines
- * up with the cursor from `createFilterableListState`.
+ * `startIndex` is computed against the visible (post-collapse) list so it
+ * lines up with the cursor from `createFilterableListState`.
  *
- * Pass `allItems` (pre-collapse) if you want section counts to reflect the
- * total per section, not just the visible items.
+ * Pass `allItems` (pre-collapse) for section counts to reflect the total per
+ * section instead of just the visible items.
  */
 export function groupBySection<T, K extends SectionKey>(config: GroupBySectionConfig<T, K>): SectionEntry<T, K>[] {
   const counts = new Map<K, number>()
@@ -149,10 +146,10 @@ export function groupBySection<T, K extends SectionKey>(config: GroupBySectionCo
     }
     buckets.get(key)!.push(item)
   }
-  // Sections that were filtered down to zero visible items but still exist in
-  // `allItems` would not appear in `order` — that's the intended behavior:
-  // a fully-collapsed section still emits a header (because the user collapsed it),
-  // but a section with zero items after filtering disappears entirely.
+  // Sections that filter down to zero visible items but still exist in
+  // `allItems` don't appear in `order`. A fully-collapsed section still
+  // emits a header (the user collapsed it). A section with zero items after
+  // filtering disappears entirely.
   if (config.sectionOrder) order.sort(config.sectionOrder)
 
   const entries: SectionEntry<T, K>[] = []

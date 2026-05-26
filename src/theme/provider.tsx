@@ -8,15 +8,13 @@ export function ThemeProvider<T extends Theme = Theme>(props: ParentProps<{ valu
 }
 
 /**
- * Read the active theme. Returns the base `Theme` shape — there is no runtime
- * link between provider and hook, so the type system cannot verify whether a
- * caller-extended theme was actually supplied upstream. Callers that pass an
- * extended theme to `ThemeProvider` should cast at the call site:
+ * Read the active theme. Returns the base `Theme`. Cast at the call site if
+ * you passed an extended theme to `ThemeProvider`:
  *
  *   const theme = useTheme() as MyTheme
  *
- * The cast is explicit, visible in review, and the consumer-side risk is
- * acknowledged rather than hidden inside a misleading generic.
+ * There's no runtime link between provider and hook, so the type system can't
+ * verify the cast.
  */
 export function useTheme(): Theme {
   return useContext(ThemeContext)

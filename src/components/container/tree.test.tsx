@@ -26,9 +26,9 @@ describe("Tree", () => {
   test("renders one row per visible node", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState(() => build())
+        const treeState = createTreeState(() => build())
         const { captureCharFrame, renderOnce } = await testRender(
-          () => <Tree state={t} render={(ctx) => <text>{ctx.row.node.data.name}</text>} />,
+          () => <Tree state={treeState} render={(context) => <text>{context.row.node.data.name}</text>} />,
           { width: 40, height: 10 },
         )
         await renderOnce()
@@ -46,9 +46,9 @@ describe("Tree", () => {
   test("expanded children render with deeper indent and the expanded chevron", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState(() => build(), { initialExpanded: ["src"] })
+        const treeState = createTreeState(() => build(), { initialExpanded: ["src"] })
         const { captureCharFrame, renderOnce } = await testRender(
-          () => <Tree state={t} render={(ctx) => <text>{ctx.row.node.data.name}</text>} />,
+          () => <Tree state={treeState} render={(context) => <text>{context.row.node.data.name}</text>} />,
           { width: 40, height: 10 },
         )
         await renderOnce()
@@ -65,9 +65,9 @@ describe("Tree", () => {
   test("collapsed expandable node shows the collapsed chevron", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState(() => build())
+        const treeState = createTreeState(() => build())
         const { captureCharFrame, renderOnce } = await testRender(
-          () => <Tree state={t} render={(ctx) => <text>{ctx.row.node.data.name}</text>} />,
+          () => <Tree state={treeState} render={(context) => <text>{context.row.node.data.name}</text>} />,
           { width: 40, height: 10 },
         )
         await renderOnce()
@@ -83,9 +83,9 @@ describe("Tree", () => {
   test("leaf rows render no chevron", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState<Folder>(() => [{ id: "only", data: { name: "only" } }])
+        const treeState = createTreeState<Folder>(() => [{ id: "only", data: { name: "only" } }])
         const { captureCharFrame, renderOnce } = await testRender(
-          () => <Tree state={t} render={(ctx) => <text>{ctx.row.node.data.name}</text>} />,
+          () => <Tree state={treeState} render={(context) => <text>{context.row.node.data.name}</text>} />,
           { width: 30, height: 5 },
         )
         await renderOnce()
@@ -102,23 +102,23 @@ describe("Tree", () => {
   test("passes isCursor true for the cursor row in render context", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState(() => build())
-        t.setCursor(1)
+        const treeState = createTreeState(() => build())
+        treeState.setCursor(1)
         const seen: Array<{ id: string; isCursor: boolean }> = []
         const { renderOnce } = await testRender(
           () => (
             <Tree
-              state={t}
-              render={(ctx) => {
-                seen.push({ id: ctx.row.node.id, isCursor: ctx.isCursor })
-                return <text>{ctx.row.node.data.name}</text>
+              state={treeState}
+              render={(context) => {
+                seen.push({ id: context.row.node.id, isCursor: context.isCursor })
+                return <text>{context.row.node.data.name}</text>
               }}
             />
           ),
           { width: 40, height: 10 },
         )
         await renderOnce()
-        const cursorEntries = seen.filter((s) => s.isCursor)
+        const cursorEntries = seen.filter((entry) => entry.isCursor)
         expect(cursorEntries.length).toBeGreaterThan(0)
         expect(cursorEntries[0]!.id).toBe("README")
         dispose()
@@ -130,9 +130,9 @@ describe("Tree", () => {
   test("empty tree renders no rows", async () => {
     await new Promise<void>((resolve) => {
       createRoot(async (dispose) => {
-        const t = createTreeState<Folder>(() => [])
+        const treeState = createTreeState<Folder>(() => [])
         const { captureCharFrame, renderOnce } = await testRender(
-          () => <Tree state={t} render={(ctx) => <text>{ctx.row.node.data.name}</text>} />,
+          () => <Tree state={treeState} render={(context) => <text>{context.row.node.data.name}</text>} />,
           { width: 30, height: 5 },
         )
         await renderOnce()

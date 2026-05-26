@@ -44,7 +44,7 @@ describe("Truncated", () => {
           items={() => items}
           max={1}
           renderItem={(item) => <text>{item}</text>}
-          renderMore={(n) => `${n} hidden`}
+          renderMore={(count) => `${count} hidden`}
         />
       ),
       { width: 15, height: 5 },
@@ -61,7 +61,7 @@ describe("Truncated", () => {
           items={() => items}
           max={1}
           renderItem={(item) => <text>{item}</text>}
-          renderMore={(n) => <text>{`x${n}`}</text>}
+          renderMore={(count) => <text>{`x${count}`}</text>}
         />
       ),
       { width: 10, height: 5 },

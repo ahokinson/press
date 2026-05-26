@@ -2,9 +2,9 @@ import type { KeyHint } from "@keyboard"
 import { createSignal } from "solid-js"
 
 /**
- * Shape consumed by `<ConfirmDialog>`. Owned by the models layer because the
- * dialog component is a pure renderer over this state; the component imports
- * the type from here, not vice versa.
+ * Shape consumed by `<ConfirmDialog>`. Owned by the models layer. The dialog
+ * component is a pure renderer over this state and imports the type from
+ * here.
  */
 export interface ConfirmAction {
   message: string
@@ -23,8 +23,8 @@ export interface ConfirmRequest {
   title?: string
   onConfirm: () => void | Promise<void>
   /**
-   * Called when `onConfirm` returns a Promise that rejects. Without this hook
-   * the rejection would surface as an unhandled rejection.
+   * Called when `onConfirm`'s returned Promise rejects. Without this hook
+   * the rejection becomes unhandled.
    */
   onError?: (err: unknown) => void
 }
@@ -35,20 +35,19 @@ export interface ConfirmState {
   cancel: () => void
   execute: () => void
   /**
-   * Pre-wired accessor for `<ConfirmDialog action={state.dialogAction} />`:
-   * fills in `onCancel` from `cancel()` so the dialog has both halves.
+   * Pre-wired accessor for `<ConfirmDialog action={state.dialogAction} />`.
+   * Fills in `onCancel` from `cancel()`.
    */
   dialogAction: () => ConfirmAction | null
 }
 
 /**
- * Modal confirmation lifecycle. Pairs with `<ConfirmDialog>`.
+ * Modal confirmation lifecycle.
  *
- * Usage:
  *   const confirm = createConfirmState()
  *   confirm.request({ message: "Delete?", destructive: true, onConfirm: () => doIt() })
- *   // in keymap: enter → confirm.execute(); esc → confirm.cancel()
- *   // in render: <ConfirmDialog action={confirm.dialogAction} />
+ *   // keymap: enter → confirm.execute(), esc → confirm.cancel()
+ *   // render: <ConfirmDialog action={confirm.dialogAction} />
  */
 export function createConfirmState(): ConfirmState {
   const [action, setAction] = createSignal<ConfirmRequest | null>(null)

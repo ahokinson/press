@@ -14,8 +14,8 @@ describe("Sparkline (renderable)", () => {
     await renderOnce()
     const frame = captureCharFrame()
     // Braille block starts at U+2800
-    const hasBraille = Array.from(frame).some((ch) => {
-      const code = ch.codePointAt(0) ?? 0
+    const hasBraille = Array.from(frame).some((character) => {
+      const code = character.codePointAt(0) ?? 0
       return code >= 0x2800 && code <= 0x28ff
     })
     expect(hasBraille).toBe(true)
@@ -41,12 +41,12 @@ describe("Sparkline (renderable)", () => {
 
   test("reactive values prop drives the getter/setter pair", async () => {
     const [values, setValues] = createSignal<number[]>([1, 2, 3])
-    let ref: SparklineRenderable | undefined
+    let sparklineRef: SparklineRenderable | undefined
     const { renderOnce } = await testRender(
       () => (
         <sparkline
-          ref={(el) => {
-            ref = el
+          ref={(element) => {
+            sparklineRef = element
           }}
           values={values()}
           width={10}
@@ -55,9 +55,9 @@ describe("Sparkline (renderable)", () => {
       { width: 20, height: 1 },
     )
     await renderOnce()
-    expect(ref?.values).toEqual([1, 2, 3])
+    expect(sparklineRef?.values).toEqual([1, 2, 3])
     setValues([9, 8, 7])
     await renderOnce()
-    expect(ref?.values).toEqual([9, 8, 7])
+    expect(sparklineRef?.values).toEqual([9, 8, 7])
   })
 })

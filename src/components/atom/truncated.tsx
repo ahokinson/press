@@ -10,9 +10,8 @@ export interface TruncatedProps<T> {
 }
 
 /**
- * Renders the first `max` items and, when more remain, an overflow row
- * (default: dim "+N more"). Pure paint — slicing happens here so the caller
- * doesn't have to memoize it.
+ * Renders the first `max` items, plus an overflow row when more remain
+ * (default: dim "+N more"). Slicing happens here.
  */
 export function Truncated<T>(props: TruncatedProps<T>): JSX.Element {
   const theme = useTheme()

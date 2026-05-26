@@ -28,9 +28,8 @@ export interface NumericEditor {
 
 /**
  * Buffered numeric field for inline TUI editors. The buffer is a string so
- * partial states ("", "1") are observable; `commit()` is the only path that
- * parses, clamps, and reports a final value. Wire j/k (or up/down) to
- * `increment`/`decrement`, enter/esc to `commit`.
+ * partial states ("", "1") are observable. `commit()` is the only path that
+ * parses, clamps, and reports a final value.
  */
 export function createNumericEditor(config: NumericEditorConfig): NumericEditor {
   const step = config.step ?? 1

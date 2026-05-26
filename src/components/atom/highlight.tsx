@@ -13,9 +13,8 @@ export interface HighlightProps {
 }
 
 /**
- * Single-line text that highlights occurrences of `query` inside `text`. Match
- * coloring is opaque to the component — caller decides the palette. Empty
- * query renders as plain text.
+ * Single-line text that highlights occurrences of `query` inside `text`. The
+ * caller picks match colors. An empty query renders as plain text.
  */
 export function Highlight(props: HighlightProps): JSX.Element {
   const segments = createMemo(() => highlightSegments(props.text, props.query, props.caseSensitive ?? false))

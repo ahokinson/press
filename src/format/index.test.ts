@@ -67,18 +67,18 @@ describe("relativeAge (ISO)", () => {
 
 describe("formatClock", () => {
   test("zero-pads each segment", () => {
-    const ts = new Date(2026, 0, 1, 3, 4, 5).getTime()
-    expect(formatClock(ts)).toBe("03:04:05")
+    const timestamp = new Date(2026, 0, 1, 3, 4, 5).getTime()
+    expect(formatClock(timestamp)).toBe("03:04:05")
   })
 
   test("end-of-day", () => {
-    const ts = new Date(2026, 0, 1, 23, 59, 59).getTime()
-    expect(formatClock(ts)).toBe("23:59:59")
+    const timestamp = new Date(2026, 0, 1, 23, 59, 59).getTime()
+    expect(formatClock(timestamp)).toBe("23:59:59")
   })
 
   test("midnight", () => {
-    const ts = new Date(2026, 0, 1, 0, 0, 0).getTime()
-    expect(formatClock(ts)).toBe("00:00:00")
+    const timestamp = new Date(2026, 0, 1, 0, 0, 0).getTime()
+    expect(formatClock(timestamp)).toBe("00:00:00")
   })
 })
 

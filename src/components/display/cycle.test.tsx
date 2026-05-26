@@ -1,19 +1,19 @@
 import { describe, expect, test } from "bun:test"
-import { Ticker } from "@components/display/ticker.tsx"
+import { Cycle } from "@components/display/cycle.tsx"
 import { testRender } from "@opentui/solid"
 import { createSignal } from "solid-js"
 
-const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+const sleep = (milliseconds: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, milliseconds))
 
 interface Task {
   id: string
   label: string
 }
 
-describe("Ticker", () => {
+describe("Cycle", () => {
   test("renders fallback when items is empty", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => []} render={(t: string) => t} fallback={() => "idle"} />,
+      () => <Cycle items={() => []} render={(item: string) => item} fallback={() => "idle"} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -22,7 +22,7 @@ describe("Ticker", () => {
 
   test("renders an empty span when items is empty and no fallback", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => []} render={(t: string) => t} />,
+      () => <Cycle items={() => []} render={(item: string) => item} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -31,7 +31,7 @@ describe("Ticker", () => {
 
   test("renders the only item without rotation", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => ["only"]} render={(t) => t} />,
+      () => <Cycle items={() => ["only"]} render={(item) => item} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -41,7 +41,7 @@ describe("Ticker", () => {
 
   test("rotates through multiple items at the configured interval", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => ["alpha", "beta", "gamma"]} render={(t) => t} intervalMs={20} />,
+      () => <Cycle items={() => ["alpha", "beta", "gamma"]} render={(item) => item} intervalMs={20} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -55,7 +55,7 @@ describe("Ticker", () => {
 
   test("position suffix is hidden when showPosition is false", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => ["a", "b"]} render={(t) => t} intervalMs={50} showPosition={false} />,
+      () => <Cycle items={() => ["a", "b"]} render={(item) => item} intervalMs={50} showPosition={false} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -64,7 +64,7 @@ describe("Ticker", () => {
 
   test("prefix slot renders before the item", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => ["task"]} render={(t) => t} prefix={() => "⏱"} />,
+      () => <Cycle items={() => ["task"]} render={(item) => item} prefix={() => "⏱"} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -76,7 +76,7 @@ describe("Ticker", () => {
   test("resets index when items goes from non-empty to empty", async () => {
     const [items, setItems] = createSignal<string[]>(["x", "y"])
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={items} render={(t) => t} intervalMs={50} />,
+      () => <Cycle items={items} render={(item) => item} intervalMs={50} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -91,7 +91,7 @@ describe("Ticker", () => {
 
   test("uses default interval when intervalMs is omitted", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => ["a", "b"]} render={(t) => t} />,
+      () => <Cycle items={() => ["a", "b"]} render={(item) => item} />,
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -104,7 +104,7 @@ describe("Ticker", () => {
       { id: "2", label: "queued" },
     ]
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Ticker items={() => tasks} render={(t) => `${t.id}:${t.label}`} intervalMs={50} />,
+      () => <Cycle items={() => tasks} render={(task) => `${task.id}:${task.label}`} intervalMs={50} />,
       { width: 30, height: 1 },
     )
     await renderOnce()

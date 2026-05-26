@@ -14,9 +14,8 @@ export interface RangeBarProps {
 }
 
 /**
- * Theme-colored `├──●──┤` positional slider. Renders the marker in `markerColor`
- * (default accent) on a track in `trackColor` (default dim). Pure paint over
- * `rangeBar()` from `@ahokinson/press/format`.
+ * Theme-colored `├──●──┤` positional slider. Marker in `markerColor`
+ * (default `theme.accent`), track in `trackColor` (default `theme.dim`).
  */
 export function RangeBar(props: RangeBarProps): JSX.Element {
   const theme = useTheme()
@@ -28,14 +27,14 @@ export function RangeBar(props: RangeBarProps): JSX.Element {
   return (
     <text>
       {(() => {
-        const s = bar()
-        const i = markerIndex()
-        if (i < 0) return <span style={{ fg: track() }}>{s}</span>
+        const barString = bar()
+        const position = markerIndex()
+        if (position < 0) return <span style={{ fg: track() }}>{barString}</span>
         return (
           <>
-            <span style={{ fg: track() }}>{s.slice(0, i)}</span>
+            <span style={{ fg: track() }}>{barString.slice(0, position)}</span>
             <span style={{ fg: marker() }}>{RANGE_BAR_MARKER}</span>
-            <span style={{ fg: track() }}>{s.slice(i + 1)}</span>
+            <span style={{ fg: track() }}>{barString.slice(position + 1)}</span>
           </>
         )
       })()}

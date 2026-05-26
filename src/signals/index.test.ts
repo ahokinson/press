@@ -14,9 +14,9 @@ describe("cumulativeOffsets", () => {
       { kind: "item" as const, expanded: true },
       { kind: "item" as const },
     ]
-    const offsets = cumulativeOffsets(rows, (r) => {
-      if (r.kind === "header") return 2
-      return r.expanded ? 2 : 1
+    const offsets = cumulativeOffsets(rows, (row) => {
+      if (row.kind === "header") return 2
+      return row.expanded ? 2 : 1
     })
     expect(offsets).toEqual([0, 2, 3, 5, 6])
   })
@@ -26,7 +26,7 @@ describe("cumulativeOffsets", () => {
   })
 
   test("zero-height row leaves offset unchanged", () => {
-    const offsets = cumulativeOffsets([1, 2, 3], (_r, i) => (i === 1 ? 0 : 1))
+    const offsets = cumulativeOffsets([1, 2, 3], (_row, index) => (index === 1 ? 0 : 1))
     expect(offsets).toEqual([0, 1, 1, 2])
   })
 })

@@ -6,9 +6,8 @@ export interface SeparatedProps {
 }
 
 /**
- * Renders a horizontal list of pre-built JSX items with `separator` inserted
- * between each. String separators are wrapped in a `<text>`; JSX separators
- * are inserted verbatim (rendered fresh per gap). Pure presenter.
+ * Renders pre-built JSX items with `separator` inserted between each. String
+ * separators are wrapped in a `<text>`. JSX separators render fresh per gap.
  */
 export function Separated(props: SeparatedProps): JSX.Element {
   const separator = createMemo(() =>

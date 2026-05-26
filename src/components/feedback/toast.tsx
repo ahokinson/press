@@ -1,9 +1,10 @@
+import { Strip } from "@components/atom/strip.tsx"
 import { Severity, severityColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type Accessor, type JSX, Show } from "solid-js"
 
 export interface ToastProps {
-  /** Reactive accessor — when it returns null, nothing renders. */
+  /** Message accessor. When it returns null, nothing renders. */
   message: () => string | null
   /** Trailing decoration (e.g. shrinking trail from `createStatusState`). */
   trail?: () => string
@@ -16,13 +17,12 @@ export interface ToastProps {
 }
 
 /**
- * Single-row floating notification driven by an accessor. Pairs directly with
- * `createStatusState`:
+ * Single-row floating notification driven by an accessor.
  *
  *   const status = createStatusState()
  *   <Toast message={status.message} trail={status.trail} />
  *
- * Pure renderer — owns no timers; `createStatusState` does the dismiss bookkeeping.
+ * Owns no timers. `createStatusState` does the dismiss bookkeeping.
  */
 export function Toast(props: ToastProps): JSX.Element {
   const theme = useTheme()
@@ -35,7 +35,7 @@ export function Toast(props: ToastProps): JSX.Element {
   return (
     <Show when={props.message()}>
       {(msg: Accessor<string>) => (
-        <box flexDirection="row" height={1} paddingLeft={1} paddingRight={1}>
+        <Strip paddingX={1}>
           <text fg={color()}>
             <Show when={props.icon}>
               <span>{`${props.icon} `}</span>
@@ -45,7 +45,7 @@ export function Toast(props: ToastProps): JSX.Element {
               <span>{props.trail?.()}</span>
             </Show>
           </text>
-        </box>
+        </Strip>
       )}
     </Show>
   )

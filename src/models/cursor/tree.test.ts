@@ -27,9 +27,9 @@ function build(): TreeNode<Folder>[] {
 describe("createTreeState", () => {
   test("visible shows only roots when nothing is expanded", () => {
     createRoot(() => {
-      const t = createTreeState(() => build())
-      const rows = t.visible()
-      expect(rows.map((r) => r.node.id)).toEqual(["a", "b"])
+      const tree = createTreeState(() => build())
+      const rows = tree.visible()
+      expect(rows.map((row) => row.node.id)).toEqual(["a", "b"])
       expect(rows[0]!.depth).toBe(0)
       expect(rows[0]!.hasChildren).toBe(true)
       expect(rows[0]!.isExpanded).toBe(false)
@@ -39,46 +39,46 @@ describe("createTreeState", () => {
 
   test("initialExpanded seeds the expanded set", () => {
     createRoot(() => {
-      const t = createTreeState(() => build(), { initialExpanded: ["a"] })
-      expect(t.isExpanded("a")).toBe(true)
-      const rows = t.visible()
-      expect(rows.map((r) => r.node.id)).toEqual(["a", "a1", "a2", "b"])
+      const tree = createTreeState(() => build(), { initialExpanded: ["a"] })
+      expect(tree.isExpanded("a")).toBe(true)
+      const rows = tree.visible()
+      expect(rows.map((row) => row.node.id)).toEqual(["a", "a1", "a2", "b"])
       expect(rows[1]!.depth).toBe(1)
     })
   })
 
   test("expand reveals children; collapse hides them", () => {
     createRoot(() => {
-      const t = createTreeState(() => build())
-      t.expand("a")
-      expect(t.visible().map((r) => r.node.id)).toEqual(["a", "a1", "a2", "b"])
-      t.collapse("a")
-      expect(t.visible().map((r) => r.node.id)).toEqual(["a", "b"])
+      const tree = createTreeState(() => build())
+      tree.expand("a")
+      expect(tree.visible().map((row) => row.node.id)).toEqual(["a", "a1", "a2", "b"])
+      tree.collapse("a")
+      expect(tree.visible().map((row) => row.node.id)).toEqual(["a", "b"])
     })
   })
 
   test("toggle flips state", () => {
     createRoot(() => {
-      const t = createTreeState(() => build())
-      t.toggle("a")
-      expect(t.isExpanded("a")).toBe(true)
-      t.toggle("a")
-      expect(t.isExpanded("a")).toBe(false)
+      const tree = createTreeState(() => build())
+      tree.toggle("a")
+      expect(tree.isExpanded("a")).toBe(true)
+      tree.toggle("a")
+      expect(tree.isExpanded("a")).toBe(false)
     })
   })
 
   test("nested expansion flattens depth-first", () => {
     createRoot(() => {
-      const t = createTreeState(() => build(), { initialExpanded: ["a", "a1"] })
-      expect(t.visible().map((r) => r.node.id)).toEqual(["a", "a1", "a1a", "a2", "b"])
-      expect(t.visible().map((r) => r.depth)).toEqual([0, 1, 2, 1, 0])
+      const tree = createTreeState(() => build(), { initialExpanded: ["a", "a1"] })
+      expect(tree.visible().map((row) => row.node.id)).toEqual(["a", "a1", "a1a", "a2", "b"])
+      expect(tree.visible().map((row) => row.depth)).toEqual([0, 1, 2, 1, 0])
     })
   })
 
   test("isExpanded is false for leaves even when in the expanded set", () => {
     createRoot(() => {
-      const t = createTreeState(() => build(), { initialExpanded: ["b"] })
-      const row = t.visible().find((r) => r.node.id === "b")!
+      const tree = createTreeState(() => build(), { initialExpanded: ["b"] })
+      const row = tree.visible().find((row) => row.node.id === "b")!
       expect(row.isExpanded).toBe(false)
       expect(row.hasChildren).toBe(false)
     })
@@ -86,51 +86,72 @@ describe("createTreeState", () => {
 
   test("cursor clamps to visible.length and supports setCursor", () => {
     createRoot(() => {
-      const t = createTreeState(() => build())
-      expect(t.cursor()).toBe(0)
-      t.setCursor(99)
-      expect(t.cursor()).toBe(1)
-      t.setCursor(-5)
-      expect(t.cursor()).toBe(0)
+      const tree = createTreeState(() => build())
+      expect(tree.cursor()).toBe(0)
+      tree.setCursor(99)
+      expect(tree.cursor()).toBe(1)
+      tree.setCursor(-5)
+      expect(tree.cursor()).toBe(0)
     })
   })
 
   test("focusNext / focusPrev wrap around", () => {
     createRoot(() => {
-      const t = createTreeState(() => build())
-      t.focusNext()
-      expect(t.cursor()).toBe(1)
-      t.focusNext()
-      expect(t.cursor()).toBe(0)
-      t.focusPrev()
-      expect(t.cursor()).toBe(1)
+      const tree = createTreeState(() => build())
+      tree.focusNext()
+      expect(tree.cursor()).toBe(1)
+      tree.focusNext()
+      expect(tree.cursor()).toBe(0)
+      tree.focusPrev()
+      expect(tree.cursor()).toBe(1)
+    })
+  })
+
+  test("focusNext after the visible list shrinks steps from the clamped cursor", () => {
+    createRoot(() => {
+      const [roots, setRoots] = createSignal<TreeNode<Folder>[]>([
+        { id: "a", data: { name: "A" } },
+        { id: "b", data: { name: "B" } },
+        { id: "c", data: { name: "C" } },
+        { id: "d", data: { name: "D" } },
+      ])
+      const tree = createTreeState(roots)
+      tree.setCursor(3)
+      expect(tree.cursor()).toBe(3)
+      setRoots([
+        { id: "a", data: { name: "A" } },
+        { id: "b", data: { name: "B" } },
+      ])
+      expect(tree.cursor()).toBe(1)
+      tree.focusNext()
+      expect(tree.cursor()).toBe(0)
     })
   })
 
   test("focusNext / focusPrev no-op on empty tree", () => {
     createRoot(() => {
-      const t = createTreeState<Folder>(() => [])
-      t.focusNext()
-      t.focusPrev()
-      expect(t.cursor()).toBe(0)
-      expect(t.visible()).toEqual([])
+      const tree = createTreeState<Folder>(() => [])
+      tree.focusNext()
+      tree.focusPrev()
+      expect(tree.cursor()).toBe(0)
+      expect(tree.visible()).toEqual([])
     })
   })
 
   test("reacts when roots accessor changes", () => {
     createRoot(() => {
       const [roots, setRoots] = createSignal<TreeNode<Folder>[]>(build())
-      const t = createTreeState(roots)
-      expect(t.visible().length).toBe(2)
+      const tree = createTreeState(roots)
+      expect(tree.visible().length).toBe(2)
       setRoots([{ id: "x", data: { name: "X" } }])
-      expect(t.visible().map((r) => r.node.id)).toEqual(["x"])
+      expect(tree.visible().map((row) => row.node.id)).toEqual(["x"])
     })
   })
 
   test("expanded accessor returns a snapshot of the set", () => {
     createRoot(() => {
-      const t = createTreeState(() => build(), { initialExpanded: ["a"] })
-      expect([...t.expanded()]).toContain("a")
+      const tree = createTreeState(() => build(), { initialExpanded: ["a"] })
+      expect([...tree.expanded()]).toContain("a")
     })
   })
 })

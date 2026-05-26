@@ -7,9 +7,8 @@ export interface EmptyProps {
 }
 
 /**
- * Centered empty-state for lists/search results. Primary message in `muted`;
- * optional hint in `dim`. Stretches to fill its parent — drop it in a
- * `flexGrow={1}` slot.
+ * Centered empty-state for lists/search results. Primary message in `muted`,
+ * optional hint in `dim`. Stretches to fill its parent.
  */
 export function Empty(props: EmptyProps): JSX.Element {
   const theme = useTheme()

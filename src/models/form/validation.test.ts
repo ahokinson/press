@@ -12,19 +12,19 @@ import { createRoot } from "solid-js"
 
 describe("createValidator", () => {
   test("returns null when all rules pass", () => {
-    const v = createValidator<string>([nonEmpty(), maxLength(10)])
-    expect(v("hi")).toBeNull()
+    const validator = createValidator<string>([nonEmpty(), maxLength(10)])
+    expect(validator("hi")).toBeNull()
   })
 
   test("returns the first failing rule's message", () => {
-    const v = createValidator<string>([nonEmpty("blank!"), maxLength(2, "long!")])
-    expect(v("")).toBe("blank!")
-    expect(v("abc")).toBe("long!")
+    const validator = createValidator<string>([nonEmpty("blank!"), maxLength(2, "long!")])
+    expect(validator("")).toBe("blank!")
+    expect(validator("abc")).toBe("long!")
   })
 
   test("empty rule array always passes", () => {
-    const v = createValidator<string>([])
-    expect(v("anything")).toBeNull()
+    const validator = createValidator<string>([])
+    expect(validator("anything")).toBeNull()
   })
 })
 
@@ -113,51 +113,51 @@ describe("numeric", () => {
 describe("createFieldState", () => {
   test("initial value is exposed and error is null without a validator", () => {
     createRoot(() => {
-      const f = createFieldState({ initial: "hello" })
-      expect(f.value()).toBe("hello")
-      expect(f.error()).toBeNull()
-      expect(f.valid()).toBe(true)
-      expect(f.touched()).toBe(false)
+      const field = createFieldState({ initial: "hello" })
+      expect(field.value()).toBe("hello")
+      expect(field.error()).toBeNull()
+      expect(field.valid()).toBe(true)
+      expect(field.touched()).toBe(false)
     })
   })
 
   test("error derives reactively from value via validate", () => {
     createRoot(() => {
-      const f = createFieldState<string>({
+      const field = createFieldState<string>({
         initial: "",
         validate: nonEmpty("required!"),
       })
-      expect(f.error()).toBe("required!")
-      expect(f.valid()).toBe(false)
-      f.set("ok")
-      expect(f.error()).toBeNull()
-      expect(f.valid()).toBe(true)
+      expect(field.error()).toBe("required!")
+      expect(field.valid()).toBe(false)
+      field.set("ok")
+      expect(field.error()).toBeNull()
+      expect(field.valid()).toBe(true)
     })
   })
 
   test("markTouched flips touched", () => {
     createRoot(() => {
-      const f = createFieldState({ initial: "" })
-      expect(f.touched()).toBe(false)
-      f.markTouched()
-      expect(f.touched()).toBe(true)
+      const field = createFieldState({ initial: "" })
+      expect(field.touched()).toBe(false)
+      field.markTouched()
+      expect(field.touched()).toBe(true)
     })
   })
 
   test("reset restores initial value and clears touched", () => {
     createRoot(() => {
-      const f = createFieldState<string>({
+      const field = createFieldState<string>({
         initial: "seed",
         validate: nonEmpty(),
       })
-      f.set("changed")
-      f.markTouched()
-      expect(f.value()).toBe("changed")
-      expect(f.touched()).toBe(true)
-      f.reset()
-      expect(f.value()).toBe("seed")
-      expect(f.touched()).toBe(false)
-      expect(f.error()).toBeNull()
+      field.set("changed")
+      field.markTouched()
+      expect(field.value()).toBe("changed")
+      expect(field.touched()).toBe(true)
+      field.reset()
+      expect(field.value()).toBe("seed")
+      expect(field.touched()).toBe(false)
+      expect(field.error()).toBeNull()
     })
   })
 })

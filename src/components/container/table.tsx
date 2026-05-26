@@ -1,9 +1,18 @@
 import { Skeleton } from "@components/atom/skeleton.tsx"
 import { padLeft, padRight } from "@format"
 import { placeholder } from "@icons"
+import type { SortState } from "@models/table/query.ts"
 import { BOLD } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { For, type JSX, Show } from "solid-js"
+
+export type { SortState } from "@models/table/query.ts"
+
+/** Horizontal alignment for a `Column`'s header and skeleton placeholder. */
+export enum ColumnAlign {
+  Left = "left",
+  Right = "right",
+}
 
 export interface Column<T> {
   /** Stable identifier for sort/selection lookups. */
@@ -13,16 +22,11 @@ export interface Column<T> {
   /** Column width in terminal columns. Headers + cells are clipped/padded to fit. */
   width: number
   /** Header and skeleton-placeholder alignment. Cell rendering is up to `render`. */
-  align?: "left" | "right"
-  /** Cell renderer. Receives the row; should produce a `<text>` or compatible JSX. */
+  align?: ColumnAlign
+  /** Cell renderer. Receives the row. Returns `<text>` or compatible JSX. */
   render: (row: T, selected: boolean) => JSX.Element
   /** When true, the header participates in sort UI (gets the active accent + ▲/▼ indicator). */
   sortable?: boolean
-}
-
-export interface SortState {
-  key: string
-  desc: boolean
 }
 
 export interface TableProps<T> {
@@ -37,8 +41,8 @@ export interface TableProps<T> {
   /** Called when the user clicks a data row. */
   onRowClick?: (row: T) => void
   /**
-   * When `rows()` is empty and this is set, paint `loadingRows` skeleton rows
-   * built from `placeholder()` so column widths match the real data layout.
+   * When `rows()` is empty and this is set, paint `loadingRows` skeleton
+   * rows built from `placeholder()`.
    */
   loadingRows?: number
 }
@@ -47,48 +51,51 @@ const SORT_ASC = "▲"
 const SORT_DESC = "▼"
 
 /**
- * Sortable column-aligned data table. Header row paints the active sort column
- * in `theme.accent` bold with a trailing ▲/▼ glyph; other headers render in
- * `theme.muted`. The selected row (per `selected()`) gets `theme.bgHighlight`.
- * Empty rows + `loadingRows` falls back to dashed placeholders via `Skeleton`.
+ * Sortable column-aligned data table. The active sort column's header paints
+ * in `theme.accent` bold with a trailing ▲/▼. Other headers render in
+ * `theme.muted`. The selected row (per `selected()`) gets
+ * `theme.bgHighlight`. When `rows()` is empty and `loadingRows` is set,
+ * paints dashed placeholders via `Skeleton`.
  *
- * Pure paint: the caller owns the sort signal, selection signal, and the
- * keymap that updates them. Click handlers on headers/rows are optional —
- * because there is no keyboard equivalent for activating a header from a
- * focused row, callers wiring keyboard-only navigation must surface a sort
- * cycle (e.g. an `s` binding that calls `onHeaderClick(nextSortableKey)`).
+ * The caller owns the sort signal, selection signal, and the keymap. Click
+ * handlers on headers and rows are optional. Keyboard-only callers need
+ * their own sort-cycle binding, since there's no keyboard equivalent for
+ * activating a header from a focused row.
  */
 export function Table<T>(props: TableProps<T>): JSX.Element {
   const theme = useTheme()
   const activeSort = () => props.sort?.()
   const isLoading = () => props.rows().length === 0 && (props.loadingRows ?? 0) > 0
 
-  const headerText = (col: Column<T>): string => {
+  const headerText = (column: Column<T>): string => {
     const sort = activeSort()
-    const arrow = sort && sort.key === col.key ? ` ${sort.desc ? SORT_DESC : SORT_ASC}` : ""
-    const label = `${col.label}${arrow}`
-    return col.align === "right" ? padLeft(label, col.width) : padRight(label, col.width)
+    const arrow = sort && sort.key === column.key ? ` ${sort.desc ? SORT_DESC : SORT_ASC}` : ""
+    const label = `${column.label}${arrow}`
+    return column.align === ColumnAlign.Right ? padLeft(label, column.width) : padRight(label, column.width)
   }
 
-  const headerFg = (col: Column<T>): string => {
+  const headerFg = (column: Column<T>): string => {
     const sort = activeSort()
-    return sort && sort.key === col.key ? theme.accent : theme.muted
+    return sort && sort.key === column.key ? theme.accent : theme.muted
   }
 
-  const headerBold = (col: Column<T>): 0 | 1 => {
+  const headerBold = (column: Column<T>): 0 | 1 => {
     const sort = activeSort()
-    return sort && sort.key === col.key ? BOLD : 0
+    return sort && sort.key === column.key ? BOLD : 0
   }
 
   return (
     <box flexDirection="column">
       <box flexDirection="row" height={1}>
         <For each={props.columns}>
-          {(col) => (
+          {(column) => (
             // biome-ignore lint/a11y/noStaticElementInteractions: opentui <box> is the sole TUI interaction primitive
-            <box width={col.width} onMouseDown={col.sortable ? () => props.onHeaderClick?.(col.key) : undefined}>
-              <text fg={headerFg(col)} attributes={headerBold(col)}>
-                {headerText(col)}
+            <box
+              width={column.width}
+              onMouseDown={column.sortable ? () => props.onHeaderClick?.(column.key) : undefined}
+            >
+              <text fg={headerFg(column)} attributes={headerBold(column)}>
+                {headerText(column)}
               </text>
             </box>
           )}
@@ -103,12 +110,12 @@ export function Table<T>(props: TableProps<T>): JSX.Element {
             renderRow={() => (
               <box flexDirection="row" height={1}>
                 <For each={props.columns}>
-                  {(col) => (
-                    <box width={col.width}>
+                  {(column) => (
+                    <box width={column.width}>
                       <text fg={theme.faint}>
-                        {col.align === "right"
-                          ? padLeft(placeholder(Math.max(0, col.width - 1)), col.width)
-                          : padRight(placeholder(Math.max(0, col.width - 1)), col.width)}
+                        {column.align === ColumnAlign.Right
+                          ? padLeft(placeholder(Math.max(0, column.width - 1)), column.width)
+                          : padRight(placeholder(Math.max(0, column.width - 1)), column.width)}
                       </text>
                     </box>
                   )}
@@ -129,7 +136,9 @@ export function Table<T>(props: TableProps<T>): JSX.Element {
                 backgroundColor={isSelected() ? theme.bgHighlight : undefined}
                 onMouseDown={props.onRowClick ? () => props.onRowClick!(row) : undefined}
               >
-                <For each={props.columns}>{(col) => <box width={col.width}>{col.render(row, isSelected())}</box>}</For>
+                <For each={props.columns}>
+                  {(column) => <box width={column.width}>{column.render(row, isSelected())}</box>}
+                </For>
               </box>
             )
           }}

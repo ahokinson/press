@@ -11,8 +11,7 @@ export interface ToggleSet<T> {
 }
 
 /**
- * Reactive Set of keys with toggle/clear. Common shape for "things the user
- * has revealed / pinned / selected" — the UI re-renders when membership
+ * Reactive Set of keys with toggle/clear. The UI re-renders when membership
  * changes. Stores keys structurally; pass strings or other stable values.
  */
 export function createToggleSet<T>(initial?: Iterable<T>): ToggleSet<T> {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { type Column, Table } from "@components/container/table.tsx"
+import { type Column, ColumnAlign, Table } from "@components/container/table.tsx"
 import { testRender } from "@opentui/solid"
 
 interface Row {
@@ -8,8 +8,15 @@ interface Row {
 }
 
 const columns: Column<Row>[] = [
-  { key: "name", label: "Name", width: 10, render: (r) => <text>{r.name}</text>, sortable: true },
-  { key: "qty", label: "Qty", width: 6, align: "right", render: (r) => <text>{r.qty}</text>, sortable: true },
+  { key: "name", label: "Name", width: 10, render: (row) => <text>{row.name}</text>, sortable: true },
+  {
+    key: "qty",
+    label: "Qty",
+    width: 6,
+    align: ColumnAlign.Right,
+    render: (row) => <text>{row.qty}</text>,
+    sortable: true,
+  },
 ]
 
 describe("Table", () => {
@@ -69,7 +76,7 @@ describe("Table", () => {
         <Table
           columns={columns}
           rows={() => rows}
-          selected={(r) => r.name === "b"}
+          selected={(row) => row.name === "b"}
           onRowClick={() => {}}
           onHeaderClick={() => {}}
         />

@@ -5,7 +5,7 @@ import { testRender } from "@opentui/solid"
 describe("Skeleton", () => {
   test("repeats renderRow N times", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Skeleton rows={() => 3} renderRow={(i) => <text>{`row-${i}`}</text>} />,
+      () => <Skeleton rows={() => 3} renderRow={(index) => <text>{`row-${index}`}</text>} />,
       { width: 20, height: 5 },
     )
     await renderOnce()
@@ -18,7 +18,7 @@ describe("Skeleton", () => {
 
   test("rounds and clamps row count to non-negative integer", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Skeleton rows={() => -5} renderRow={(i) => <text>{`row-${i}`}</text>} />,
+      () => <Skeleton rows={() => -5} renderRow={(index) => <text>{`row-${index}`}</text>} />,
       { width: 20, height: 5 },
     )
     await renderOnce()
@@ -27,7 +27,7 @@ describe("Skeleton", () => {
 
   test("zero rows renders nothing", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Skeleton rows={() => 0} renderRow={(i) => <text>{`row-${i}`}</text>} />,
+      () => <Skeleton rows={() => 0} renderRow={(index) => <text>{`row-${index}`}</text>} />,
       { width: 20, height: 3 },
     )
     await renderOnce()

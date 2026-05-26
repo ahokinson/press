@@ -13,8 +13,8 @@ export interface SectionProps {
 }
 
 /**
- * One-row collapsible section header: chevron + bold label + faint count.
- * Pure paint — caller owns the collapsed signal and the toggle key.
+ * One-row collapsible section header: chevron, bold label, faint count. The
+ * caller owns the collapsed signal and the toggle key.
  */
 export function Section(props: SectionProps): JSX.Element {
   const theme = useTheme()

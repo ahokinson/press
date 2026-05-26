@@ -10,34 +10,34 @@ beforeEach(() => {
 
 describe("createCreditLimiter", () => {
   test("exposes minute and day buckets with the configured capacity", () => {
-    const l = createCreditLimiter({ perMinute: 8, perDay: 800, now })
-    expect(l.minuteRemaining()).toBe(8)
-    expect(l.dailyRemaining()).toBe(800)
+    const limiter = createCreditLimiter({ perMinute: 8, perDay: 800, now })
+    expect(limiter.minuteRemaining()).toBe(8)
+    expect(limiter.dailyRemaining()).toBe(800)
   })
 
   test("spend reduces both buckets", () => {
-    const l = createCreditLimiter({ perMinute: 8, perDay: 800, now })
-    l.spend(3)
-    expect(l.minuteRemaining()).toBe(5)
-    expect(l.dailyRemaining()).toBe(797)
+    const limiter = createCreditLimiter({ perMinute: 8, perDay: 800, now })
+    limiter.spend(3)
+    expect(limiter.minuteRemaining()).toBe(5)
+    expect(limiter.dailyRemaining()).toBe(797)
   })
 
   test("canSpend mirrors capacity across both buckets", () => {
-    const l = createCreditLimiter({ perMinute: 2, perDay: 10, now })
-    l.spend(2)
-    expect(l.canSpend(1)).toBe(false)
+    const limiter = createCreditLimiter({ perMinute: 2, perDay: 10, now })
+    limiter.spend(2)
+    expect(limiter.canSpend(1)).toBe(false)
   })
 
   test("nextCreditAt aliases nextAvailableAt", () => {
-    const l = createCreditLimiter({ perMinute: 1, perDay: 1, now })
-    l.spend(1)
-    expect(l.nextCreditAt(1)).toBe(l.nextAvailableAt(1))
+    const limiter = createCreditLimiter({ perMinute: 1, perDay: 1, now })
+    limiter.spend(1)
+    expect(limiter.nextCreditAt(1)).toBe(limiter.nextAvailableAt(1))
   })
 
   test("uses Date.now by default", () => {
-    const l = createCreditLimiter({ perMinute: 1, perDay: 1 })
-    expect(l.minuteRemaining()).toBe(1)
-    l.spend(1)
-    expect(l.canSpend(1)).toBe(false)
+    const limiter = createCreditLimiter({ perMinute: 1, perDay: 1 })
+    expect(limiter.minuteRemaining()).toBe(1)
+    limiter.spend(1)
+    expect(limiter.canSpend(1)).toBe(false)
   })
 })

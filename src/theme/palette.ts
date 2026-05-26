@@ -1,52 +1,52 @@
 import { type CatppuccinColors, flavors } from "@catppuccin/palette"
+import type { Severity } from "@theme/severity.ts"
 
 /**
- * Map a Catppuccin palette (any of the four flavors) onto the press theme
- * token names. Use this to switch flavors at the root of your app:
+ * Build a `Theme` from a Catppuccin palette.
  *
  * ```ts
  * <ThemeProvider value={makeTheme(flavors.mocha.colors)}>...</ThemeProvider>
  * ```
  */
-export function makeTheme(p: CatppuccinColors) {
+export function makeTheme(palette: CatppuccinColors) {
   return {
-    text: p.text.hex,
-    subtext: p.subtext1.hex,
-    muted: p.subtext0.hex,
-    dim: p.overlay0.hex,
-    faint: p.surface2.hex,
+    text: palette.text.hex,
+    subtext: palette.subtext1.hex,
+    muted: palette.subtext0.hex,
+    dim: palette.overlay0.hex,
+    faint: palette.surface2.hex,
 
-    accent: p.blue.hex,
-    ok: p.green.hex,
-    warn: p.yellow.hex,
-    err: p.red.hex,
-    info: p.sapphire.hex,
+    accent: palette.blue.hex,
+    ok: palette.green.hex,
+    warn: palette.yellow.hex,
+    err: palette.red.hex,
+    info: palette.sapphire.hex,
 
-    teal: p.teal.hex,
-    lavender: p.lavender.hex,
-    flamingo: p.flamingo.hex,
-    maroon: p.maroon.hex,
-    peach: p.peach.hex,
-    sky: p.sky.hex,
-    mauve: p.mauve.hex,
+    teal: palette.teal.hex,
+    lavender: palette.lavender.hex,
+    flamingo: palette.flamingo.hex,
+    maroon: palette.maroon.hex,
+    peach: palette.peach.hex,
+    sky: palette.sky.hex,
+    mauve: palette.mauve.hex,
 
-    bg: p.base.hex,
-    bgAlt: p.surface0.hex,
-    bgHighlight: p.surface1.hex,
-    headerBg: p.mantle.hex,
-    border: p.surface1.hex,
-    crust: p.crust.hex,
+    bg: palette.base.hex,
+    bgAlt: palette.surface0.hex,
+    bgHighlight: palette.surface1.hex,
+    headerBg: palette.mantle.hex,
+    border: palette.surface1.hex,
+    crust: palette.crust.hex,
   }
 }
 
-export const defaultTheme = makeTheme(flavors.frappe.colors)
+export const defaultTheme: Theme = makeTheme(flavors.frappe.colors)
 
-export type Theme = ReturnType<typeof makeTheme>
+export type Theme = ReturnType<typeof makeTheme> & {
+  /** Per-`Severity` color overrides consulted by `severityColor` before the default mapping. */
+  severityColors?: Partial<Record<Severity, string>>
+}
 
-/**
- * Add custom tokens to the default (Frappé) theme. Pass a different palette as
- * the second argument to swap base flavors and add tokens in one call.
- */
+/** Build a `Theme` with extra tokens layered on top. Defaults to the Frappé palette. */
 export function createTheme<E extends Record<string, string>>(
   extensions: E,
   palette: CatppuccinColors = flavors.frappe.colors,

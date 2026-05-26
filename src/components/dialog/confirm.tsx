@@ -1,6 +1,6 @@
 import type { KeyHint } from "@keyboard"
 import type { ConfirmAction } from "@models/dialog/confirm.ts"
-import { BOLD } from "@theme"
+import { BOLD, Severity, severityColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type Accessor, For, type JSX, Show } from "solid-js"
 
@@ -12,11 +12,15 @@ const DEFAULT_HINTS: ReadonlyArray<KeyHint> = [
 ]
 
 /**
- * Bordered confirmation dialog. Prop-driven: pass `() => ConfirmAction | null`;
- * the dialog renders only when the accessor returns a non-null action.
+ * Bordered confirmation dialog. Pass `() => ConfirmAction | null`. The dialog
+ * renders when the accessor returns a non-null action.
  *
- * The component does NOT bind keys — it just paints. Wire enter/esc in your
- * keymap layer and call `action.onConfirm()` / `action.onCancel()` yourself.
+ * Inline by design: flows in the parent's layout, unlike `Modal` which
+ * floats absolutely. Destructive confirms paint `Severity.Error`, everything
+ * else paints `Severity.Info`.
+ *
+ * The component doesn't bind keys. Wire enter/esc in your keymap layer and
+ * call `action.onConfirm()` / `action.onCancel()` yourself.
  */
 export function ConfirmDialog(props: { action: () => ConfirmAction | null }): JSX.Element {
   const theme = useTheme()
@@ -33,7 +37,7 @@ export function ConfirmDialog(props: { action: () => ConfirmAction | null }): JS
           backgroundColor={theme.bg}
           border
           borderStyle="rounded"
-          borderColor={action().destructive ? theme.err : theme.accent}
+          borderColor={severityColor(theme, action().destructive ? Severity.Error : Severity.Info)}
           title={action().title ?? " confirm "}
           titleAlignment="left"
         >

@@ -10,9 +10,11 @@ coverageThreshold = { line = 0.80, function = 0.80 }
 coveragePathIgnorePatterns = [
   "src/async/index.ts",
   "src/charts/index.ts",
+  "src/clipboard/index.ts",
   "src/components/index.ts",
   "src/context/index.ts",
   "src/io/index.ts",
+  "src/link/index.ts",
   "src/models/index.ts",
   "src/theme/index.ts",
   "src/charts/register.ts",

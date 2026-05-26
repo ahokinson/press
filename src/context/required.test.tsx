@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { createSimpleContext } from "@context/simple.tsx"
+import { createRequiredContext } from "@context/required.tsx"
 import { testRender } from "@opentui/solid"
 
 interface CounterApi {
@@ -7,7 +7,7 @@ interface CounterApi {
   value: number
 }
 
-const Counter = createSimpleContext<CounterApi, { start: number; label: string }>({
+const Counter = createRequiredContext<CounterApi, { start: number; label: string }>({
   name: "Counter",
   init: (props) => ({ label: props.label, value: props.start }),
 })
@@ -17,7 +17,7 @@ function Consumer() {
   return <text>{`${api.label}=${api.value}`}</text>
 }
 
-describe("createSimpleContext", () => {
+describe("createRequiredContext", () => {
   test("Provider exposes init() result through use()", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (

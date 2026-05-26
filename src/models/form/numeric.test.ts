@@ -3,93 +3,93 @@ import { createNumericEditor } from "@models/form/numeric.ts"
 
 describe("createNumericEditor", () => {
   test("starts with clamped initial value", () => {
-    const e = createNumericEditor({ initial: () => 7, min: 0, max: 5, onCommit: () => {} })
-    expect(e.editing()).toBe("5")
+    const editor = createNumericEditor({ initial: () => 7, min: 0, max: 5, onCommit: () => {} })
+    expect(editor.editing()).toBe("5")
   })
 
   test("increment / decrement clamp to bounds", () => {
-    const e = createNumericEditor({ initial: () => 3, min: 0, max: 5, onCommit: () => {} })
-    e.increment()
-    expect(e.editing()).toBe("4")
-    e.increment()
-    expect(e.editing()).toBe("5")
-    e.increment()
-    expect(e.editing()).toBe("5") // bounded
-    e.decrement()
-    e.decrement()
-    e.decrement()
-    e.decrement()
-    e.decrement()
-    e.decrement()
-    expect(e.editing()).toBe("0")
+    const editor = createNumericEditor({ initial: () => 3, min: 0, max: 5, onCommit: () => {} })
+    editor.increment()
+    expect(editor.editing()).toBe("4")
+    editor.increment()
+    expect(editor.editing()).toBe("5")
+    editor.increment()
+    expect(editor.editing()).toBe("5") // bounded
+    editor.decrement()
+    editor.decrement()
+    editor.decrement()
+    editor.decrement()
+    editor.decrement()
+    editor.decrement()
+    expect(editor.editing()).toBe("0")
   })
 
   test("custom step is respected", () => {
-    const e = createNumericEditor({ initial: () => 0, min: 0, max: 100, step: 10, onCommit: () => {} })
-    e.increment()
-    expect(e.editing()).toBe("10")
-    e.increment()
-    expect(e.editing()).toBe("20")
+    const editor = createNumericEditor({ initial: () => 0, min: 0, max: 100, step: 10, onCommit: () => {} })
+    editor.increment()
+    expect(editor.editing()).toBe("10")
+    editor.increment()
+    expect(editor.editing()).toBe("20")
   })
 
   test("commit fires onCommit only when value changed; resets buffer to canonical form", () => {
     const committed: number[] = []
     let stored = 5
-    const e = createNumericEditor({
+    const editor = createNumericEditor({
       initial: () => stored,
       min: 0,
       max: 100,
-      onCommit: (v) => {
-        committed.push(v)
-        stored = v
+      onCommit: (value) => {
+        committed.push(value)
+        stored = value
       },
     })
-    e.commit()
+    editor.commit()
     expect(committed).toEqual([])
 
-    e.setEditing("12")
-    e.commit()
+    editor.setEditing("12")
+    editor.commit()
     expect(committed).toEqual([12])
-    expect(e.editing()).toBe("12")
+    expect(editor.editing()).toBe("12")
   })
 
   test("commit clamps and persists the canonical value", () => {
     let last = 0
-    const e = createNumericEditor({
+    const editor = createNumericEditor({
       initial: () => 0,
       min: 0,
       max: 10,
-      onCommit: (v) => {
-        last = v
+      onCommit: (value) => {
+        last = value
       },
     })
-    e.setEditing("999")
-    e.commit()
+    editor.setEditing("999")
+    editor.commit()
     expect(last).toBe(10)
-    expect(e.editing()).toBe("10")
+    expect(editor.editing()).toBe("10")
   })
 
   test("commit on garbage input resets from initial()", () => {
     const initial = 4
-    const e = createNumericEditor({ initial: () => initial, min: 0, max: 10, onCommit: () => {} })
-    e.setEditing("not a number")
-    e.commit()
-    expect(e.editing()).toBe("4")
+    const editor = createNumericEditor({ initial: () => initial, min: 0, max: 10, onCommit: () => {} })
+    editor.setEditing("not a number")
+    editor.commit()
+    expect(editor.editing()).toBe("4")
   })
 
   test("reset reloads from initial()", () => {
     let initial = 2
-    const e = createNumericEditor({ initial: () => initial, onCommit: () => {} })
-    e.setEditing("99")
+    const editor = createNumericEditor({ initial: () => initial, onCommit: () => {} })
+    editor.setEditing("99")
     initial = 5
-    e.reset()
-    expect(e.editing()).toBe("5")
+    editor.reset()
+    expect(editor.editing()).toBe("5")
   })
 
   test("increment from NaN buffer uses initial() as base", () => {
-    const e = createNumericEditor({ initial: () => 3, min: 0, max: 100, onCommit: () => {} })
-    e.setEditing("garbage")
-    e.increment()
-    expect(e.editing()).toBe("4")
+    const editor = createNumericEditor({ initial: () => 3, min: 0, max: 100, onCommit: () => {} })
+    editor.setEditing("garbage")
+    editor.increment()
+    expect(editor.editing()).toBe("4")
   })
 })
