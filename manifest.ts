@@ -4,6 +4,7 @@
 
 export const subpaths = [
   "async",
+  "build",
   "charts",
   "clipboard",
   "components",

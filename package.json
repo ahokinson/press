@@ -1,6 +1,6 @@
 {
   "name": "@ahokinson/press",
-  "version": "0.0.3",
+  "version": "0.0.0",
   "description": "Reusable Solid + opentui TUI primitives: async, charts, clipboard, components, context, format, icons, io, keyboard, link, markdown, models, signals, terminal, theme.",
   "license": "MIT",
   "type": "module",
@@ -26,6 +26,10 @@
     "./async": {
       "types": "./dist/async/index.d.ts",
       "import": "./dist/async/index.js"
+    },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build/index.js"
     },
     "./charts": {
       "types": "./dist/charts/index.d.ts",
