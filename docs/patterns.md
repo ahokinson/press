@@ -205,6 +205,102 @@ async function save() {
 
 ---
 
+## Help overlay
+
+```tsx
+import { useKeyboard } from "@opentui/solid"
+import { createSignal } from "solid-js"
+import { dispatchBindings, bindingHints } from "@ahokinson/press/keyboard"
+import { HelpOverlay, StatusBar } from "@ahokinson/press/components"
+
+const [showHelp, setShowHelp] = createSignal(false)
+
+const bindings = [
+  {
+    match: { name: "j" },
+    hint: { key: "j", action: "Down" },
+    group: "Navigation",
+    run: () => list.next(),
+  },
+  {
+    match: { name: "k" },
+    hint: { key: "k", action: "Up" },
+    group: "Navigation",
+    run: () => list.prev(),
+  },
+  {
+    match: { name: "?" },
+    hint: { key: "?", action: "Help" },
+    run: () => setShowHelp(true),
+  },
+  {
+    match: { name: "escape" },
+    run: () => setShowHelp(false),
+  },
+]
+
+const handler = dispatchBindings(() => bindings, () => process.exit(0))
+useKeyboard(handler)
+
+// In JSX:
+<StatusBar hints={bindingHints(bindings)} />
+<HelpOverlay when={showHelp} bindings={() => bindings} />
+```
+
+`HelpOverlay` takes a `bindings` accessor and calls `bindingCheatsheet` internally. Bindings without a `hint` (like the `escape` dismiss) are excluded from the overlay automatically. Give bindings a `group` string to cluster them into sections; those without a `group` appear under the default label. `dispatchBindings` is a flat alternative to `composeKeymap` — both work here.
+
+---
+
+## Responsive layout
+
+```tsx
+import { useKeyboard } from "@opentui/solid"
+import { createSignal } from "solid-js"
+import { For, Show } from "solid-js"
+import { createResponsiveRouter } from "@ahokinson/press/terminal"
+import { Pane, Modal } from "@ahokinson/press/components"
+import { composeKeymap, matchKey } from "@ahokinson/press/keyboard"
+
+type Mode = "narrow" | "standard" | "wide"
+
+const router = createResponsiveRouter<Mode>({
+  breakpoints: [
+    { minWidth: 0,   mode: "narrow" },
+    { minWidth: 80,  mode: "standard" },
+    { minWidth: 140, mode: "wide" },
+  ],
+  routes: {
+    narrow:   { mode: "narrow",   panes: [{ key: "list", flex: 1 }] },
+    standard: { mode: "standard", panes: [{ key: "list", flex: 65 }, { key: "detail", flex: 35 }] },
+    wide:     { mode: "wide",     panes: [{ key: "list", flex: 55 }, { key: "detail", flex: 45 }] },
+  },
+})
+
+const [detailOpen, setDetailOpen] = createSignal(false)
+
+// In JSX:
+<box flexDirection="row">
+  <Pane flexGrow={router.paneByKey("list")?.flex ?? 1}>
+    <ListPane />
+  </Pane>
+  <Show when={!router.isOverlay("detail")}>
+    <Pane flexGrow={router.paneByKey("detail")?.flex ?? 35}>
+      <DetailPane />
+    </Pane>
+  </Show>
+</box>
+
+<Modal when={() => router.isOverlay("detail") && detailOpen()}>
+  <DetailPane />
+</Modal>
+```
+
+`minWidth: 0` is required as the catch-all breakpoint. `isOverlay(key)` returns `true` when the key is declared in some route but absent from the active mode — use it to switch between inline and `Modal` rendering. `paneByKey` returns `undefined` when collapsed; guard before reading `flex`. All router methods are reactive on terminal resize.
+
+`createTerminalHandover` is separate: use it to suspend the renderer while shelling out to `$EDITOR` or a pager, not for layout switching.
+
+---
+
 ## Tabbed layout
 
 ```tsx

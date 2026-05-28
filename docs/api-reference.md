@@ -171,6 +171,44 @@ createHistory(opts: { initial: T, limit?: number }): History<T>
 
 ---
 
+## Terminal (`@ahokinson/press/terminal`)
+
+### createResponsiveRouter\<TMode\>
+```ts
+createResponsiveRouter(options: {
+  breakpoints: readonly Breakpoint<TMode>[]   // { minWidth: number; mode: TMode }
+  routes: Record<TMode, { mode: TMode; panes: ReadonlyArray<LayoutPane> }>
+}): ResponsiveRouter<TMode>
+```
+`LayoutPane`: `{ key: string; flex: number; minWidth?: number }`
+
+`ResponsiveRouter<TMode>`:
+- `mode()` — active mode label, reactive on terminal resize
+- `panes()` — inline pane list for the active mode
+- `paneByKey(key)` — `undefined` when the pane is collapsed at the current width
+- `isOverlay(key)` — `true` when the key is declared in some route but absent from the active one
+
+Must include a `minWidth: 0` breakpoint (catch-all) or it throws. Use `isOverlay` to branch between inline and `Modal` rendering.
+
+---
+
+### useResponsiveLayout\<TMode\>
+```ts
+useResponsiveLayout(breakpoints: readonly Breakpoint<TMode>[]): () => TMode
+```
+Lower-level hook; returns the active mode. Use `createResponsiveRouter` instead unless you only need the mode label without pane routing.
+
+---
+
+### createTerminalHandover
+```ts
+createTerminalHandover(renderer: CliRenderer): TerminalHandover
+// TerminalHandover: <T>(fn: () => Promise<T>) => Promise<T>
+```
+Suspends the opentui renderer, runs `fn` (e.g. spawn `$EDITOR` or a pager), then resumes. Re-entrant: nested calls share the outermost suspend/resume pair. Concurrent calls serialize.
+
+---
+
 ## Signals (`@ahokinson/press/signals`)
 
 ```ts
@@ -186,6 +224,11 @@ createCycler(values: T[], signal: Accessor<T>, setter: Setter<T>)
 
 cumulativeOffsets(rows: T[], heightOf: (row: T) => number)
   // → number[]   where result[i] = Y start of row i in scrollbox coordinate space
+
+createIndexedStore<K extends string, V>(initial?: Record<K, V>): IndexedStore<K, V>
+  // store.entries(), store.get(key), store.keys(), store.size()
+  // store.set(key, value), store.update(key, partial), store.upsert(key, value)
+  // store.remove(key), store.replace(next), store.clear()
 ```
 
 ---
@@ -208,6 +251,19 @@ dispatchBindings(bindings: () => readonly KeyBinding[], onQuit?: () => void): Ke
 
 bindingHints(bindings: () => readonly KeyBinding[]): KeyHint[]
 // Extract { key, action } pairs for StatusBar hints prop
+
+bindingCheatsheet(bindings: readonly KeyBinding[]): CheatsheetGroup[]
+// Groups by binding.group; bindings without a hint are excluded.
+// DEFAULT_CHEATSHEET_GROUP labels ungrouped entries.
+// HelpOverlay calls this internally — no need to call it yourself.
+
+createHover(): Hover
+// Hover: { hovered: () => boolean; handlers: MouseHandlers }
+// Spread handlers onto a <box> for reactive hover state.
+
+createDragHandle(opts: { onDrag: (delta: number) => void; axis?: DragAxis; onStart?(): void; onEnd?(): void }): DragHandle
+// DragHandle: { dragging: () => boolean; handlers: MouseHandlers }
+// DragAxis: "x" | "y" — defaults to "y"
 ```
 
 Key names: `"return"`, `"escape"`, `"up"`, `"down"`, `"left"`, `"right"`, `"backspace"`, `"tab"`, `"space"`, `"f1"`–`"f12"`. Single characters use the character as `name` (e.g., `{ name: "j" }`). Modifiers: `ctrl`, `meta`, `shift`.
@@ -223,6 +279,11 @@ Key names: `"return"`, `"escape"`, `"up"`, `"down"`, `"left"`, `"right"`, `"back
 <Header>
 <Tabs tabs active orientation? onActivate renderTab?>
 <Separated>
+
+createScrollboxOptions(theme: Theme): ScrollboxOptions
+// Pre-built <scrollbox> config: no arrow widgets, bgAlt/faint scrollbar track,
+// MacOS momentum curve. Spread directly:
+// <scrollbox {...createScrollboxOptions(theme)} ref={sync.bindRef}>
 ```
 
 ### Lists
@@ -253,7 +314,7 @@ Key names: `"return"`, `"escape"`, `"up"`, `"down"`, `"left"`, `"right"`, `"back
 <Modal when title? severity? width? height? top? left? paddingX? paddingY? zIndex?>
 <ConfirmDialog action />       // action: () => ConfirmAction | null
 <Picker state title? placeholder? width? height? renderItem?>
-<HelpOverlay when groups />
+<HelpOverlay when bindings />
 ```
 `ConfirmDialog` flows inline in the layout. `Modal` is absolutely positioned.
 
@@ -297,3 +358,30 @@ const myTheme = createTheme({ brand: "#ff6b6b" }, flavors.mocha.colors)
 // In JSX: attributes prop uses bit masks
 <text attributes={BOLD | ITALIC}>bold italic</text>
 ```
+
+### Severity and Change
+```ts
+import { Severity, severityColor, Change, changeOf, changeColor } from "@ahokinson/press/theme"
+
+Severity: Neutral | Info | Success | Warning | Error
+severityColor(theme, severity): string
+  // Info→accent, Success→ok, Warning→warn, Error→err, Neutral→muted
+  // Override per-bucket via theme.severityColors
+
+Change: Down | Flat | Up
+changeOf(delta: number, epsilon = 0): Change
+  // |delta| <= epsilon → Flat; NaN → Flat
+changeColor(theme, change): string
+  // Up→ok, Down→err, Flat→muted
+```
+
+---
+
+## Context (`@ahokinson/press/context`)
+
+### createRequiredContext
+```ts
+createRequiredContext<T, Props>({ name: string; init: (props: Props) => T }): RequiredContext<T, Props>
+// RequiredContext: { Provider: Component<Props>; use: () => T }
+```
+`use()` throws when called outside its `Provider` — makes missing the provider a dev error rather than a silent undefined. Use for feature sub-contexts that should never be used without setup.

@@ -68,7 +68,7 @@ claude plugin install https://github.com/ahokinson/press
 
 **Use:**
 
-Type `/press` in any Claude Code session. This loads the full API reference, architecture guide, and pattern library into context. After activation, ask anything — scaffold components, wire models, explain APIs, debug issues — without re-invoking the command.
+Type `/press` in any Claude Code session to load the full API reference, architecture guide, and pattern library. The docs stay in context for the session; no need to re-invoke.
 
 ## Contributing
 
