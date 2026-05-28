@@ -59,19 +59,19 @@ describe("createToggleSet", () => {
   test("clear on empty set is a no-op", () => {
     createRoot((dispose) => {
       const s = createToggleSet<string>()
-      const before = s.values()
+      const before = s.set()
       s.clear()
-      expect(s.values()).toBe(before)
+      expect(s.set()).toBe(before)
       dispose()
     })
   })
 
-  test("values returns a fresh reference per change", () => {
+  test("set returns a fresh reference per change", () => {
     createRoot((dispose) => {
       const s = createToggleSet<string>()
-      const before = s.values()
+      const before = s.set()
       s.add("a")
-      expect(s.values()).not.toBe(before)
+      expect(s.set()).not.toBe(before)
       dispose()
     })
   })

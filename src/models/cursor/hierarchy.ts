@@ -50,7 +50,7 @@ export function createHierarchyState(levels: HierarchyLevelConfig[]): HierarchyS
   }
 
   const raws = levels.map(() => createSignal(0))
-  const focusNav = createNavigationCursor({ length: () => levels.length })
+  const focusNav = createNavigationCursor({ length: () => levels.length, wrap: true })
 
   const memos: Accessor<number>[] = levels.map((config, index) => {
     const [read] = raws[index]!

@@ -188,7 +188,7 @@ export class ChartRenderable extends Renderable {
 
     if (this._values.length === 0) {
       buffer.drawText(
-        "(no data)",
+        "No data",
         plotX + Math.floor(plotWidth / 2) - 4,
         plotY + Math.floor(plotHeight / 2),
         this._axisColor,

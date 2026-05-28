@@ -12,6 +12,40 @@ describe("Markdown", () => {
     expect(captureCharFrame()).toContain("Welcome")
   })
 
+  test("renders h2 and h3 headings", async () => {
+    const source = "## Section\n### Subsection"
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => <Markdown source={() => source} width={() => 40} />,
+      { width: 40, height: 6 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("Section")
+    expect(frame).toContain("Subsection")
+  })
+
+  test("renders h4+ headings with the dim color path", async () => {
+    const source = "#### Deep heading"
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => <Markdown source={() => source} width={() => 40} />,
+      { width: 40, height: 6 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("Deep heading")
+  })
+
+  test("renders italic inline text", async () => {
+    const source = "This is *emphasized* text."
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => <Markdown source={() => source} width={() => 60} />,
+      { width: 60, height: 4 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("emphasized")
+    expect(frame).not.toContain("*emphasized*")
+  })
+
   test("renders a paragraph with inline bold and code", async () => {
     const source = "This is **strong** and `code`."
     const { captureCharFrame, renderOnce } = await testRender(

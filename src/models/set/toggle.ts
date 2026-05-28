@@ -3,11 +3,12 @@ import { type Accessor, createSignal } from "solid-js"
 export interface ToggleSet<T> {
   has: (key: T) => boolean
   size: Accessor<number>
-  values: Accessor<ReadonlySet<T>>
+  set: Accessor<ReadonlySet<T>>
   toggle: (key: T) => void
   add: (key: T) => void
   delete: (key: T) => void
   clear: () => void
+  setAll: (keys: Iterable<T>) => void
 }
 
 /**
@@ -28,7 +29,7 @@ export function createToggleSet<T>(initial?: Iterable<T>): ToggleSet<T> {
   return {
     has: (key) => set().has(key),
     size: () => set().size,
-    values: () => set(),
+    set: () => set(),
     toggle: (key) =>
       mutate((next) => {
         if (next.has(key)) next.delete(key)
@@ -40,5 +41,6 @@ export function createToggleSet<T>(initial?: Iterable<T>): ToggleSet<T> {
       if (set().size === 0) return
       setSet(new Set<T>())
     },
+    setAll: (keys) => setSet(new Set(keys)),
   }
 }

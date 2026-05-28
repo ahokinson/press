@@ -1,3 +1,4 @@
+import { Empty } from "@components/atom/empty.tsx"
 import { Pane } from "@components/container/pane.tsx"
 import { createScrollboxOptions } from "@components/container/scroll/index.ts"
 import { createScrollboxSync } from "@signals"
@@ -8,12 +9,21 @@ import { createEffect, createMemo, For, type JSX, Show } from "solid-js"
 export interface ListProps<T> {
   title?: string
   items: () => readonly T[]
-  selected: () => number
+  cursor: () => number
   focused?: () => boolean
-  /** Render a row given the item, its index, and whether it is the active selection. */
-  renderItem: (item: T, index: number, selected: boolean) => JSX.Element
-  /** Optional empty-state label. */
-  emptyLabel?: string
+  /**
+   * Render a row given the item, its index, and an accessor for whether this
+   * row is under the cursor. Pass `active` as an accessor (not a value) into
+   * JSX so cursor-driven styling updates reactively when the cursor moves.
+   *
+   * @example
+   * renderItem={(item, _i, active) => <text bold={active()}>{item.name}</text>}
+   */
+  renderItem: (item: T, index: number, active: () => boolean) => JSX.Element
+  /** Primary message shown when the list is empty. */
+  emptyMessage?: string
+  /** Optional secondary hint shown below the empty message. */
+  emptyHint?: string
   flexGrow?: number
   flexBasis?: DimensionFixed
   width?: Dimension
@@ -23,13 +33,19 @@ export interface ListProps<T> {
 /**
  * Focusable list with selection highlighting. Keeps the active row inside the
  * viewport via `createScrollboxSync` and the scrollbox's height. Does not
- * bind keys; wire j/k in the caller and update `selected`.
+ * bind keys; wire j/k in the caller and update `cursor`.
+ *
+ * Rows must be single-line. Multi-line `renderItem` output breaks scroll sync
+ * because the cursor is mapped to a row index, not a Y offset. For
+ * variable-height rows use `cumulativeOffsets` and wire scroll sync manually.
  */
 export function List<T>(props: ListProps<T>): JSX.Element {
   const theme = useTheme()
+  // Memo so the createEffect below reads a single stable accessor instead of
+  // calling props.items() twice (once in the effect, once in <For>).
   const items = createMemo(() => props.items())
   const scrollboxOptions = createScrollboxOptions(theme)
-  const sync = createScrollboxSync({ cursor: () => props.selected() })
+  const sync = createScrollboxSync({ cursor: () => props.cursor() })
 
   // Items can change the scrollbox's content extent without firing
   // onSizeChange. Re-read the height when items change to keep viewport
@@ -48,17 +64,20 @@ export function List<T>(props: ListProps<T>): JSX.Element {
       width={props.width}
       height={props.height}
     >
-      <Show when={items().length > 0} fallback={<text fg={theme.faint}>{props.emptyLabel ?? "(empty)"}</text>}>
+      <Show
+        when={items().length > 0}
+        fallback={<Empty message={props.emptyMessage ?? "No items"} hint={props.emptyHint} />}
+      >
         <scrollbox flexGrow={1} ref={sync.bindRef} {...scrollboxOptions}>
           <For each={items()}>
             {(item, i) => {
-              const isSelected = () => props.selected() === i()
+              const isActive = createMemo(() => props.cursor() === i())
               return (
                 <box
                   flexDirection="row"
-                  backgroundColor={isSelected() && props.focused?.() ? theme.bgHighlight : undefined}
+                  backgroundColor={isActive() && props.focused?.() ? theme.bgHighlight : undefined}
                 >
-                  {props.renderItem(item, i(), isSelected())}
+                  {props.renderItem(item, i(), isActive)}
                 </box>
               )
             }}

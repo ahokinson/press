@@ -24,7 +24,7 @@ describe("Chart (renderable)", () => {
       height: 12,
     })
     await renderOnce()
-    expect(captureCharFrame()).toContain("(no data)")
+    expect(captureCharFrame()).toContain("No data")
   })
 
   test("supports refLines and markers props (smoke)", async () => {

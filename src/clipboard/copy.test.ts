@@ -100,6 +100,22 @@ describe("copy via OSC 52", () => {
     expect(stream.writes.join("")).toBe(osc52Sequence("hi"))
   })
 
+  test("returns Spawn failure when the stream write throws", async () => {
+    // biome-ignore lint/suspicious/noExplicitAny: minimal writable stream surface for tests
+    const throwingStream: any = {
+      isTTY: true,
+      write() {
+        throw new Error("stream full")
+      },
+    }
+    const result = await copy("hi", { method: ClipboardMethod.Osc52, stream: throwingStream })
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.reason).toBe(CopyFailureReason.Spawn)
+      expect(result.error).toContain("stream full")
+    }
+  })
+
   test("Auto prefers OSC 52 when the stream is a TTY", async () => {
     const stream = capturingStream()
     const result = await copy("hi", { stream })

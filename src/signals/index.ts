@@ -47,7 +47,7 @@ export interface NavigationCursorOptions {
   length: () => number
   /** Initial cursor position, clamped to [0, length-1] on read. Default 0. */
   initial?: number
-  /** Wrap past the ends. Default true. */
+  /** Wrap past the ends. Default false. */
   wrap?: boolean
 }
 
@@ -58,7 +58,7 @@ export interface NavigationCursorOptions {
  * See `models/cursor/tree.ts` for why that matters.
  */
 export function createNavigationCursor(options: NavigationCursorOptions): NavigationCursor {
-  const wrap = options.wrap ?? true
+  const wrap = options.wrap ?? false
   const [raw, setRaw] = createSignal(options.initial ?? 0)
 
   const cursor = createMemo<number>(() => {

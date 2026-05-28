@@ -53,7 +53,7 @@ export function createTreeState<T>(roots: Accessor<TreeNode<T>[]>, opts: TreeSta
   const expandedSet = createToggleSet<string>(opts.initialExpanded)
 
   const visible = createMemo<VisibleTreeRow<T>[]>(() => {
-    const expanded = expandedSet.values()
+    const expanded = expandedSet.set()
     const rows: VisibleTreeRow<T>[] = []
     function walk(nodes: TreeNode<T>[], depth: number): void {
       for (const node of nodes) {
@@ -67,11 +67,11 @@ export function createTreeState<T>(roots: Accessor<TreeNode<T>[]>, opts: TreeSta
     return rows
   })
 
-  const nav = createNavigationCursor({ length: () => visible().length })
+  const nav = createNavigationCursor({ length: () => visible().length, wrap: true })
 
   return {
     roots,
-    expanded: expandedSet.values,
+    expanded: expandedSet.set,
     isExpanded: (id) => expandedSet.has(id),
     toggle: (id) => expandedSet.toggle(id),
     expand: (id) => expandedSet.add(id),

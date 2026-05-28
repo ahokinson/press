@@ -1,5 +1,36 @@
 import { describe, expect, test } from "bun:test"
-import { cumulativeOffsets } from "@signals"
+import { createClampedSetter, cumulativeOffsets } from "@signals"
+import { createRoot, createSignal } from "solid-js"
+
+describe("createClampedSetter", () => {
+  test("clamps a raw numeric value into [0, maxIndex]", () => {
+    createRoot((dispose) => {
+      const [raw, setRaw] = createSignal(0)
+      const clamped = createClampedSetter(setRaw, () => 4)
+      clamped(10)
+      expect(raw()).toBe(4)
+      clamped(-1)
+      expect(raw()).toBe(0)
+      clamped(2)
+      expect(raw()).toBe(2)
+      dispose()
+    })
+  })
+
+  test("clamps an updater function result into [0, maxIndex]", () => {
+    createRoot((dispose) => {
+      const [raw, setRaw] = createSignal(2)
+      const clamped = createClampedSetter(setRaw, () => 4)
+      clamped((prev) => prev + 10)
+      expect(raw()).toBe(4)
+      clamped((prev) => prev - 10)
+      expect(raw()).toBe(0)
+      clamped((prev) => prev + 2)
+      expect(raw()).toBe(2)
+      dispose()
+    })
+  })
+})
 
 describe("cumulativeOffsets", () => {
   test("returns 0 followed by running sum for uniform rows", () => {

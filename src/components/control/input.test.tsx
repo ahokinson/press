@@ -40,11 +40,11 @@ describe("InputBar", () => {
 
   test("renders trailing string content", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <InputBar label="q" buffer={() => "hello"} trailing={() => "(3 matches)"} />,
+      () => <InputBar label="q" buffer={() => "hello"} trailing={() => "3 matches"} />,
       { width: 40, height: 1 },
     )
     await renderOnce()
-    expect(captureCharFrame()).toContain("(3 matches)")
+    expect(captureCharFrame()).toContain("3 matches")
   })
 
   test("renders trailing JSX content", async () => {

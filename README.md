@@ -50,6 +50,26 @@ In your `tsconfig.json`:
 }
 ```
 
+## Claude Code plugin
+
+Press ships with a Claude Code plugin that activates expert mode for building press TUIs.
+
+**Install:**
+
+```sh
+claude plugin install /path/to/press
+```
+
+Or from the git repo directly:
+
+```sh
+claude plugin install https://github.com/ahokinson/press
+```
+
+**Use:**
+
+Type `/press` in any Claude Code session. This loads the full API reference, architecture guide, and pattern library into context. After activation, ask anything — scaffold components, wire models, explain APIs, debug issues — without re-invoking the command.
+
 ## Contributing
 
 Press only accepts security PRs. See [CONTRIBUTING.md](./CONTRIBUTING.md).

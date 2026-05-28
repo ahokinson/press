@@ -75,7 +75,7 @@ export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): J
         </Show>
       }
     >
-      <Show when={totalItems() > 0} fallback={props.emptyState ?? <Empty message="(empty)" />}>
+      <Show when={totalItems() > 0} fallback={props.emptyState ?? <Empty message="No items" />}>
         <scrollbox flexGrow={1} ref={props.setScrollRef} {...scrollboxOptions}>
           <box flexDirection="column">
             <For each={props.sections()}>
