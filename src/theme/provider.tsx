@@ -16,6 +16,6 @@ export function ThemeProvider<T extends Theme = Theme>(props: ParentProps<{ valu
  * There's no runtime link between provider and hook, so the type system can't
  * verify the cast.
  */
-export function useTheme(): Theme {
-  return useContext(ThemeContext)
+export function useTheme<T extends Theme = Theme>(): T {
+  return useContext(ThemeContext) as T
 }

@@ -34,8 +34,8 @@ export function Markdown(props: MarkdownProps): JSX.Element {
 
 const HEADING_COLOR = (theme: Theme, level: HeadingLevel): string => {
   if (level === 1) return theme.accent
-  if (level === 2) return theme.lavender
-  if (level === 3) return theme.mauve
+  if (level === 2) return theme.syntaxKey
+  if (level === 3) return theme.syntaxSubheading
   return theme.dim
 }
 
@@ -120,7 +120,7 @@ function renderSpan(span: Inline, theme: Theme): JSX.Element {
     case InlineKind.Italic:
       return <span style={{ fg: theme.subtext, attributes: ITALIC }}>{span.text}</span>
     case InlineKind.Code:
-      return <span style={{ fg: theme.peach, bg: theme.bgAlt }}>{span.text}</span>
+      return <span style={{ fg: theme.syntaxInlineCode, bg: theme.bgAlt }}>{span.text}</span>
     case InlineKind.Link:
       return <Link href={span.url}>{span.label}</Link>
   }

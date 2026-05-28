@@ -1,5 +1,6 @@
 import { BRAILLE_BASE, rasterize } from "@charts/braille.ts"
 import { type OptimizedBuffer, Renderable, type RenderableOptions, type RenderContext, RGBA } from "@opentui/core"
+import type { Theme } from "@theme/palette.ts"
 
 export interface RefLine {
   value: number
@@ -40,6 +41,8 @@ export interface ChartOptions extends RenderableOptions<ChartRenderable> {
   downColor?: string
   axisColor?: string
   refColor?: string
+  /** When provided, seeds default colors from theme tokens before the hardcoded fallbacks. */
+  theme?: Theme
   yMin?: number
   yMax?: number
   refLines?: RefLine[]
@@ -82,10 +85,10 @@ export class ChartRenderable extends Renderable {
     super(context, options)
     this._values = options.values ?? []
     this._timestamps = options.timestamps ?? []
-    this._upColor = RGBA.fromHex(options.upColor ?? "#7dd87a")
-    this._downColor = RGBA.fromHex(options.downColor ?? "#ef6b6b")
-    this._axisColor = RGBA.fromHex(options.axisColor ?? "#666666")
-    this._refColor = RGBA.fromHex(options.refColor ?? "#444444")
+    this._upColor = RGBA.fromHex(options.upColor ?? options.theme?.ok ?? "#7dd87a")
+    this._downColor = RGBA.fromHex(options.downColor ?? options.theme?.err ?? "#ef6b6b")
+    this._axisColor = RGBA.fromHex(options.axisColor ?? options.theme?.dim ?? "#666666")
+    this._refColor = RGBA.fromHex(options.refColor ?? options.theme?.faint ?? "#444444")
     this._yMin = options.yMin
     this._yMax = options.yMax
     this._refLines = options.refLines ?? []

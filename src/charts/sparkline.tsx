@@ -1,10 +1,13 @@
 import { BRAILLE_BASE, rasterize } from "@charts/braille.ts"
 import { type OptimizedBuffer, Renderable, type RenderableOptions, type RenderContext, RGBA } from "@opentui/core"
+import type { Theme } from "@theme/palette.ts"
 
 export interface SparklineOptions extends RenderableOptions<SparklineRenderable> {
   values?: number[]
   upColor?: string
   downColor?: string
+  /** When provided, seeds default colors from theme tokens before the hardcoded fallbacks. */
+  theme?: Theme
 }
 
 /** 1-row inline braille sparkline. Effective resolution: width*2 × 4 sub-pixels. */
@@ -16,8 +19,8 @@ export class SparklineRenderable extends Renderable {
   constructor(context: RenderContext, options: SparklineOptions) {
     super(context, options)
     this._values = options.values ?? []
-    this._upColor = RGBA.fromHex(options.upColor ?? "#7dd87a")
-    this._downColor = RGBA.fromHex(options.downColor ?? "#ef6b6b")
+    this._upColor = RGBA.fromHex(options.upColor ?? options.theme?.ok ?? "#7dd87a")
+    this._downColor = RGBA.fromHex(options.downColor ?? options.theme?.err ?? "#ef6b6b")
   }
 
   get values(): number[] {

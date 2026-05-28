@@ -48,12 +48,12 @@ export function Json(props: JsonProps): JSX.Element {
   const indentStep = () => props.indent ?? 2
 
   const colors: JsonColors = {
-    key: props.colors?.key ?? theme.lavender,
+    key: props.colors?.key ?? theme.syntaxKey,
     str: props.colors?.str ?? theme.ok,
-    num: props.colors?.num ?? theme.peach,
-    bool: props.colors?.bool ?? theme.maroon,
+    num: props.colors?.num ?? theme.syntaxNum,
+    bool: props.colors?.bool ?? theme.syntaxBool,
     nul: props.colors?.nul ?? theme.dim,
-    type: props.colors?.type ?? theme.teal,
+    type: props.colors?.type ?? theme.syntaxType,
     punct: props.colors?.punct ?? theme.faint,
   }
 
