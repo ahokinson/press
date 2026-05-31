@@ -3,31 +3,31 @@
 [![CI](https://github.com/ahokinson/press/actions/workflows/test.yml/badge.svg)](https://github.com/ahokinson/press/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/ahokinson/press/branch/develop/graph/badge.svg)](https://codecov.io/gh/ahokinson/press)
 
-A toolkit for building terminal apps that look and feel good. Solid's reactivity, opentui's renderer, and the layer between them you'd otherwise write yourself.
+Solid's reactivity, opentui's renderer, and the layer between them you'd otherwise write every time. Press is for people who care how the terminal feels.
 
-## Why this exists
+## Why?
 
-Nothing else looked right. Press is for people who care how the terminal feels.
+Nothing else looked right.
 
-## What's in the box
+## Modules
 
-Each module is a separate import path. Pull only what you use.
-
-- **`press/async`** — Polling controller with active/paused/disabled modes, plus stale-stamp and coalesce guards for race-prone work.
-- **`press/charts`** — Braille rasterizer, sparkline, and a chart renderable that registers as an opentui element.
-- **`press/clipboard`** — `copy(text)` with a discriminated `CopyResult`. OSC 52 first when stdout is a TTY (works over SSH), platform-native command otherwise. Size-capped.
-- **`press/components`** — Rendered building blocks. Atoms, containers, controls, dialogs, and feedback surfaces. No app logic.
-- **`press/context`** — `createRequiredContext`: a Solid `Provider` and `use()` hook bundled together. `use()` throws outside its `Provider`.
-- **`press/format`** — Terminal-aware string utilities. Column-width, truncate/pad, compact numbers, relative time, range bars.
-- **`press/icons`** — Nerd Font glyph constants with their column widths. Plus a placeholder generator.
-- **`press/io`** — Atomic file writes and JSON load/save with optional zod validation.
-- **`press/keyboard`** — Key matching, binding dispatch, modal keymap layers, and a cheatsheet projection into the help overlay.
-- **`press/link`** — Themed `Link` component, plus `wrapOsc8` / `supportsOsc8` for clickable terminal hyperlinks.
-- **`press/markdown`** — A `Markdown` component, a parser, and word-wrap helpers. ATX headings, paragraphs, fenced code, lists, blockquotes, and the usual inline forms.
-- **`press/models`** — Headless state machines: filterable lists, fuzzy pickers, tree expansion, table sort/filter, confirm dialogs, undo/redo, focus rings, numeric editors.
-- **`press/signals`** — Reactive helpers around scroll sync, value cycling, and clamped cursors.
-- **`press/terminal`** — Responsive layout, screen-stack navigation, and renderer handover for subprocesses (editors, pagers).
-- **`press/theme`** — Catppuccin-based palette, `ThemeProvider`, `useTheme`. Build your own with `createTheme`.
+| Module             |                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------- |
+| `press/async`      | Async polling with lifecycle control and race-condition guards                  |
+| `press/charts`     | Braille-based sparklines and chart renderables                                  |
+| `press/clipboard`  | Clipboard write with SSH-compatible OSC 52 and platform-native fallback         |
+| `press/components` | UI building blocks: atoms, containers, controls, dialogs, and feedback surfaces |
+| `press/context`    | Type-safe required context for Solid                                            |
+| `press/format`     | String formatting for terminal display                                          |
+| `press/icons`      | Nerd Font glyph constants                                                       |
+| `press/io`         | File I/O with atomic writes and optional schema validation                      |
+| `press/keyboard`   | Keyboard input handling and modal keymaps                                       |
+| `press/link`       | Clickable terminal hyperlinks via OSC 8                                         |
+| `press/markdown`   | Markdown rendering for the terminal                                             |
+| `press/models`     | Headless UI state machines                                                      |
+| `press/signals`    | Reactive primitives for scroll, cycling, and clamped cursors                    |
+| `press/terminal`   | Screen layout, stack navigation, and subprocess handover                        |
+| `press/theme`      | Theming, palette management, and a Catppuccin default                           |
 
 ## Install
 
@@ -50,15 +50,13 @@ In your `tsconfig.json`:
 }
 ```
 
-## Claude Code plugin
+## Claude Code
 
 Press ships with a Claude Code plugin. Install it once, then invoke `/press` in any session to load the full API reference, architecture guide, and pattern library into context.
 
 ```sh
 claude plugin install ahokinson/press
 ```
-
-After install, type `/press` in any Claude Code session.
 
 ## Contributing
 
