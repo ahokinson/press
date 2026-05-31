@@ -105,26 +105,6 @@ describe("Tabs", () => {
     expect(captureCharFrame()).toContain("alpha")
   })
 
-  test("renderTab override replaces the default cell layout", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(
-      () => (
-        <Tabs
-          tabs={() => TABS}
-          active={() => "beta"}
-          renderTab={(tab, isActive) => <text>{`${isActive ? "*" : " "}${tab.label.toUpperCase()}`}</text>}
-        >
-          <text>p</text>
-        </Tabs>
-      ),
-      { width: 60, height: 5 },
-    )
-    await renderOnce()
-    const frame = captureCharFrame()
-    expect(frame).toContain("ALPHA")
-    expect(frame).toContain("*BETA")
-    expect(frame).toContain("GAMMA")
-  })
-
   test("invokes onActivate on a mouse-down on a tab", async () => {
     let clicked: string | null = null
     const { renderOnce, mockMouse } = await testRender(

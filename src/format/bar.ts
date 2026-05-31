@@ -1,8 +1,10 @@
+import { Icon } from "@icons"
+
 /** Single-glyph constants for `rangeBar`. */
-export const RANGE_BAR_MARKER = "●"
-export const RANGE_BAR_TRACK = "─"
-export const RANGE_BAR_LEFT_CAP = "├"
-export const RANGE_BAR_RIGHT_CAP = "┤"
+export const RANGE_BAR_MARKER = Icon.circleFilled.char
+export const RANGE_BAR_TRACK = Icon.lineHorizontal.char
+export const RANGE_BAR_LEFT_CAP = Icon.teeRight.char
+export const RANGE_BAR_RIGHT_CAP = Icon.teeLeft.char
 
 /**
  * Render a positional slider as a single line: `├──●──┤`. `current` is

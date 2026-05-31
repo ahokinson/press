@@ -16,10 +16,12 @@ describe("Icon registry", () => {
     expect(Icon.chevronRight.columns).toBe(2)
   })
 
-  test("ASCII-width markers report one column", () => {
-    expect(Icon.selectMarker.columns).toBe(1)
+  test("single-column glyphs report one column", () => {
+    expect(Icon.caretRight.columns).toBe(1)
     expect(Icon.dot.columns).toBe(1)
     expect(Icon.bullet.columns).toBe(1)
+    expect(Icon.lineHorizontal.columns).toBe(1)
+    expect(Icon.circleFilled.columns).toBe(1)
   })
 
   test("every entry exposes a non-empty char", () => {

@@ -1,6 +1,6 @@
 import { Skeleton } from "@components/atom/skeleton.tsx"
 import { padLeft, padRight } from "@format"
-import { placeholder } from "@icons"
+import { Icon, placeholder } from "@icons"
 import type { SortState } from "@models/table/query.ts"
 import { BOLD } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
@@ -47,8 +47,8 @@ export interface TableProps<T> {
   loadingRows?: number
 }
 
-const SORT_ASC = "▲"
-const SORT_DESC = "▼"
+const SORT_ASC = Icon.triangleUp.char
+const SORT_DESC = Icon.triangleDown.char
 
 /**
  * Sortable column-aligned data table. The active sort column's header paints

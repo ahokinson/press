@@ -1,4 +1,4 @@
-import { BOLD } from "@theme"
+import { BOLD, UNDERLINE } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { For, type JSX, Show } from "solid-js"
 
@@ -20,11 +20,6 @@ export interface TabsProps {
   orientation?: TabOrientation
   /** Optional click/key handler. The caller wires keyboard rotation. */
   onActivate?: (key: string) => void
-  /**
-   * Custom renderer for a tab cell. Replaces the built-in label+badge layout.
-   * Receives the descriptor plus whether it's currently active.
-   */
-  renderTab?: (tab: TabDescriptor, isActive: boolean) => JSX.Element
   /** Panel content for the active tab. */
   children?: JSX.Element
 }
@@ -54,24 +49,17 @@ export function Tabs(props: TabsProps): JSX.Element {
             const isActive = (): boolean => tab.key === props.active()
             return (
               // biome-ignore lint/a11y/noStaticElementInteractions: opentui <box> is the sole TUI interaction primitive
-              <box
-                onMouseDown={() => props.onActivate?.(tab.key)}
-                backgroundColor={isActive() ? theme.bgHighlight : undefined}
-              >
-                <Show
-                  when={props.renderTab}
-                  fallback={
-                    <text attributes={isActive() ? BOLD : 0} fg={isActive() ? theme.text : theme.dim}>
-                      <span>{` ${tab.label}`}</span>
-                      <Show when={tab.badge !== undefined}>
-                        <span style={{ fg: theme.accent }}>{` ${tab.badge}`}</span>
-                      </Show>
-                      <span> </span>
-                    </text>
-                  }
+              <box onMouseDown={() => props.onActivate?.(tab.key)}>
+                <text
+                  attributes={isActive() ? BOLD | UNDERLINE : 0}
+                  fg={isActive() ? theme.accent : theme.dim}
                 >
-                  {props.renderTab?.(tab, isActive())}
-                </Show>
+                  <span>{` ${tab.label}`}</span>
+                  <Show when={tab.badge !== undefined}>
+                    <span style={{ fg: isActive() ? theme.accent : theme.dim }}>{` ${tab.badge}`}</span>
+                  </Show>
+                  <span> </span>
+                </text>
               </box>
             )
           }}

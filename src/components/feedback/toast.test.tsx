@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import { Toast } from "@components/feedback/toast.tsx"
 import { testRender } from "@opentui/solid"
+import { Icon } from "@icons"
 import { Severity } from "@theme"
 import { createSignal } from "solid-js"
 
@@ -53,23 +54,39 @@ describe("Toast", () => {
     }
   })
 
-  test("color override wins over severity", async () => {
+  test("auto-derives glyph from severity", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Toast message={() => "custom"} severity={Severity.Error} color="#abcdef" />,
+      () => <Toast message={() => "saved"} severity={Severity.Success} />,
       { width: 30, height: 3 },
     )
     await renderOnce()
-    expect(captureCharFrame()).toContain("custom")
+    const frame = captureCharFrame()
+    expect(frame).toContain(Icon.circleSuccess.char)
+    expect(frame).toContain("saved")
+    expect(frame.indexOf(Icon.circleSuccess.char)).toBeLessThan(frame.indexOf("saved"))
   })
 
-  test("icon renders before the message", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(() => <Toast message={() => "saved"} icon="✓" />, {
+  test("Neutral severity renders no auto glyph", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => <Toast message={() => "note"} severity={Severity.Neutral} />,
+      { width: 30, height: 3 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("note")
+    expect(frame).not.toContain(Icon.circleInfo.char)
+    expect(frame).not.toContain(Icon.circleSuccess.char)
+  })
+
+  test("explicit glyph overrides the auto-derived one", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(() => <Toast message={() => "saved"} glyph="✓" />, {
       width: 30,
       height: 3,
     })
     await renderOnce()
     const frame = captureCharFrame()
     expect(frame).toContain("✓")
+    expect(frame).not.toContain(Icon.circleInfo.char)
     expect(frame).toContain("saved")
     expect(frame.indexOf("✓")).toBeLessThan(frame.indexOf("saved"))
   })

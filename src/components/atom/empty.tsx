@@ -7,16 +7,16 @@ export interface EmptyProps {
 }
 
 /**
- * Centered empty-state for lists/search results. Primary message in `muted`,
- * optional hint in `dim`. Stretches to fill its parent.
+ * Centered empty-state for lists/search results. Both message and hint in `faint`
+ * so they recede behind any real content. Stretches to fill its parent.
  */
 export function Empty(props: EmptyProps): JSX.Element {
   const theme = useTheme()
   return (
     <box flexGrow={1} justifyContent="center" alignItems="center" flexDirection="column" gap={1}>
-      <text fg={theme.muted}>{props.message}</text>
+      <text fg={theme.faint}>{props.message}</text>
       <Show when={props.hint}>
-        <text fg={theme.dim}>{props.hint}</text>
+        <text fg={theme.faint}>{props.hint}</text>
       </Show>
     </box>
   )

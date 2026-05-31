@@ -6,20 +6,20 @@ export interface BadgeProps {
   /** Label text to render. */
   text: string
   severity?: Severity
-  /** Raw color override. Takes precedence over severity. Expects a theme token (e.g. `theme.accent`). */
-  color?: string
-  /** When true, wraps the label in brackets to mark a selected/current state. */
+  /** When true, renders as an inverted filled chip to signal the selected/current state. */
   active?: boolean
 }
 
-/** One-line label rendered in a semantic colour, optionally bracketed when `active`. */
+/** One-line label in a semantic colour. Active state inverts to a filled chip. */
 export function Badge(props: BadgeProps): JSX.Element {
   const theme = useTheme()
+  const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
 
-  const resolvedColor = (): string => {
-    if (props.color !== undefined) return props.color
-    return severityColor(theme, props.severity ?? Severity.Neutral)
-  }
-
-  return <text fg={resolvedColor()}>{props.active ? `[${props.text}]` : ` ${props.text} `}</text>
+  return (
+    <text>
+      {props.active
+        ? <span style={{ fg: theme.bg, bg: color() }}>{` ${props.text} `}</span>
+        : <span style={{ fg: color() }}>{` ${props.text} `}</span>}
+    </text>
+  )
 }

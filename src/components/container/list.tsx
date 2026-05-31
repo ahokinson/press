@@ -1,5 +1,5 @@
 import { Empty } from "@components/atom/empty.tsx"
-import { Pane } from "@components/container/pane.tsx"
+import { Box } from "@components/container/box.tsx"
 import { createScrollboxOptions } from "@components/container/scroll/index.ts"
 import { createScrollboxSync } from "@signals"
 import type { Dimension, DimensionFixed } from "@terminal/dimension.ts"
@@ -56,7 +56,7 @@ export function List<T>(props: ListProps<T>): JSX.Element {
   })
 
   return (
-    <Pane
+    <Box
       title={props.title}
       focused={props.focused}
       flexGrow={props.flexGrow}
@@ -84,6 +84,6 @@ export function List<T>(props: ListProps<T>): JSX.Element {
           </For>
         </scrollbox>
       </Show>
-    </Pane>
+    </Box>
   )
 }

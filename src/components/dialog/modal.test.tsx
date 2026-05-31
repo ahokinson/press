@@ -62,20 +62,7 @@ describe("Modal", () => {
     }
   })
 
-  test("borderColor override wins over severity", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(
-      () => (
-        <Modal when={() => true} severity={Severity.Error} borderColor="#abcdef" title=" custom ">
-          <text>raw</text>
-        </Modal>
-      ),
-      { width: 40, height: 15 },
-    )
-    await renderOnce()
-    expect(captureCharFrame()).toContain("raw")
-  })
-
-  test("backgroundColor / paddingX / paddingY / zIndex pass through", async () => {
+  test("width / height / top / left / zIndex pass through", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
         <Modal
@@ -85,10 +72,7 @@ describe("Modal", () => {
           height={6}
           top={1}
           left={2}
-          paddingX={1}
-          paddingY={0}
           zIndex={20}
-          backgroundColor="#101010"
         >
           <text>sized body</text>
         </Modal>

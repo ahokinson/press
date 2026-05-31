@@ -17,23 +17,12 @@ describe("Spinner", () => {
   })
 
   test("renders without a label", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(() => <Spinner color="#ff00ff" />, {
+    const { captureCharFrame, renderOnce } = await testRender(() => <Spinner />, {
       width: 10,
       height: 1,
     })
     await renderOnce()
     const frame = captureCharFrame()
     expect(frame).not.toContain("loading")
-  })
-
-  test("accepts custom frames", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(() => <Spinner frames={["X", "Y", "Z"]} label="hi" />, {
-      width: 10,
-      height: 1,
-    })
-    await renderOnce()
-    const frame = captureCharFrame()
-    expect(frame).toContain("hi")
-    expect(["X", "Y", "Z"].some((frameGlyph) => frame.includes(frameGlyph))).toBe(true)
   })
 })

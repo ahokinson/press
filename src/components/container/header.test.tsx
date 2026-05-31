@@ -25,7 +25,7 @@ describe("Header", () => {
   })
 
   test("renders blank when both slots are omitted", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(() => <Header background="#000000" />, {
+    const { captureCharFrame, renderOnce } = await testRender(() => <Header />, {
       width: 10,
       height: 1,
     })

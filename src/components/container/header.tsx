@@ -7,8 +7,6 @@ export interface HeaderProps {
   left?: () => JSX.Element
   /** Right-aligned content (typically a position/filter/sort badge). */
   right?: () => JSX.Element
-  /** Background color override. Defaults to `theme.headerBg`. */
-  background?: string
 }
 
 /**
@@ -25,7 +23,7 @@ export function Header(props: HeaderProps): JSX.Element {
       justifyContent="space-between"
       paddingLeft={1}
       paddingRight={1}
-      backgroundColor={props.background ?? theme.headerBg}
+      backgroundColor={theme.headerBg}
     >
       <Show when={props.left} fallback={<text>{""}</text>}>
         {props.left?.()}

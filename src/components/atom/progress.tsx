@@ -1,4 +1,5 @@
 import { progressParts } from "@format"
+import { Icon } from "@icons"
 import { useTheme } from "@theme/provider.tsx"
 import type { JSX } from "solid-js"
 
@@ -19,8 +20,8 @@ export interface ProgressProps {
 export function Progress(props: ProgressProps): JSX.Element {
   const theme = useTheme()
   const width = () => Math.max(1, props.width ?? 16)
-  const filledChar = () => props.filledChar ?? "█"
-  const unfilledChar = () => props.unfilledChar ?? "░"
+  const filledChar = () => props.filledChar ?? Icon.blockFilled.char
+  const unfilledChar = () => props.unfilledChar ?? Icon.blockShaded.char
   const parts = () => progressParts(props.value(), props.max(), width(), filledChar(), unfilledChar())
   return (
     <text>

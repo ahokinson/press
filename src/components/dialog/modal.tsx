@@ -8,27 +8,18 @@ export interface ModalProps extends ParentProps {
   when: () => boolean
   /** Title strip rendered into the top border. */
   title?: string
-  /**
-   * Semantic colour bucket for the border. Defaults to `Severity.Info`.
-   * Ignored when `borderColor` is set.
-   */
+  /** Semantic colour bucket for the border. Defaults to `Severity.Neutral`. */
   severity?: Severity
-  /** Raw colour override for the border. Wins over `severity` when set. */
-  borderColor?: string
-  /** Panel background. Defaults to `theme.bg`. */
-  backgroundColor?: string
   /** Box sizing. Defaults to "50%" wide and 12 rows tall. */
   width?: Dimension
   height?: Dimension
   /** Position offsets. Default centres the modal at 25%/25%. */
   top?: Dimension
   left?: Dimension
-  /** Inner padding on the long axis. Default 2. */
-  paddingX?: number
-  /** Inner padding on the short axis. Default 1. */
-  paddingY?: number
   /** Stack order. Default 10. Raise for nested modals. */
   zIndex?: number
+  /** Remove inner padding for full-bleed content (e.g. compound pickers). */
+  flush?: boolean
 }
 
 /**
@@ -41,10 +32,7 @@ export interface ModalProps extends ParentProps {
 export function Modal(props: ModalProps): JSX.Element {
   const theme = useTheme()
 
-  const border = (): string => {
-    if (props.borderColor !== undefined) return props.borderColor
-    return severityColor(theme, props.severity ?? Severity.Info)
-  }
+  const border = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
 
   return (
     <Show when={props.when()}>
@@ -57,13 +45,13 @@ export function Modal(props: ModalProps): JSX.Element {
         border
         borderStyle="rounded"
         borderColor={border()}
-        backgroundColor={props.backgroundColor ?? theme.bg}
+        backgroundColor={theme.bg}
         title={props.title}
         titleAlignment="left"
-        paddingTop={props.paddingY ?? 1}
-        paddingBottom={props.paddingY ?? 1}
-        paddingLeft={props.paddingX ?? 2}
-        paddingRight={props.paddingX ?? 2}
+        paddingTop={props.flush ? 0 : 1}
+        paddingBottom={props.flush ? 0 : 1}
+        paddingLeft={props.flush ? 0 : 2}
+        paddingRight={props.flush ? 0 : 2}
         flexDirection="column"
         zIndex={props.zIndex ?? 10}
       >

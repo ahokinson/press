@@ -1,3 +1,4 @@
+import { Icon } from "@icons"
 import { useTheme } from "@theme/provider.tsx"
 import { For, type JSX, Show } from "solid-js"
 
@@ -29,10 +30,10 @@ enum StepStatus {
 }
 
 const DEFAULT_GLYPHS: Required<WizardGlyphs> = {
-  done: "●",
-  active: "◉",
-  pending: "○",
-  connector: "─",
+  done: Icon.circleFilled.char,
+  active: Icon.circleDot.char,
+  pending: Icon.circleEmpty.char,
+  connector: Icon.lineHorizontal.char,
 }
 
 /**

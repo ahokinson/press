@@ -32,16 +32,14 @@ export const Spinners = {
 
 export interface SpinnerProps {
   label?: string
-  color?: string
-  frames?: readonly string[]
 }
 
 /** Inline spinner with optional label. */
 export function Spinner(props: SpinnerProps): JSX.Element {
   const theme = useTheme()
-  const frame = useFrame(props.frames ?? DEFAULT_FRAMES)
+  const frame = useFrame()
   return (
-    <text fg={props.color ?? theme.accent}>
+    <text fg={theme.accent}>
       {frame()}
       <Show when={props.label}>{` ${props.label}`}</Show>
     </text>

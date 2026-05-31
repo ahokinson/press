@@ -1,3 +1,4 @@
+import { Icon } from "@icons"
 import type { Theme } from "@theme/palette.ts"
 
 /**
@@ -32,6 +33,17 @@ export function severityColor(theme: Theme, severity: Severity): string {
       return theme.err
     case Severity.Neutral:
       return theme.muted
+  }
+}
+
+/** Canonical Nerd Font glyph character for a severity level. Returns `null` for Neutral. */
+export function severityGlyph(severity: Severity): string | null {
+  switch (severity) {
+    case Severity.Info:    return Icon.circleInfo.char
+    case Severity.Success: return Icon.circleSuccess.char
+    case Severity.Warning: return Icon.triangleWarning.char
+    case Severity.Error:   return Icon.circleError.char
+    case Severity.Neutral: return null
   }
 }
 

@@ -53,8 +53,7 @@ export function Picker<T>(props: PickerProps<T>): JSX.Element {
       title={props.title ?? "Picker"}
       width={props.width ?? "60%"}
       height={props.height ?? "60%"}
-      paddingX={0}
-      paddingY={0}
+      flush
     >
       <box flexDirection="column" flexGrow={1}>
         <InputBar

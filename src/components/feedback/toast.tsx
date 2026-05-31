@@ -1,5 +1,5 @@
 import { Strip } from "@components/atom/strip.tsx"
-import { Severity, severityColor } from "@theme"
+import { Severity, severityColor, severityGlyph } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type Accessor, type JSX, Show } from "solid-js"
 
@@ -8,12 +8,10 @@ export interface ToastProps {
   message: () => string | null
   /** Trailing decoration (e.g. shrinking trail from `createStatusState`). */
   trail?: () => string
-  /** Semantic colour bucket. Defaults to `Severity.Info`. Ignored when `color` is set. */
+  /** Semantic colour bucket. Defaults to `Severity.Neutral`. */
   severity?: Severity
-  /** Raw colour override for the message text. Wins over `severity`. */
-  color?: string
-  /** Leading glyph (typically a Nerd Font icon). Painted in the same colour. */
-  icon?: string
+  /** Leading glyph character override. When omitted, the canonical severity glyph is used (none for Neutral). */
+  glyph?: string
 }
 
 /**
@@ -27,18 +25,16 @@ export interface ToastProps {
 export function Toast(props: ToastProps): JSX.Element {
   const theme = useTheme()
 
-  const color = (): string => {
-    if (props.color !== undefined) return props.color
-    return severityColor(theme, props.severity ?? Severity.Info)
-  }
+  const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
+  const glyph = (): string | null => props.glyph !== undefined ? props.glyph : severityGlyph(props.severity ?? Severity.Neutral)
 
   return (
     <Show when={props.message()}>
       {(msg: Accessor<string>) => (
         <Strip paddingX={1}>
           <text fg={color()}>
-            <Show when={props.icon}>
-              <span>{`${props.icon} `}</span>
+            <Show when={glyph()}>
+              <span>{`${glyph()} `}</span>
             </Show>
             <span>{msg()}</span>
             <Show when={props.trail?.()}>

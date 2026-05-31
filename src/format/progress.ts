@@ -1,3 +1,5 @@
+import { Icon } from "@icons"
+
 /**
  * Split a progress run into filled and unfilled character strings.
  *
@@ -10,8 +12,8 @@ export function progressParts(
   value: number,
   max: number,
   width: number,
-  filledChar: string = "█",
-  unfilledChar: string = "░",
+  filledChar: string = Icon.blockFilled.char,
+  unfilledChar: string = Icon.blockShaded.char,
 ): { filled: string; unfilled: string } {
   const usableWidth = Math.max(1, Math.floor(width))
   if (max <= 0) return { filled: filledChar.repeat(usableWidth), unfilled: "" }

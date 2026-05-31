@@ -7,9 +7,6 @@ export interface SectionProps {
   label: string
   count?: number
   collapsed?: () => boolean
-  chevronCollapsed?: string
-  chevronExpanded?: string
-  background?: string
 }
 
 /**
@@ -18,13 +15,9 @@ export interface SectionProps {
  */
 export function Section(props: SectionProps): JSX.Element {
   const theme = useTheme()
-  const chevron = () => {
-    const collapsed = props.collapsed?.() ?? false
-    if (collapsed) return props.chevronCollapsed ?? Icon.chevronRight.char
-    return props.chevronExpanded ?? Icon.chevronDown.char
-  }
+  const chevron = () => (props.collapsed?.() ?? false) ? Icon.chevronRight.char : Icon.chevronDown.char
   return (
-    <box height={1} backgroundColor={props.background ?? theme.headerBg}>
+    <box height={1} backgroundColor={theme.headerBg}>
       <text>
         <span style={{ fg: theme.subtext }}>{` ${chevron()} `}</span>
         <span style={{ fg: theme.subtext, attributes: BOLD }}>{props.label}</span>

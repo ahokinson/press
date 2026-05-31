@@ -1,3 +1,4 @@
+import { Icon } from "@icons"
 import type { TreeState, VisibleTreeRow } from "@models/cursor/tree.ts"
 import { BOLD } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
@@ -17,8 +18,8 @@ export interface TreeProps<T> {
   render: (ctx: TreeRenderContext<T>) => JSX.Element
 }
 
-const CHEVRON_EXPANDED = "▾"
-const CHEVRON_COLLAPSED = "▸"
+const CHEVRON_EXPANDED = Icon.caretDown.char
+const CHEVRON_COLLAPSED = Icon.caretRight.char
 const LEAF = " "
 const INDENT = "  "
 

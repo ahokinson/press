@@ -3,6 +3,7 @@ import { Skeleton } from "@components/atom/skeleton.tsx"
 import { Callout } from "@components/feedback/callout.tsx"
 import { Icon } from "@icons"
 import type { DataLoaderState } from "@models/loader/index.ts"
+import { Severity } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type JSX, Match, Show, Switch } from "solid-js"
 
@@ -69,7 +70,7 @@ export function AsyncView<T>(props: AsyncViewProps<T>): JSX.Element {
     return err instanceof Error ? err.message : String(err)
   }
 
-  const defaultSkeleton = (i: number): JSX.Element => <text fg={theme.dim}>{"─".repeat(8 + (i % 4) * 4)}</text>
+  const defaultSkeleton = (i: number): JSX.Element => <text fg={theme.dim}>{Icon.lineHorizontal.char.repeat(8 + (i % 4) * 4)}</text>
 
   // Note: there is no explicit Match for "refreshing". During a refresh,
   // isEmpty() and hasData() both include "refreshing" so stale data stays
@@ -80,7 +81,7 @@ export function AsyncView<T>(props: AsyncViewProps<T>): JSX.Element {
         <Skeleton rows={() => props.skeletonRows ?? 5} renderRow={props.renderSkeleton ?? defaultSkeleton} />
       </Match>
       <Match when={status() === "error"}>
-        <Callout color={theme.err} icon={Icon.errorCircle.char}>
+        <Callout variant="rail" severity={Severity.Error}>
           {errorMessage()}
         </Callout>
       </Match>

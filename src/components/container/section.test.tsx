@@ -27,22 +27,12 @@ describe("Section", () => {
     expect(frame).toContain(Icon.chevronRight.char)
   })
 
-  test("custom chevron glyphs are respected", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(
-      () => <Section label="X" collapsed={() => true} chevronCollapsed=">" chevronExpanded="v" />,
-      { width: 10, height: 1 },
-    )
-    await renderOnce()
-    expect(captureCharFrame()).toContain(">")
-  })
-
   test("hides the count when undefined", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(() => <Section label="NoCount" background="#222222" />, {
+    const { captureCharFrame, renderOnce } = await testRender(() => <Section label="NoCount" />, {
       width: 20,
       height: 1,
     })
     await renderOnce()
-    const frame = captureCharFrame()
-    expect(frame).toContain("NoCount")
+    expect(captureCharFrame()).toContain("NoCount")
   })
 })

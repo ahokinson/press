@@ -8,11 +8,10 @@ export { Skeleton, type SkeletonProps } from "@components/atom/skeleton.tsx"
 export { Spinner, type SpinnerProps, Spinners } from "@components/atom/spinner.tsx"
 export { Strip, type StripProps } from "@components/atom/strip.tsx"
 export { Truncated, type TruncatedProps } from "@components/atom/truncated.tsx"
-export { Card, type CardProps } from "@components/container/card.tsx"
+export { Box, type BoxProps } from "@components/container/box.tsx"
 export { Header, type HeaderProps } from "@components/container/header.tsx"
 export { List, type ListProps } from "@components/container/list.tsx"
 export { MultiList, type MultiListProps } from "@components/container/multiList.tsx"
-export { Pane, type PaneProps } from "@components/container/pane.tsx"
 export { createScrollboxOptions } from "@components/container/scroll/index.ts"
 export { Section, type SectionProps } from "@components/container/section.tsx"
 export {
@@ -54,8 +53,7 @@ export {
   type WizardRailProps,
   type WizardStep,
 } from "@components/display/wizard.tsx"
-export { Banner, type BannerProps } from "@components/feedback/banner.tsx"
-export { Callout, type CalloutProps } from "@components/feedback/callout.tsx"
+export { Callout, type CalloutProps, type CalloutVariant } from "@components/feedback/callout.tsx"
 export {
   type KeyHint,
   StatusBar,
