@@ -1,6 +1,5 @@
 {
-  "name": "press-tui",
-  "displayName": "Press TUI",
+  "name": "press",
   "version": "1.0.0",
-  "description": "Expert mode for building terminal UIs with @ahokinson/press"
+  "description": "Loads the press API reference, architecture guide, and pattern library into context"
 }

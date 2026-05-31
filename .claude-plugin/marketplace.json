@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "press",
+  "description": "Claude Code plugin for @ahokinson/press",
+  "owner": {
+    "name": "ahokinson",
+    "email": "1762048+ahokinson@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "press",
+      "description": "Loads the press API reference, architecture guide, and pattern library into context",
+      "source": ".",
+      "category": "productivity"
+    }
+  ]
+}

@@ -52,23 +52,13 @@ In your `tsconfig.json`:
 
 ## Claude Code plugin
 
-Press ships with a Claude Code plugin that activates expert mode for building press TUIs.
-
-**Install:**
+Press ships with a Claude Code plugin. Install it once, then invoke `/press` in any session to load the full API reference, architecture guide, and pattern library into context.
 
 ```sh
-claude plugin install /path/to/press
+claude plugin install ahokinson/press
 ```
 
-Or from the git repo directly:
-
-```sh
-claude plugin install https://github.com/ahokinson/press
-```
-
-**Use:**
-
-Type `/press` in any Claude Code session to load the full API reference, architecture guide, and pattern library. The docs stay in context for the session; no need to re-invoke.
+After install, type `/press` in any Claude Code session.
 
 ## Contributing
 
