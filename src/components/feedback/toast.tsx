@@ -26,7 +26,8 @@ export function Toast(props: ToastProps): JSX.Element {
   const theme = useTheme()
 
   const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
-  const glyph = (): string | null => props.glyph !== undefined ? props.glyph : severityGlyph(props.severity ?? Severity.Neutral)
+  const glyph = (): string | null =>
+    props.glyph !== undefined ? props.glyph : severityGlyph(props.severity ?? Severity.Neutral)
 
   return (
     <Show when={props.message()}>

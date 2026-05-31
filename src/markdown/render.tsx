@@ -61,7 +61,13 @@ function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
     }
     case BlockKind.Code:
       return (
-        <box flexDirection="column" marginBottom={1} paddingLeft={2} paddingRight={2} backgroundColor={theme.backgroundElevated}>
+        <box
+          flexDirection="column"
+          marginBottom={1}
+          paddingLeft={2}
+          paddingRight={2}
+          backgroundColor={theme.backgroundElevated}
+        >
           <For each={block.lines}>{(line) => <text fg={theme.textSub}>{line}</text>}</For>
         </box>
       )
@@ -78,7 +84,9 @@ function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
                   <For each={lines}>
                     {(line, lineIndex) => (
                       <text>
-                        <span style={{ fg: theme.textDim }}>{lineIndex() === 0 ? `${marker} ` : " ".repeat(indent)}</span>
+                        <span style={{ fg: theme.textDim }}>
+                          {lineIndex() === 0 ? `${marker} ` : " ".repeat(indent)}
+                        </span>
                         {renderSpans(line, theme)}
                       </text>
                     )}

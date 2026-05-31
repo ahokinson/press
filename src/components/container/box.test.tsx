@@ -17,10 +17,7 @@ describe("Box", () => {
   })
 
   test("renders title string in the header bar", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(
-      () => <Box title="Settings" />,
-      { width: 25, height: 5 },
-    )
+    const { captureCharFrame, renderOnce } = await testRender(() => <Box title="Settings" />, { width: 25, height: 5 })
     await renderOnce()
     expect(captureCharFrame()).toContain("Settings")
   })
@@ -37,10 +34,10 @@ describe("Box", () => {
   })
 
   test("accepts a JSX title", async () => {
-    const { captureCharFrame, renderOnce } = await testRender(
-      () => <Box title={<text>Custom</text>} />,
-      { width: 25, height: 5 },
-    )
+    const { captureCharFrame, renderOnce } = await testRender(() => <Box title={<text>Custom</text>} />, {
+      width: 25,
+      height: 5,
+    })
     await renderOnce()
     expect(captureCharFrame()).toContain("Custom")
   })

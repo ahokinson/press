@@ -104,7 +104,9 @@ function defaultRow<T>(context: PickerRowContext<T>): JSX.Element {
           <span style={{ fg: theme.textDim }}>{` ${context.shape().group} `}</span>
         </Show>
         <Show when={context.shape().hint}>
-          <span style={{ fg: theme.text, bg: theme.backgroundSelection, attributes: BOLD }}>{` ${context.shape().hint} `}</span>
+          <span
+            style={{ fg: theme.text, bg: theme.backgroundSelection, attributes: BOLD }}
+          >{` ${context.shape().hint} `}</span>
         </Show>
       </text>
     </box>

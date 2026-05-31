@@ -70,7 +70,9 @@ export function AsyncView<T>(props: AsyncViewProps<T>): JSX.Element {
     return err instanceof Error ? err.message : String(err)
   }
 
-  const defaultSkeleton = (i: number): JSX.Element => <text fg={theme.textDim}>{Icon.lineHorizontal.char.repeat(8 + (i % 4) * 4)}</text>
+  const defaultSkeleton = (i: number): JSX.Element => (
+    <text fg={theme.textDim}>{Icon.lineHorizontal.char.repeat(8 + (i % 4) * 4)}</text>
+  )
 
   // Note: there is no explicit Match for "refreshing". During a refresh,
   // isEmpty() and hasData() both include "refreshing" so stale data stays

@@ -38,9 +38,7 @@ export function Callout(props: CalloutProps): JSX.Element {
       <Show when={glyph()}>
         <text fg={color()}>{`${glyph()}  `}</text>
       </Show>
-      {typeof props.children === "string"
-        ? <text fg={color()}>{props.children}</text>
-        : props.children}
+      {typeof props.children === "string" ? <text fg={color()}>{props.children}</text> : props.children}
     </Strip>
   )
 }

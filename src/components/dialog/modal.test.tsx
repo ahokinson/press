@@ -65,15 +65,7 @@ describe("Modal", () => {
   test("width / height / top / left / zIndex pass through", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
-        <Modal
-          when={() => true}
-          title=" sized "
-          width={30}
-          height={6}
-          top={1}
-          left={2}
-          zIndex={20}
-        >
+        <Modal when={() => true} title=" sized " width={30} height={6} top={1} left={2} zIndex={20}>
           <text>sized body</text>
         </Modal>
       ),

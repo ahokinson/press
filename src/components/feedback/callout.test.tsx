@@ -1,9 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import { Callout } from "@components/feedback/callout.tsx"
-import { testRender } from "@opentui/solid"
 import { Icon } from "@icons"
+import { testRender } from "@opentui/solid"
 import { Severity } from "@theme"
-import type { CalloutVariant } from "@components/feedback/callout.tsx"
 
 describe("Callout", () => {
   test("renders the rail glyph and string children", async () => {
@@ -19,7 +18,11 @@ describe("Callout", () => {
 
   test("no glyph shown without explicit glyph prop", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Callout variant="rail" severity={Severity.Error}>error</Callout>,
+      () => (
+        <Callout variant="rail" severity={Severity.Error}>
+          error
+        </Callout>
+      ),
       { width: 30, height: 1 },
     )
     await renderOnce()
@@ -30,7 +33,11 @@ describe("Callout", () => {
 
   test("Neutral severity renders no auto glyph", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Callout variant="rail" severity={Severity.Neutral}>note</Callout>,
+      () => (
+        <Callout variant="rail" severity={Severity.Neutral}>
+          note
+        </Callout>
+      ),
       { width: 20, height: 1 },
     )
     await renderOnce()
@@ -43,7 +50,11 @@ describe("Callout", () => {
 
   test("explicit glyph prop renders before children", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Callout variant="rail" severity={Severity.Error} glyph="!">error</Callout>,
+      () => (
+        <Callout variant="rail" severity={Severity.Error} glyph="!">
+          error
+        </Callout>
+      ),
       { width: 20, height: 1 },
     )
     await renderOnce()

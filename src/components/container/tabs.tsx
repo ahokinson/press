@@ -50,10 +50,7 @@ export function Tabs(props: TabsProps): JSX.Element {
             return (
               // biome-ignore lint/a11y/noStaticElementInteractions: opentui <box> is the sole TUI interaction primitive
               <box onMouseDown={() => props.onActivate?.(tab.key)}>
-                <text
-                  attributes={isActive() ? BOLD | UNDERLINE : 0}
-                  fg={isActive() ? theme.accent : theme.textDim}
-                >
+                <text attributes={isActive() ? BOLD | UNDERLINE : 0} fg={isActive() ? theme.accent : theme.textDim}>
                   <span>{` ${tab.label}`}</span>
                   <Show when={tab.badge !== undefined}>
                     <span style={{ fg: isActive() ? theme.accent : theme.textDim }}>{` ${tab.badge}`}</span>

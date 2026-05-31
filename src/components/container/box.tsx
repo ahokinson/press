@@ -24,7 +24,7 @@ export interface BoxProps extends ParentProps {
 export function Box(props: BoxProps): JSX.Element {
   const theme = useTheme()
   const pad = () => props.padding ?? 1
-  const border = () => props.focused?.() ? theme.borderFocused : theme.border
+  const border = () => (props.focused?.() ? theme.borderFocused : theme.border)
 
   return (
     <box
@@ -44,9 +44,13 @@ export function Box(props: BoxProps): JSX.Element {
     >
       <Show when={props.title !== undefined}>
         <box height={1} backgroundColor={theme.backgroundChrome} paddingLeft={1} paddingRight={1}>
-          {typeof props.title === "string"
-            ? <text fg={theme.accent} attributes={BOLD}>{props.title}</text>
-            : props.title}
+          {typeof props.title === "string" ? (
+            <text fg={theme.accent} attributes={BOLD}>
+              {props.title}
+            </text>
+          ) : (
+            props.title
+          )}
         </box>
       </Show>
       <Show when={props.description}>

@@ -15,7 +15,7 @@ export interface SectionProps {
  */
 export function Section(props: SectionProps): JSX.Element {
   const theme = useTheme()
-  const chevron = () => (props.collapsed?.() ?? false) ? Icon.chevronRight.char : Icon.chevronDown.char
+  const chevron = () => ((props.collapsed?.() ?? false) ? Icon.chevronRight.char : Icon.chevronDown.char)
   return (
     <box height={1} backgroundColor={theme.backgroundChrome}>
       <text>

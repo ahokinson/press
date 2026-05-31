@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import { Toast } from "@components/feedback/toast.tsx"
-import { testRender } from "@opentui/solid"
 import { Icon } from "@icons"
+import { testRender } from "@opentui/solid"
 import { Severity } from "@theme"
 import { createSignal } from "solid-js"
 

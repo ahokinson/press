@@ -87,8 +87,8 @@ export class ChartRenderable extends Renderable {
     this._timestamps = options.timestamps ?? []
     this._upColor = RGBA.fromHex(options.upColor ?? options.theme?.ok ?? "#7dd87a")
     this._downColor = RGBA.fromHex(options.downColor ?? options.theme?.err ?? "#ef6b6b")
-    this._axisColor = RGBA.fromHex(options.axisColor ?? options.theme?.dim ?? "#666666")
-    this._refColor = RGBA.fromHex(options.refColor ?? options.theme?.faint ?? "#444444")
+    this._axisColor = RGBA.fromHex(options.axisColor ?? options.theme?.textDim ?? "#666666")
+    this._refColor = RGBA.fromHex(options.refColor ?? options.theme?.textFaint ?? "#444444")
     this._yMin = options.yMin
     this._yMax = options.yMax
     this._refLines = options.refLines ?? []

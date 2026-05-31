@@ -39,11 +39,16 @@ export function severityColor(theme: Theme, severity: Severity): string {
 /** Canonical Nerd Font glyph character for a severity level. Returns `null` for Neutral. */
 export function severityGlyph(severity: Severity): string | null {
   switch (severity) {
-    case Severity.Info:    return Icon.circleInfo.char
-    case Severity.Success: return Icon.circleSuccess.char
-    case Severity.Warning: return Icon.triangleWarning.char
-    case Severity.Error:   return Icon.circleError.char
-    case Severity.Neutral: return null
+    case Severity.Info:
+      return Icon.circleInfo.char
+    case Severity.Success:
+      return Icon.circleSuccess.char
+    case Severity.Warning:
+      return Icon.triangleWarning.char
+    case Severity.Error:
+      return Icon.circleError.char
+    case Severity.Neutral:
+      return null
   }
 }
 
