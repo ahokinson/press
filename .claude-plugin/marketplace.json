@@ -10,7 +10,7 @@
     {
       "name": "press",
       "description": "Loads the press API reference, architecture guide, and pattern library into context",
-      "source": ".",
+      "source": "./",
       "category": "productivity"
     }
   ]
