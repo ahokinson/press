@@ -9,6 +9,43 @@ description: Load the press API reference, architecture guide, and pattern libra
 
 !`cat "${CLAUDE_SKILL_DIR}/../../docs/patterns.md"`
 
+## Install
+
+`@ahokinson/press` is published to GitHub Packages, not the public npm registry. Users must configure their package manager to authenticate with GitHub Packages for the `@ahokinson` scope before installing.
+
+**Bun** — add to `bunfig.toml`:
+
+```toml
+[install.scopes]
+"@ahokinson" = { token = "$GITHUB_TOKEN", url = "https://npm.pkg.github.com/" }
+```
+
+**npm / pnpm** — add to `.npmrc`:
+
+```
+@ahokinson:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+`GITHUB_TOKEN` must be a GitHub personal access token (classic or fine-grained) with at least `read:packages` scope. Once the registry is configured:
+
+```sh
+bun add @ahokinson/press
+bun add solid-js @opentui/core @opentui/solid
+bun add zod   # only if using press/io
+```
+
+Also add to `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "@opentui/solid"
+  }
+}
+```
+
 ## Usage rules
 
 - Models are created outside JSX components, at app root or passed as props. Never inside a component.
