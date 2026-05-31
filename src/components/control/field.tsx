@@ -18,7 +18,7 @@ export function Field(props: FieldProps): JSX.Element {
   return (
     <box flexDirection="row">
       <box width={props.labelWidth ?? 12}>
-        <text fg={props.labelColor ?? theme.dim} attributes={props.bold ? BOLD : 0}>
+        <text fg={props.labelColor ?? theme.textDim} attributes={props.bold ? BOLD : 0}>
           {props.label}
         </text>
       </box>

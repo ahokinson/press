@@ -58,7 +58,7 @@ describe("Box", () => {
     expect(captureCharFrame()).toContain("focused")
   })
 
-  test("unfocused renders with faint border", async () => {
+  test("unfocused renders with idle border", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
         <Box focused={() => false} padding={1}>
@@ -71,7 +71,7 @@ describe("Box", () => {
     expect(captureCharFrame()).toContain("bordered")
   })
 
-  test("no focused prop renders with faint border", async () => {
+  test("no focused prop renders with idle border", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
         <Box>

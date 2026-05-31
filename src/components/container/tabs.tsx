@@ -40,7 +40,7 @@ export function Tabs(props: TabsProps): JSX.Element {
         flexDirection={isVertical() ? "column" : "row"}
         height={isVertical() ? undefined : 1}
         width={isVertical() ? undefined : "100%"}
-        backgroundColor={theme.headerBg}
+        backgroundColor={theme.backgroundChrome}
         paddingLeft={isVertical() ? 0 : 1}
         paddingRight={isVertical() ? 0 : 1}
       >
@@ -52,11 +52,11 @@ export function Tabs(props: TabsProps): JSX.Element {
               <box onMouseDown={() => props.onActivate?.(tab.key)}>
                 <text
                   attributes={isActive() ? BOLD | UNDERLINE : 0}
-                  fg={isActive() ? theme.accent : theme.dim}
+                  fg={isActive() ? theme.accent : theme.textDim}
                 >
                   <span>{` ${tab.label}`}</span>
                   <Show when={tab.badge !== undefined}>
-                    <span style={{ fg: isActive() ? theme.accent : theme.dim }}>{` ${tab.badge}`}</span>
+                    <span style={{ fg: isActive() ? theme.accent : theme.textDim }}>{` ${tab.badge}`}</span>
                   </Show>
                   <span> </span>
                 </text>

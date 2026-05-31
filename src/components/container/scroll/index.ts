@@ -11,8 +11,8 @@ export function createScrollboxOptions(theme: Theme) {
     verticalScrollbarOptions: {
       showArrows: false,
       trackOptions: {
-        backgroundColor: theme.bgAlt,
-        foregroundColor: theme.faint,
+        backgroundColor: theme.backgroundElevated,
+        foregroundColor: theme.textFaint,
       },
     },
     scrollAcceleration: new MacOSScrollAccel(),

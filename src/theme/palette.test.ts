@@ -7,10 +7,10 @@ describe("makeTheme", () => {
     const theme = makeTheme(flavors.mocha.colors)
     const tokens = [
       "text",
-      "subtext",
-      "muted",
-      "dim",
-      "faint",
+      "textSub",
+      "textMuted",
+      "textDim",
+      "textFaint",
       "accent",
       "ok",
       "warn",
@@ -22,11 +22,12 @@ describe("makeTheme", () => {
       "syntaxType",
       "syntaxSubheading",
       "syntaxInlineCode",
-      "bg",
-      "bgAlt",
-      "bgHighlight",
-      "headerBg",
+      "background",
+      "backgroundElevated",
+      "backgroundSelection",
+      "backgroundChrome",
       "border",
+      "borderFocused",
       "crust",
     ] as const
     for (const token of tokens) {
@@ -38,13 +39,13 @@ describe("makeTheme", () => {
   test("returns palette-specific values (mocha differs from frappé)", () => {
     const mocha = makeTheme(flavors.mocha.colors)
     const frappe = makeTheme(flavors.frappe.colors)
-    expect(mocha.bg).not.toBe(frappe.bg)
+    expect(mocha.background).not.toBe(frappe.background)
   })
 })
 
 describe("defaultTheme", () => {
   test("matches the Frappé palette", () => {
-    expect(defaultTheme.bg).toBe(flavors.frappe.colors.base.hex)
+    expect(defaultTheme.background).toBe(flavors.frappe.colors.base.hex)
     expect(defaultTheme.accent).toBe(flavors.frappe.colors.blue.hex)
   })
 })
@@ -53,13 +54,13 @@ describe("createTheme", () => {
   test("merges extensions onto the default Frappé palette", () => {
     const theme = createTheme({ brand: "#deadbe" })
     expect(theme.brand).toBe("#deadbe")
-    expect(theme.bg).toBe(flavors.frappe.colors.base.hex)
+    expect(theme.background).toBe(flavors.frappe.colors.base.hex)
   })
 
   test("accepts a custom palette", () => {
     const theme = createTheme({ brand: "#abcdef" }, flavors.macchiato.colors)
     expect(theme.brand).toBe("#abcdef")
-    expect(theme.bg).toBe(flavors.macchiato.colors.base.hex)
+    expect(theme.background).toBe(flavors.macchiato.colors.base.hex)
   })
 
   test("extension keys can shadow base tokens", () => {

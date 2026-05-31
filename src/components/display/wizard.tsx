@@ -75,14 +75,14 @@ export function WizardRail<TStep extends string>(props: WizardRailProps<TStep>):
               case StepStatus.Active:
                 return theme.text
               case StepStatus.Pending:
-                return theme.dim
+                return theme.textDim
             }
           }
           return (
             <text>
               <span style={{ fg: color() }}>{`${glyph()} ${step.label}`}</span>
               <Show when={index() < props.steps.length - 1}>
-                <span style={{ fg: theme.faint }}>{` ${glyphs().connector} `}</span>
+                <span style={{ fg: theme.textFaint }}>{` ${glyphs().connector} `}</span>
               </Show>
             </text>
           )

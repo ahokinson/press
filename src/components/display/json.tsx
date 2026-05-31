@@ -52,9 +52,9 @@ export function Json(props: JsonProps): JSX.Element {
     str: props.colors?.str ?? theme.ok,
     num: props.colors?.num ?? theme.syntaxNum,
     bool: props.colors?.bool ?? theme.syntaxBool,
-    nul: props.colors?.nul ?? theme.dim,
+    nul: props.colors?.nul ?? theme.textDim,
     type: props.colors?.type ?? theme.syntaxType,
-    punct: props.colors?.punct ?? theme.faint,
+    punct: props.colors?.punct ?? theme.textFaint,
   }
 
   function formatPrimitive(value: unknown): { text: string; color: string } {

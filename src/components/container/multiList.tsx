@@ -62,7 +62,7 @@ export function MultiList<T>(props: MultiListProps<T>): JSX.Element {
         const off = props.uncheckedChar ?? UNCHECKED
         return (
           <>
-            <text fg={checked() ? theme.accent : theme.faint}>{`${checked() ? on : off} `}</text>
+            <text fg={checked() ? theme.accent : theme.textFaint}>{`${checked() ? on : off} `}</text>
             {props.renderItem(item, index, active, checked)}
           </>
         )

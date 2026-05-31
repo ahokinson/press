@@ -37,18 +37,18 @@ export function InputBar(props: InputBarProps): JSX.Element {
       paddingLeft={1}
       paddingRight={1}
       justifyContent={props.trailing ? "space-between" : "flex-start"}
-      backgroundColor={theme.bgAlt}
+      backgroundColor={theme.backgroundElevated}
     >
       <text>
         <span style={{ fg: theme.accent, attributes: BOLD }}>{props.label}</span>
-        <span style={{ fg: theme.faint }}>{separator()}</span>
+        <span style={{ fg: theme.textFaint }}>{separator()}</span>
         <span style={{ fg: theme.text }}>{props.buffer() || placeholder()}</span>
         <span style={{ fg: theme.accent }}>{cursor()}</span>
       </text>
       <Show when={trailing()}>
         {(value: Accessor<string | JSX.Element>) => {
           const trailingValue = value()
-          return typeof trailingValue === "string" ? <text fg={theme.dim}>{trailingValue}</text> : trailingValue
+          return typeof trailingValue === "string" ? <text fg={theme.textDim}>{trailingValue}</text> : trailingValue
         }}
       </Show>
     </box>

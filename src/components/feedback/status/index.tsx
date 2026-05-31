@@ -27,7 +27,7 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
       justifyContent="space-between"
       paddingLeft={1}
       paddingRight={1}
-      backgroundColor={theme.headerBg}
+      backgroundColor={theme.backgroundChrome}
     >
       <text>
         <For each={props.hints()}>
@@ -35,7 +35,7 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
             <>
               <KeyChip hint={hint} />
               <Show when={index() < props.hints().length - 1}>
-                <span style={{ fg: theme.faint }}> · </span>
+                <span style={{ fg: theme.textFaint }}> · </span>
               </Show>
             </>
           )}

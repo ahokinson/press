@@ -17,11 +17,11 @@ export function Section(props: SectionProps): JSX.Element {
   const theme = useTheme()
   const chevron = () => (props.collapsed?.() ?? false) ? Icon.chevronRight.char : Icon.chevronDown.char
   return (
-    <box height={1} backgroundColor={theme.headerBg}>
+    <box height={1} backgroundColor={theme.backgroundChrome}>
       <text>
-        <span style={{ fg: theme.subtext }}>{` ${chevron()} `}</span>
-        <span style={{ fg: theme.subtext, attributes: BOLD }}>{props.label}</span>
-        {props.count !== undefined && <span style={{ fg: theme.dim }}>{` ${props.count}`}</span>}
+        <span style={{ fg: theme.textSub }}>{` ${chevron()} `}</span>
+        <span style={{ fg: theme.textSub, attributes: BOLD }}>{props.label}</span>
+        {props.count !== undefined && <span style={{ fg: theme.textDim }}>{` ${props.count}`}</span>}
       </text>
     </box>
   )

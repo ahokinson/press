@@ -20,8 +20,8 @@ export function Truncated<T>(props: TruncatedProps<T>): JSX.Element {
 
   const renderOverflow = (n: number): JSX.Element => {
     const out = props.renderMore?.(n)
-    if (out === undefined) return <text fg={theme.dim}>{`+${n} more`}</text>
-    if (typeof out === "string") return <text fg={theme.dim}>{out}</text>
+    if (out === undefined) return <text fg={theme.textDim}>{`+${n} more`}</text>
+    if (typeof out === "string") return <text fg={theme.textDim}>{out}</text>
     return out
   }
 

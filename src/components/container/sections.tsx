@@ -91,7 +91,7 @@ export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): J
                         const globalIndex = createMemo(() => entry.startIndex + localIndex())
                         const selected = createMemo(() => globalIndex() === props.cursor())
                         return (
-                          <box flexDirection="row" backgroundColor={selected() ? theme.bgHighlight : undefined}>
+                          <box flexDirection="row" backgroundColor={selected() ? theme.backgroundSelection : undefined}>
                             {props.renderItem(item, globalIndex(), selected())}
                           </box>
                         )

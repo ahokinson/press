@@ -40,9 +40,9 @@ export function Tree<T>(props: TreeProps<T>): JSX.Element {
             return row.isExpanded ? CHEVRON_EXPANDED : CHEVRON_COLLAPSED
           }
           return (
-            <box flexDirection="row" height={1} backgroundColor={isCursor() ? theme.bgHighlight : undefined}>
-              <text fg={theme.dim}>{INDENT.repeat(row.depth)}</text>
-              <text fg={row.hasChildren ? theme.accent : theme.faint} attributes={isCursor() ? BOLD : 0}>
+            <box flexDirection="row" height={1} backgroundColor={isCursor() ? theme.backgroundSelection : undefined}>
+              <text fg={theme.textDim}>{INDENT.repeat(row.depth)}</text>
+              <text fg={row.hasChildren ? theme.accent : theme.textFaint} attributes={isCursor() ? BOLD : 0}>
                 {`${chevron()} `}
               </text>
               {props.render({ row, isCursor: isCursor() })}

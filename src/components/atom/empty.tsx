@@ -14,9 +14,9 @@ export function Empty(props: EmptyProps): JSX.Element {
   const theme = useTheme()
   return (
     <box flexGrow={1} justifyContent="center" alignItems="center" flexDirection="column" gap={1}>
-      <text fg={theme.faint}>{props.message}</text>
+      <text fg={theme.textFaint}>{props.message}</text>
       <Show when={props.hint}>
-        <text fg={theme.faint}>{props.hint}</text>
+        <text fg={theme.textFaint}>{props.hint}</text>
       </Show>
     </box>
   )

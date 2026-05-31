@@ -6,14 +6,14 @@ import { ThemeProvider, useTheme } from "@theme/provider.tsx"
 
 function Consumer() {
   const theme = useTheme()
-  return <text>{`bg=${theme.bg}`}</text>
+  return <text>{`bg=${theme.background}`}</text>
 }
 
 describe("ThemeProvider / useTheme", () => {
   test("returns the default theme without a provider", async () => {
     const { captureCharFrame, renderOnce } = await testRender(() => <Consumer />, { width: 30, height: 1 })
     await renderOnce()
-    expect(captureCharFrame()).toContain(`bg=${defaultTheme.bg}`)
+    expect(captureCharFrame()).toContain(`bg=${defaultTheme.background}`)
   })
 
   test("returns the provided theme inside a provider", async () => {
@@ -27,7 +27,7 @@ describe("ThemeProvider / useTheme", () => {
       { width: 30, height: 1 },
     )
     await renderOnce()
-    expect(captureCharFrame()).toContain(`bg=${mocha.bg}`)
+    expect(captureCharFrame()).toContain(`bg=${mocha.background}`)
   })
 
   test("provider with no value prop falls back to defaultTheme", async () => {
@@ -40,6 +40,6 @@ describe("ThemeProvider / useTheme", () => {
       { width: 30, height: 1 },
     )
     await renderOnce()
-    expect(captureCharFrame()).toContain(`bg=${defaultTheme.bg}`)
+    expect(captureCharFrame()).toContain(`bg=${defaultTheme.background}`)
   })
 })

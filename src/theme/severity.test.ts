@@ -8,7 +8,7 @@ describe("severityColor", () => {
     expect(severityColor(defaultTheme, Severity.Success)).toBe(defaultTheme.ok)
     expect(severityColor(defaultTheme, Severity.Warning)).toBe(defaultTheme.warn)
     expect(severityColor(defaultTheme, Severity.Error)).toBe(defaultTheme.err)
-    expect(severityColor(defaultTheme, Severity.Neutral)).toBe(defaultTheme.muted)
+    expect(severityColor(defaultTheme, Severity.Neutral)).toBe(defaultTheme.textMuted)
   })
 
   test("theme.severityColors overrides the default mapping for that bucket only", () => {
@@ -48,9 +48,9 @@ describe("changeOf", () => {
 })
 
 describe("changeColor", () => {
-  test("Up → ok, Down → err, Flat → muted", () => {
+  test("Up → ok, Down → err, Flat → textMuted", () => {
     expect(changeColor(defaultTheme, Change.Up)).toBe(defaultTheme.ok)
     expect(changeColor(defaultTheme, Change.Down)).toBe(defaultTheme.err)
-    expect(changeColor(defaultTheme, Change.Flat)).toBe(defaultTheme.muted)
+    expect(changeColor(defaultTheme, Change.Flat)).toBe(defaultTheme.textMuted)
   })
 })

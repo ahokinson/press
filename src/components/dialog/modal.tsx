@@ -45,7 +45,7 @@ export function Modal(props: ModalProps): JSX.Element {
         border
         borderStyle="rounded"
         borderColor={border()}
-        backgroundColor={theme.bg}
+        backgroundColor={theme.background}
         title={props.title}
         titleAlignment="left"
         paddingTop={props.flush ? 0 : 1}

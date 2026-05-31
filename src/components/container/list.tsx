@@ -75,7 +75,7 @@ export function List<T>(props: ListProps<T>): JSX.Element {
               return (
                 <box
                   flexDirection="row"
-                  backgroundColor={isActive() && props.focused?.() ? theme.bgHighlight : undefined}
+                  backgroundColor={isActive() && props.focused?.() ? theme.backgroundSelection : undefined}
                 >
                   {props.renderItem(item, i(), isActive)}
                 </box>

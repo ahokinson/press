@@ -53,8 +53,8 @@ const SORT_DESC = Icon.triangleDown.char
 /**
  * Sortable column-aligned data table. The active sort column's header paints
  * in `theme.accent` bold with a trailing ▲/▼. Other headers render in
- * `theme.muted`. The selected row (per `selected()`) gets
- * `theme.bgHighlight`. When `rows()` is empty and `loadingRows` is set,
+ * `theme.textMuted`. The selected row (per `selected()`) gets
+ * `theme.backgroundSelection`. When `rows()` is empty and `loadingRows` is set,
  * paints dashed placeholders via `Skeleton`.
  *
  * The caller owns the sort signal, selection signal, and the keymap. Click
@@ -76,7 +76,7 @@ export function Table<T>(props: TableProps<T>): JSX.Element {
 
   const headerFg = (column: Column<T>): string => {
     const sort = activeSort()
-    return sort && sort.key === column.key ? theme.accent : theme.muted
+    return sort && sort.key === column.key ? theme.accent : theme.textMuted
   }
 
   const headerBold = (column: Column<T>): 0 | 1 => {
@@ -112,7 +112,7 @@ export function Table<T>(props: TableProps<T>): JSX.Element {
                 <For each={props.columns}>
                   {(column) => (
                     <box width={column.width}>
-                      <text fg={theme.faint}>
+                      <text fg={theme.textFaint}>
                         {column.align === ColumnAlign.Right
                           ? padLeft(placeholder(Math.max(0, column.width - 1)), column.width)
                           : padRight(placeholder(Math.max(0, column.width - 1)), column.width)}
@@ -133,7 +133,7 @@ export function Table<T>(props: TableProps<T>): JSX.Element {
               <box
                 flexDirection="row"
                 height={1}
-                backgroundColor={isSelected() ? theme.bgHighlight : undefined}
+                backgroundColor={isSelected() ? theme.backgroundSelection : undefined}
                 onMouseDown={props.onRowClick ? () => props.onRowClick!(row) : undefined}
               >
                 <For each={props.columns}>

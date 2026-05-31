@@ -26,7 +26,7 @@ export function Progress(props: ProgressProps): JSX.Element {
   return (
     <text>
       <span style={{ fg: props.filledColor ?? theme.ok }}>{parts().filled}</span>
-      <span style={{ fg: props.unfilledColor ?? theme.faint }}>{parts().unfilled}</span>
+      <span style={{ fg: props.unfilledColor ?? theme.textFaint }}>{parts().unfilled}</span>
     </text>
   )
 }

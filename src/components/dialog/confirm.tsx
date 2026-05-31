@@ -34,7 +34,7 @@ export function ConfirmDialog(props: { action: () => ConfirmAction | null }): JS
           paddingBottom={1}
           paddingLeft={2}
           paddingRight={2}
-          backgroundColor={theme.bg}
+          backgroundColor={theme.background}
           border
           borderStyle="rounded"
           borderColor={severityColor(theme, action().destructive ? Severity.Error : Severity.Info)}
@@ -46,16 +46,16 @@ export function ConfirmDialog(props: { action: () => ConfirmAction | null }): JS
               {action().message}
             </text>
             <Show when={action().detail}>
-              <text fg={theme.muted} wrapMode="word">
+              <text fg={theme.textMuted} wrapMode="word">
                 {action().detail}
               </text>
             </Show>
-            <text fg={theme.dim}>
+            <text fg={theme.textDim}>
               <For each={action().keyHints ?? DEFAULT_HINTS}>
                 {(hint, index) => (
                   <>
                     <span>{hint.key}</span>
-                    <span style={{ fg: theme.faint }}>{` ${hint.action}`}</span>
+                    <span style={{ fg: theme.textFaint }}>{` ${hint.action}`}</span>
                     <Show when={index() < (action().keyHints ?? DEFAULT_HINTS).length - 1}>
                       <span> </span>
                     </Show>

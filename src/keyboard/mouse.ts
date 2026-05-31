@@ -39,7 +39,7 @@ export interface Hover {
  * / `onMouseOut` into a reactive boolean accessor.
  *
  *   const { hovered, handlers } = createHover()
- *   <box bg={hovered() ? theme.bgHighlight : theme.bg} {...handlers}>…</box>
+ *   <box bg={hovered() ? theme.backgroundSelection : theme.background} {...handlers}>…</box>
  */
 export function createHover(): Hover {
   const [hovered, setHovered] = createSignal(false)

@@ -16,7 +16,7 @@ const DEFAULT_WIDTH = 80
 /**
  * Render markdown into opentui boxes using the active theme. v1 supports ATX
  * headings (level-coloured, bold, no wrap), paragraphs (word-wrapped with
- * inline styles preserved per word), fenced code (full-row `bgAlt` block, no
+ * inline styles preserved per word), fenced code (full-row `backgroundElevated` block, no
  * wrap), single-level unordered and ordered lists, blockquotes (left `│`
  * gutter), and inline `code`, **bold**, *italic*, and links. Links render
  * as accent-coloured labels. The URL is not surfaced in v1.
@@ -36,7 +36,7 @@ const HEADING_COLOR = (theme: Theme, level: HeadingLevel): string => {
   if (level === 1) return theme.accent
   if (level === 2) return theme.syntaxKey
   if (level === 3) return theme.syntaxSubheading
-  return theme.dim
+  return theme.textDim
 }
 
 function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
@@ -61,8 +61,8 @@ function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
     }
     case BlockKind.Code:
       return (
-        <box flexDirection="column" marginBottom={1} paddingLeft={2} paddingRight={2} backgroundColor={theme.bgAlt}>
-          <For each={block.lines}>{(line) => <text fg={theme.subtext}>{line}</text>}</For>
+        <box flexDirection="column" marginBottom={1} paddingLeft={2} paddingRight={2} backgroundColor={theme.backgroundElevated}>
+          <For each={block.lines}>{(line) => <text fg={theme.textSub}>{line}</text>}</For>
         </box>
       )
     case BlockKind.List:
@@ -78,7 +78,7 @@ function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
                   <For each={lines}>
                     {(line, lineIndex) => (
                       <text>
-                        <span style={{ fg: theme.dim }}>{lineIndex() === 0 ? `${marker} ` : " ".repeat(indent)}</span>
+                        <span style={{ fg: theme.textDim }}>{lineIndex() === 0 ? `${marker} ` : " ".repeat(indent)}</span>
                         {renderSpans(line, theme)}
                       </text>
                     )}
@@ -96,7 +96,7 @@ function renderBlock(block: Block, width: number, theme: Theme): JSX.Element {
           <For each={lines}>
             {(line) => (
               <text>
-                <span style={{ fg: theme.dim }}>{"│ "}</span>
+                <span style={{ fg: theme.textDim }}>{"│ "}</span>
                 {renderSpans(line, theme)}
               </text>
             )}
@@ -118,9 +118,9 @@ function renderSpan(span: Inline, theme: Theme): JSX.Element {
     case InlineKind.Bold:
       return <span style={{ fg: theme.text, attributes: BOLD }}>{span.text}</span>
     case InlineKind.Italic:
-      return <span style={{ fg: theme.subtext, attributes: ITALIC }}>{span.text}</span>
+      return <span style={{ fg: theme.textSub, attributes: ITALIC }}>{span.text}</span>
     case InlineKind.Code:
-      return <span style={{ fg: theme.syntaxInlineCode, bg: theme.bgAlt }}>{span.text}</span>
+      return <span style={{ fg: theme.syntaxInlineCode, bg: theme.backgroundElevated }}>{span.text}</span>
     case InlineKind.Link:
       return <Link href={span.url}>{span.label}</Link>
   }

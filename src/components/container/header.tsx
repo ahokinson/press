@@ -23,7 +23,7 @@ export function Header(props: HeaderProps): JSX.Element {
       justifyContent="space-between"
       paddingLeft={1}
       paddingRight={1}
-      backgroundColor={theme.headerBg}
+      backgroundColor={theme.backgroundChrome}
     >
       <Show when={props.left} fallback={<text>{""}</text>}>
         {props.left?.()}

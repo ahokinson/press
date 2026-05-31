@@ -9,15 +9,15 @@ export interface KeyChipProps {
 
 /**
  * Inline `key + action` chip. Must be rendered inside a `<text>` element.
- * Returns two adjacent `<span>` elements: the key in bold on `bgHighlight`,
+ * Returns two adjacent `<span>` elements: the key in bold on `backgroundSelection`,
  * the action in `dim`. Shared between `StatusBar` and `HelpOverlay`.
  */
 export function KeyChip(props: KeyChipProps): JSX.Element {
   const theme = useTheme()
   return (
     <>
-      <span style={{ fg: theme.text, bg: theme.bgHighlight, attributes: BOLD }}>{` ${props.hint.key} `}</span>
-      <span style={{ fg: theme.dim }}>{` ${props.hint.action}`}</span>
+      <span style={{ fg: theme.text, bg: theme.backgroundSelection, attributes: BOLD }}>{` ${props.hint.key} `}</span>
+      <span style={{ fg: theme.textDim }}>{` ${props.hint.action}`}</span>
     </>
   )
 }

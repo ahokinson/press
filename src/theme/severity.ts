@@ -32,7 +32,7 @@ export function severityColor(theme: Theme, severity: Severity): string {
     case Severity.Error:
       return theme.err
     case Severity.Neutral:
-      return theme.muted
+      return theme.textMuted
   }
 }
 
@@ -77,6 +77,6 @@ export function changeColor(theme: Theme, change: Change): string {
     case Change.Down:
       return theme.err
     case Change.Flat:
-      return theme.muted
+      return theme.textMuted
   }
 }

@@ -75,7 +75,7 @@ export function Picker<T>(props: PickerProps<T>): JSX.Element {
                 const query = () => props.state.query()
                 const context: PickerRowContext<T> = { item, shape, query, active }
                 return (
-                  <box flexDirection="row" backgroundColor={active() ? theme.bgHighlight : undefined}>
+                  <box flexDirection="row" backgroundColor={active() ? theme.backgroundSelection : undefined}>
                     {props.renderItem ? props.renderItem(context) : defaultRow(context)}
                   </box>
                 )
@@ -95,16 +95,16 @@ function defaultRow<T>(context: PickerRowContext<T>): JSX.Element {
       <Highlight
         text={context.shape().label}
         query={context.query()}
-        fg={context.active() ? theme.text : theme.subtext}
+        fg={context.active() ? theme.text : theme.textSub}
         matchFg={theme.accent}
         bold={context.active()}
       />
       <text>
         <Show when={context.shape().group}>
-          <span style={{ fg: theme.dim }}>{` ${context.shape().group} `}</span>
+          <span style={{ fg: theme.textDim }}>{` ${context.shape().group} `}</span>
         </Show>
         <Show when={context.shape().hint}>
-          <span style={{ fg: theme.text, bg: theme.bgHighlight, attributes: BOLD }}>{` ${context.shape().hint} `}</span>
+          <span style={{ fg: theme.text, bg: theme.backgroundSelection, attributes: BOLD }}>{` ${context.shape().hint} `}</span>
         </Show>
       </text>
     </box>

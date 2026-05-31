@@ -18,7 +18,7 @@ export function Badge(props: BadgeProps): JSX.Element {
   return (
     <text>
       {props.active
-        ? <span style={{ fg: theme.bg, bg: color() }}>{` ${props.text} `}</span>
+        ? <span style={{ fg: theme.background, bg: color() }}>{` ${props.text} `}</span>
         : <span style={{ fg: color() }}>{` ${props.text} `}</span>}
     </text>
   )

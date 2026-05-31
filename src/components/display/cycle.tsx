@@ -56,10 +56,10 @@ export function Cycle<T>(props: CycleProps<T>): JSX.Element {
         <Show when={props.prefix?.()}>
           <span style={{ fg: theme.accent }}>{`${props.prefix?.()} `}</span>
         </Show>
-        <Show when={active() !== null} fallback={<span style={{ fg: theme.dim }}>{props.fallback?.() ?? ""}</span>}>
-          <span style={{ fg: theme.subtext }}>{props.render(active() as T)}</span>
+        <Show when={active() !== null} fallback={<span style={{ fg: theme.textDim }}>{props.fallback?.() ?? ""}</span>}>
+          <span style={{ fg: theme.textSub }}>{props.render(active() as T)}</span>
           <Show when={shouldShowPosition() && props.items().length > 1}>
-            <span style={{ fg: theme.faint }}>{` ${index() + 1}/${props.items().length}`}</span>
+            <span style={{ fg: theme.textFaint }}>{` ${index() + 1}/${props.items().length}`}</span>
           </Show>
         </Show>
       </text>

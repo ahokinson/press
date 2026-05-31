@@ -11,10 +11,10 @@ import type { Severity } from "@theme/severity.ts"
 export function makeTheme(palette: CatppuccinColors) {
   return {
     text: palette.text.hex,
-    subtext: palette.subtext1.hex,
-    muted: palette.subtext0.hex,
-    dim: palette.overlay0.hex,
-    faint: palette.surface2.hex,
+    textSub: palette.subtext1.hex,
+    textMuted: palette.subtext0.hex,
+    textDim: palette.overlay0.hex,
+    textFaint: palette.surface2.hex,
 
     accent: palette.blue.hex,
     ok: palette.green.hex,
@@ -29,11 +29,12 @@ export function makeTheme(palette: CatppuccinColors) {
     syntaxSubheading: palette.mauve.hex,
     syntaxInlineCode: palette.peach.hex,
 
-    bg: palette.base.hex,
-    bgAlt: palette.surface0.hex,
-    bgHighlight: palette.surface1.hex,
-    headerBg: palette.mantle.hex,
-    border: palette.surface1.hex,
+    background: palette.base.hex,
+    backgroundElevated: palette.surface0.hex,
+    backgroundSelection: palette.surface1.hex,
+    backgroundChrome: palette.mantle.hex,
+    border: palette.surface2.hex,
+    borderFocused: palette.blue.hex,
     crust: palette.crust.hex,
   }
 }

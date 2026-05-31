@@ -4,11 +4,11 @@ import { MacOSScrollAccel } from "@opentui/core"
 import { defaultTheme } from "@theme/palette.ts"
 
 describe("createScrollboxOptions", () => {
-  test("uses the theme's bgAlt and faint tokens for the track", () => {
+  test("uses the theme's backgroundElevated and textFaint tokens for the track", () => {
     const opts = createScrollboxOptions(defaultTheme)
     expect(opts.verticalScrollbarOptions.showArrows).toBe(false)
-    expect(opts.verticalScrollbarOptions.trackOptions.backgroundColor).toBe(defaultTheme.bgAlt)
-    expect(opts.verticalScrollbarOptions.trackOptions.foregroundColor).toBe(defaultTheme.faint)
+    expect(opts.verticalScrollbarOptions.trackOptions.backgroundColor).toBe(defaultTheme.backgroundElevated)
+    expect(opts.verticalScrollbarOptions.trackOptions.foregroundColor).toBe(defaultTheme.textFaint)
   })
 
   test("attaches a MacOSScrollAccel instance", () => {

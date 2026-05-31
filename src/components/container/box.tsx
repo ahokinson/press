@@ -19,12 +19,12 @@ export interface BoxProps extends ParentProps {
  * Bordered container with an optional title bar and focus-aware border.
  *
  * Border is accent when `focused()` is true, faint otherwise (or when
- * `focused` is omitted). Title bar uses `headerBg` with an accent label.
+ * `focused` is omitted). Title bar uses `backgroundChrome` with an accent label.
  */
 export function Box(props: BoxProps): JSX.Element {
   const theme = useTheme()
   const pad = () => props.padding ?? 1
-  const border = () => props.focused?.() ? theme.accent : theme.faint
+  const border = () => props.focused?.() ? theme.borderFocused : theme.border
 
   return (
     <box
@@ -43,7 +43,7 @@ export function Box(props: BoxProps): JSX.Element {
       borderColor={border()}
     >
       <Show when={props.title !== undefined}>
-        <box height={1} backgroundColor={theme.headerBg} paddingLeft={1} paddingRight={1}>
+        <box height={1} backgroundColor={theme.backgroundChrome} paddingLeft={1} paddingRight={1}>
           {typeof props.title === "string"
             ? <text fg={theme.accent} attributes={BOLD}>{props.title}</text>
             : props.title}
@@ -51,7 +51,7 @@ export function Box(props: BoxProps): JSX.Element {
       </Show>
       <Show when={props.description}>
         <box paddingLeft={1} paddingRight={1}>
-          <text fg={theme.dim}>{props.description}</text>
+          <text fg={theme.textDim}>{props.description}</text>
         </box>
       </Show>
       {props.children}

@@ -9,19 +9,19 @@ export interface RangeBarProps {
   width: number
   /** Override the marker color (default: `theme.accent`). */
   markerColor?: string
-  /** Override the track color (default: `theme.dim`). */
+  /** Override the track color (default: `theme.textDim`). */
   trackColor?: string
 }
 
 /**
  * Theme-colored `├──●──┤` positional slider. Marker in `markerColor`
- * (default `theme.accent`), track in `trackColor` (default `theme.dim`).
+ * (default `theme.accent`), track in `trackColor` (default `theme.textDim`).
  */
 export function RangeBar(props: RangeBarProps): JSX.Element {
   const theme = useTheme()
   const bar = createMemo(() => rangeBar(props.current, props.low, props.high, props.width))
   const marker = () => props.markerColor ?? theme.accent
-  const track = () => props.trackColor ?? theme.dim
+  const track = () => props.trackColor ?? theme.textDim
   const markerIndex = createMemo(() => bar().indexOf(RANGE_BAR_MARKER))
 
   return (
