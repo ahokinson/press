@@ -58,6 +58,11 @@ export {
 } from "@components/display/wizard.tsx"
 export { Callout, type CalloutProps, type CalloutVariant } from "@components/feedback/callout.tsx"
 export {
+  ProgressOverlay,
+  type ProgressOverlayProps,
+  type ProgressTask,
+} from "@components/feedback/progressOverlay.tsx"
+export {
   type KeyHint,
   StatusBar,
   type StatusBarProps,
