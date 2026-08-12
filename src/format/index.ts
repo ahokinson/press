@@ -4,6 +4,7 @@ export {
   RANGE_BAR_RIGHT_CAP,
   RANGE_BAR_TRACK,
   rangeBar,
+  stackedCells,
 } from "@format/bar.ts"
 export { progressParts } from "@format/progress.ts"
 export { type HighlightSegment, highlightSegments } from "@format/segment.ts"
