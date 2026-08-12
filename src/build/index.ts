@@ -29,7 +29,12 @@ export interface BuildTUIOptions {
 
 export async function buildTUI(options: BuildTUIOptions): Promise<void> {
   const target = options.target ?? BuildTarget.Host
-  const compile = target === BuildTarget.Host ? { outfile: options.outfile } : { target, outfile: options.outfile }
+  // Don't autoload bunfig.toml in the standalone binary: a consuming app's bunfig preloads the
+  // opentui/solid JSX transform for `bun run`/`bun test`, but the binary's JSX is already transformed
+  // at build time (the plugin below) and that preload module isn't present in the compiled exe, so
+  // autoloading it would crash on startup with "preload not found".
+  const base = { outfile: options.outfile, autoloadBunfig: false }
+  const compile = target === BuildTarget.Host ? base : { ...base, target }
 
   const result = await Bun.build({
     entrypoints: [options.entrypoint],
