@@ -2,11 +2,14 @@
 
 ## Bootstrap
 
-Every press app is a Solid component tree started by `render` from `@opentui/solid`. There is no `index.html` — `render` owns the terminal.
+Every press app is a Solid component tree started by `mountTUI` from `@ahokinson/press/terminal`. There is no `index.html` — the renderer owns the terminal.
+
+Mount through press rather than calling `render` from `@opentui/solid` directly. `render` resolves to `void`, so it hands back no renderer to stop, and it leaves the debug console enabled — the console opens on the first error, renders *focused*, and from then on swallows every keystroke while the app carries on painting. Both failures look like a hang.
 
 ```ts
 // src/app.tsx
-import { render, useKeyboard } from "@opentui/solid"
+import { useKeyboard } from "@opentui/solid"
+import { mountTUI } from "@ahokinson/press/terminal"
 import { onMount } from "solid-js"
 import { ThemeProvider } from "@ahokinson/press/theme"
 import { composeKeymap, matchKey } from "@ahokinson/press/keyboard"
@@ -31,10 +34,12 @@ function App() {
   )
 }
 
-await render(() => <App />)
+await mountTUI(() => <App />)
 ```
 
-`useKeyboard` and `render` are both from `@opentui/solid`. `onMount` is from `solid-js`. Do not import `useKeyboard` from press.
+`useKeyboard` is from `@opentui/solid` and `onMount` from `solid-js`; do not import `useKeyboard` from press. Mounting is the exception — that comes from `@ahokinson/press/terminal`.
+
+`mountTUI` returns the renderer and leaves it running, which suits an app that exits from inside a key handler. When something has to happen *after* the TUI — handing the terminal to another process, printing a result, choosing an exit code — use `runTUI` instead: it waits for a `finish` callback, stops the renderer, and resolves with whatever `finish` was given. Stopping is not exiting; call `process.exit` once it resolves if you mean to quit.
 
 ## Build
 

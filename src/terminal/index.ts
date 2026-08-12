@@ -3,6 +3,7 @@ import { useTerminalDimensions } from "@opentui/solid"
 import { createMemo } from "solid-js"
 
 export { AUTO, type Auto, type Dimension, type DimensionFixed } from "@terminal/dimension.ts"
+export { type MountOptions, mountTUI, runTUI } from "@terminal/mount.ts"
 export {
   createResponsiveRouter,
   type LayoutPane,

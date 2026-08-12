@@ -200,12 +200,49 @@ Lower-level hook; returns the active mode. Use `createResponsiveRouter` instead 
 
 ---
 
+### mountTUI / runTUI
+```ts
+mountTUI(node: () => JSX.Element, options?: MountOptions): Promise<CliRenderer>
+runTUI<T>(node: (finish: (value: T) => void) => JSX.Element, options?: MountOptions): Promise<T>
+// MountOptions: { renderer?: CliRendererConfig; create?: () => Promise<CliRenderer> }
+```
+**Use these instead of calling `render` directly.** They own three things apps
+keep getting wrong:
+
+- **The debug console takes the keyboard.** The renderer opens it on error and
+  it renders *focused*, so from the first thrown error every keystroke goes to
+  the console. The app keeps painting, so it reads as a hang. `consoleMode` is
+  `"disabled"` by default; pass `renderer: { consoleMode: "..." }` to opt back in.
+- **`render` hands back nothing.** It resolves to `void`, so there is no handle
+  to `stop()` — and a process holding stdin in raw mode on the alternate screen
+  never exits. The quit key looks frozen while every other key works.
+- **A failed mount must not hang.** `void render(...)` swallows the rejection
+  and leaves the caller waiting forever.
+
+`mountTUI` returns the renderer and leaves it running — for apps that exit from
+inside a key handler. `runTUI` waits for `finish`, stops the renderer in a
+`finally`, and resolves with whatever `finish` was given — for apps that must do
+something *after* the TUI, such as handing the terminal to another process.
+
+Stopping is not the same as exiting: the renderer still holds handles that keep
+the loop alive. Call `process.exit` once `runTUI` resolves if you mean to quit.
+
+```ts
+const outcome = await runTUI<Outcome>((finish) => <App onDone={finish} />)
+if (outcome.kind !== "attach") process.exit(0)
+```
+
+---
+
 ### createTerminalHandover
 ```ts
 createTerminalHandover(renderer: CliRenderer): TerminalHandover
 // TerminalHandover: <T>(fn: () => Promise<T>) => Promise<T>
 ```
 Suspends the opentui renderer, runs `fn` (e.g. spawn `$EDITOR` or a pager), then resumes. Re-entrant: nested calls share the outermost suspend/resume pair. Concurrent calls serialize.
+
+`createTerminalHandover` is for subprocesses you come back from; `runTUI` is for
+the ones you do not.
 
 ---
 
