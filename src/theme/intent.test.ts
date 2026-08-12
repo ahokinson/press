@@ -1,26 +1,26 @@
 import { describe, expect, test } from "bun:test"
+import { Change, changeColor, changeOf, Intent, intentColor } from "@theme/intent.ts"
 import { defaultTheme } from "@theme/palette.ts"
-import { Change, changeColor, changeOf, Severity, severityColor } from "@theme/severity.ts"
 
-describe("severityColor", () => {
+describe("intentColor", () => {
   test("maps each enum value to a distinct theme token", () => {
-    expect(severityColor(defaultTheme, Severity.Info)).toBe(defaultTheme.accent)
-    expect(severityColor(defaultTheme, Severity.Success)).toBe(defaultTheme.ok)
-    expect(severityColor(defaultTheme, Severity.Warning)).toBe(defaultTheme.warn)
-    expect(severityColor(defaultTheme, Severity.Error)).toBe(defaultTheme.err)
-    expect(severityColor(defaultTheme, Severity.Neutral)).toBe(defaultTheme.textMuted)
+    expect(intentColor(defaultTheme, Intent.Info)).toBe(defaultTheme.accent)
+    expect(intentColor(defaultTheme, Intent.Success)).toBe(defaultTheme.ok)
+    expect(intentColor(defaultTheme, Intent.Warning)).toBe(defaultTheme.warn)
+    expect(intentColor(defaultTheme, Intent.Error)).toBe(defaultTheme.err)
+    expect(intentColor(defaultTheme, Intent.Neutral)).toBe(defaultTheme.textMuted)
   })
 
-  test("theme.severityColors overrides the default mapping for that bucket only", () => {
-    const overridden = { ...defaultTheme, severityColors: { [Severity.Warning]: "#ff8800" } }
-    expect(severityColor(overridden, Severity.Warning)).toBe("#ff8800")
-    expect(severityColor(overridden, Severity.Error)).toBe(defaultTheme.err)
-    expect(severityColor(overridden, Severity.Info)).toBe(defaultTheme.accent)
+  test("theme.intentColors overrides the default mapping for that bucket only", () => {
+    const overridden = { ...defaultTheme, intentColors: { [Intent.Warning]: "#ff8800" } }
+    expect(intentColor(overridden, Intent.Warning)).toBe("#ff8800")
+    expect(intentColor(overridden, Intent.Error)).toBe(defaultTheme.err)
+    expect(intentColor(overridden, Intent.Info)).toBe(defaultTheme.accent)
   })
 
-  test("unset entries in severityColors fall through to the default mapping", () => {
-    const partial = { ...defaultTheme, severityColors: {} }
-    expect(severityColor(partial, Severity.Warning)).toBe(defaultTheme.warn)
+  test("unset entries in intentColors fall through to the default mapping", () => {
+    const partial = { ...defaultTheme, intentColors: {} }
+    expect(intentColor(partial, Intent.Warning)).toBe(defaultTheme.warn)
   })
 })
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import { Modal } from "@components/dialog/modal.tsx"
 import { testRender } from "@opentui/solid"
-import { Severity } from "@theme"
+import { Intent } from "@theme"
 
 describe("Modal", () => {
   test("renders nothing while when() is false", async () => {
@@ -34,7 +34,7 @@ describe("Modal", () => {
     expect(frame).toContain("type the ticker")
   })
 
-  test("renders children with the default severity when none is supplied", async () => {
+  test("renders children with the default intent when none is supplied", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
         <Modal when={() => true} title=" default ">
@@ -47,11 +47,11 @@ describe("Modal", () => {
     expect(captureCharFrame()).toContain("default body")
   })
 
-  test("renders each severity bucket", async () => {
-    for (const sev of [Severity.Info, Severity.Success, Severity.Warning, Severity.Error, Severity.Neutral]) {
+  test("renders each intent bucket", async () => {
+    for (const sev of [Intent.Info, Intent.Success, Intent.Warning, Intent.Error, Intent.Neutral]) {
       const { captureCharFrame, renderOnce } = await testRender(
         () => (
-          <Modal when={() => true} severity={sev} title={` ${sev} `}>
+          <Modal when={() => true} intent={sev} title={` ${sev} `}>
             <text>{`x-${sev}`}</text>
           </Modal>
         ),

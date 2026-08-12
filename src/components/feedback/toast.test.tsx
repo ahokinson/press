@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test"
 import { Toast } from "@components/feedback/toast.tsx"
 import { Icon } from "@icons"
 import { testRender } from "@opentui/solid"
-import { Severity } from "@theme"
+import { Intent } from "@theme"
 import { createSignal } from "solid-js"
 
 describe("Toast", () => {
@@ -43,10 +43,10 @@ describe("Toast", () => {
     expect(captureCharFrame()).toContain("bare")
   })
 
-  test("renders each severity bucket", async () => {
-    for (const sev of [Severity.Info, Severity.Success, Severity.Warning, Severity.Error, Severity.Neutral]) {
+  test("renders each intent bucket", async () => {
+    for (const sev of [Intent.Info, Intent.Success, Intent.Warning, Intent.Error, Intent.Neutral]) {
       const { captureCharFrame, renderOnce } = await testRender(
-        () => <Toast message={() => `m-${sev}`} severity={sev} />,
+        () => <Toast message={() => `m-${sev}`} intent={sev} />,
         { width: 30, height: 3 },
       )
       await renderOnce()
@@ -54,9 +54,9 @@ describe("Toast", () => {
     }
   })
 
-  test("auto-derives glyph from severity", async () => {
+  test("auto-derives glyph from intent", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Toast message={() => "saved"} severity={Severity.Success} />,
+      () => <Toast message={() => "saved"} intent={Intent.Success} />,
       { width: 30, height: 3 },
     )
     await renderOnce()
@@ -66,9 +66,9 @@ describe("Toast", () => {
     expect(frame.indexOf(Icon.circleSuccess.char)).toBeLessThan(frame.indexOf("saved"))
   })
 
-  test("Neutral severity renders no auto glyph", async () => {
+  test("Neutral intent renders no auto glyph", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
-      () => <Toast message={() => "note"} severity={Severity.Neutral} />,
+      () => <Toast message={() => "note"} intent={Intent.Neutral} />,
       { width: 30, height: 3 },
     )
     await renderOnce()

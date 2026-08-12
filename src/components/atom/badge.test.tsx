@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import { Badge } from "@components/atom/badge.tsx"
 import { testRender } from "@opentui/solid"
-import { Severity } from "@theme"
+import { Intent } from "@theme"
 
 describe("Badge", () => {
   test("renders the label with surrounding spaces", async () => {
@@ -22,9 +22,9 @@ describe("Badge", () => {
     expect(captureCharFrame()).toContain(" ok ")
   })
 
-  test("renders with each severity bucket", async () => {
-    for (const sev of [Severity.Neutral, Severity.Info, Severity.Success, Severity.Warning, Severity.Error]) {
-      const { captureCharFrame, renderOnce } = await testRender(() => <Badge text={`s-${sev}`} severity={sev} />, {
+  test("renders with each intent bucket", async () => {
+    for (const sev of [Intent.Neutral, Intent.Info, Intent.Success, Intent.Warning, Intent.Error]) {
+      const { captureCharFrame, renderOnce } = await testRender(() => <Badge text={`s-${sev}`} intent={sev} />, {
         width: 20,
         height: 1,
       })

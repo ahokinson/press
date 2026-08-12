@@ -3,7 +3,7 @@ import { Skeleton } from "@components/atom/skeleton.tsx"
 import { Callout } from "@components/feedback/callout.tsx"
 import { Icon } from "@icons"
 import type { DataLoaderState } from "@models/loader/index.ts"
-import { Severity } from "@theme"
+import { Intent } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type JSX, Match, Show, Switch } from "solid-js"
 
@@ -83,7 +83,7 @@ export function AsyncView<T>(props: AsyncViewProps<T>): JSX.Element {
         <Skeleton rows={() => props.skeletonRows ?? 5} renderRow={props.renderSkeleton ?? defaultSkeleton} />
       </Match>
       <Match when={status() === "error"}>
-        <Callout variant="rail" severity={Severity.Error}>
+        <Callout variant="rail" intent={Intent.Error}>
           {errorMessage()}
         </Callout>
       </Match>

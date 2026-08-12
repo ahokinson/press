@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test"
 import { Callout } from "@components/feedback/callout.tsx"
 import { Icon } from "@icons"
 import { testRender } from "@opentui/solid"
-import { Severity } from "@theme"
+import { Intent } from "@theme"
 
 describe("Callout", () => {
   test("renders the rail glyph and string children", async () => {
@@ -19,7 +19,7 @@ describe("Callout", () => {
   test("no glyph shown without explicit glyph prop", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
-        <Callout variant="rail" severity={Severity.Error}>
+        <Callout variant="rail" intent={Intent.Error}>
           error
         </Callout>
       ),
@@ -31,10 +31,10 @@ describe("Callout", () => {
     expect(frame).toContain("error")
   })
 
-  test("Neutral severity renders no auto glyph", async () => {
+  test("Neutral intent renders no auto glyph", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
-        <Callout variant="rail" severity={Severity.Neutral}>
+        <Callout variant="rail" intent={Intent.Neutral}>
           note
         </Callout>
       ),
@@ -51,7 +51,7 @@ describe("Callout", () => {
   test("explicit glyph prop renders before children", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
-        <Callout variant="rail" severity={Severity.Error} glyph="!">
+        <Callout variant="rail" intent={Intent.Error} glyph="!">
           error
         </Callout>
       ),
@@ -78,10 +78,10 @@ describe("Callout", () => {
     expect(captureCharFrame()).toContain("OK")
   })
 
-  test("renders each severity bucket", async () => {
-    for (const sev of [Severity.Neutral, Severity.Info, Severity.Success, Severity.Warning, Severity.Error]) {
+  test("renders each intent bucket", async () => {
+    for (const sev of [Intent.Neutral, Intent.Info, Intent.Success, Intent.Warning, Intent.Error]) {
       const { captureCharFrame, renderOnce } = await testRender(
-        () => <Callout variant="rail" severity={sev}>{`c-${sev}`}</Callout>,
+        () => <Callout variant="rail" intent={sev}>{`c-${sev}`}</Callout>,
         { width: 30, height: 1 },
       )
       await renderOnce()
@@ -106,11 +106,11 @@ describe("Callout variant=banner", () => {
     expect(frame).not.toContain("▌")
   })
 
-  test("renders each severity bucket in banner variant", async () => {
-    for (const sev of [Severity.Neutral, Severity.Info, Severity.Success, Severity.Warning, Severity.Error]) {
+  test("renders each intent bucket in banner variant", async () => {
+    for (const sev of [Intent.Neutral, Intent.Info, Intent.Success, Intent.Warning, Intent.Error]) {
       const { captureCharFrame, renderOnce } = await testRender(
         () => (
-          <Callout variant="banner" severity={sev}>
+          <Callout variant="banner" intent={sev}>
             <text>{`b-${sev}`}</text>
           </Callout>
         ),

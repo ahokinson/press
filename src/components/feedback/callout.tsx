@@ -1,18 +1,18 @@
 import { Strip } from "@components/atom/strip.tsx"
 import { Icon } from "@icons"
-import { Severity, severityColor } from "@theme"
+import { Intent, intentColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type JSX, type ParentProps, Show } from "solid-js"
 
 export type CalloutVariant = "rail" | "banner"
 
 export interface CalloutProps extends ParentProps {
-  severity?: Severity
+  intent?: Intent
   /** Leading glyph character. Must be passed explicitly — no glyph is shown by default. */
   glyph?: string
   /**
    * Visual presentation variant.
-   * - `"rail"`: text in severity color with a `▌` gutter glyph — use for inline annotations.
+   * - `"rail"`: text in intent color with a `▌` gutter glyph — use for inline annotations.
    * - `"banner"`: colored background strip — use for ambient inline status.
    */
   variant: CalloutVariant
@@ -21,7 +21,7 @@ export interface CalloutProps extends ParentProps {
 /** One-row inline feedback strip. `variant="rail"` renders a `▌` gutter glyph; `variant="banner"` fills the background. */
 export function Callout(props: CalloutProps): JSX.Element {
   const theme = useTheme()
-  const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
+  const color = (): string => intentColor(theme, props.intent ?? Intent.Neutral)
   const glyph = (): string | null => props.glyph ?? null
 
   if (props.variant === "banner") {

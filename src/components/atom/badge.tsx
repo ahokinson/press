@@ -1,11 +1,11 @@
-import { Severity, severityColor } from "@theme"
+import { Intent, intentColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import type { JSX } from "solid-js"
 
 export interface BadgeProps {
   /** Label text to render. */
   text: string
-  severity?: Severity
+  intent?: Intent
   /** When true, renders as an inverted filled chip to signal the selected/current state. */
   active?: boolean
 }
@@ -13,7 +13,7 @@ export interface BadgeProps {
 /** One-line label in a semantic colour. Active state inverts to a filled chip. */
 export function Badge(props: BadgeProps): JSX.Element {
   const theme = useTheme()
-  const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
+  const color = (): string => intentColor(theme, props.intent ?? Intent.Neutral)
 
   return (
     <text>

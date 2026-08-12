@@ -1,5 +1,5 @@
 import { Strip } from "@components/atom/strip.tsx"
-import { Severity, severityColor, severityGlyph } from "@theme"
+import { Intent, intentColor, intentGlyph } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type Accessor, type JSX, Show } from "solid-js"
 
@@ -8,9 +8,9 @@ export interface ToastProps {
   message: () => string | null
   /** Trailing decoration (e.g. shrinking trail from `createStatusState`). */
   trail?: () => string
-  /** Semantic colour bucket. Defaults to `Severity.Neutral`. */
-  severity?: Severity
-  /** Leading glyph character override. When omitted, the canonical severity glyph is used (none for Neutral). */
+  /** Semantic colour bucket. Defaults to `Intent.Neutral`. */
+  intent?: Intent
+  /** Leading glyph character override. When omitted, the canonical intent glyph is used (none for Neutral). */
   glyph?: string
 }
 
@@ -25,9 +25,9 @@ export interface ToastProps {
 export function Toast(props: ToastProps): JSX.Element {
   const theme = useTheme()
 
-  const color = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
+  const color = (): string => intentColor(theme, props.intent ?? Intent.Neutral)
   const glyph = (): string | null =>
-    props.glyph !== undefined ? props.glyph : severityGlyph(props.severity ?? Severity.Neutral)
+    props.glyph !== undefined ? props.glyph : intentGlyph(props.intent ?? Intent.Neutral)
 
   return (
     <Show when={props.message()}>

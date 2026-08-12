@@ -3,10 +3,10 @@ import type { Theme } from "@theme/palette.ts"
 
 /**
  * Semantic colour bucket for feedback surfaces (Modal, Toast, Callout, etc).
- * Resolve a bucket to a theme colour with `severityColor`. `Neutral` paints
+ * Resolve a bucket to a theme colour with `intentColor`. `Neutral` paints
  * in muted text.
  */
-export enum Severity {
+export enum Intent {
   Neutral = "neutral",
   Info = "info",
   Success = "success",
@@ -15,39 +15,39 @@ export enum Severity {
 }
 
 /**
- * Resolve a `Severity` to a theme colour. Defaults: Info=accent, Success=ok,
+ * Resolve a `Intent` to a theme colour. Defaults: Info=accent, Success=ok,
  * Warning=warn, Error=err, Neutral=muted. Override per-bucket via
- * `theme.severityColors`.
+ * `theme.intentColors`.
  */
-export function severityColor(theme: Theme, severity: Severity): string {
-  const override = theme.severityColors?.[severity]
+export function intentColor(theme: Theme, intent: Intent): string {
+  const override = theme.intentColors?.[intent]
   if (override !== undefined) return override
-  switch (severity) {
-    case Severity.Info:
+  switch (intent) {
+    case Intent.Info:
       return theme.accent
-    case Severity.Success:
+    case Intent.Success:
       return theme.ok
-    case Severity.Warning:
+    case Intent.Warning:
       return theme.warn
-    case Severity.Error:
+    case Intent.Error:
       return theme.err
-    case Severity.Neutral:
+    case Intent.Neutral:
       return theme.textMuted
   }
 }
 
-/** Canonical Nerd Font glyph character for a severity level. Returns `null` for Neutral. */
-export function severityGlyph(severity: Severity): string | null {
-  switch (severity) {
-    case Severity.Info:
+/** Canonical Nerd Font glyph character for a intent level. Returns `null` for Neutral. */
+export function intentGlyph(intent: Intent): string | null {
+  switch (intent) {
+    case Intent.Info:
       return Icon.circleInfo.char
-    case Severity.Success:
+    case Intent.Success:
       return Icon.circleSuccess.char
-    case Severity.Warning:
+    case Intent.Warning:
       return Icon.triangleWarning.char
-    case Severity.Error:
+    case Intent.Error:
       return Icon.circleError.char
-    case Severity.Neutral:
+    case Intent.Neutral:
       return null
   }
 }

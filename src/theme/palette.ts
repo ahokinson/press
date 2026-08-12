@@ -1,5 +1,5 @@
 import { type CatppuccinColors, flavors } from "@catppuccin/palette"
-import type { Severity } from "@theme/severity.ts"
+import type { Intent } from "@theme/intent.ts"
 
 /**
  * Build a `Theme` from a Catppuccin palette.
@@ -42,8 +42,8 @@ export function makeTheme(palette: CatppuccinColors) {
 export const defaultTheme: Theme = makeTheme(flavors.frappe.colors)
 
 export type Theme = ReturnType<typeof makeTheme> & {
-  /** Per-`Severity` color overrides consulted by `severityColor` before the default mapping. */
-  severityColors?: Partial<Record<Severity, string>>
+  /** Per-`Intent` color overrides consulted by `intentColor` before the default mapping. */
+  intentColors?: Partial<Record<Intent, string>>
 }
 
 /** Build a `Theme` with extra tokens layered on top. Defaults to the Frappé palette. */

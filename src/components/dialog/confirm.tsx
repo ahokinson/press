@@ -1,6 +1,6 @@
 import type { KeyHint } from "@keyboard"
 import type { ConfirmAction } from "@models/dialog/confirm.ts"
-import { BOLD, Severity, severityColor } from "@theme"
+import { BOLD, Intent, intentColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type Accessor, For, type JSX, Show } from "solid-js"
 
@@ -16,8 +16,8 @@ const DEFAULT_HINTS: ReadonlyArray<KeyHint> = [
  * renders when the accessor returns a non-null action.
  *
  * Inline by design: flows in the parent's layout, unlike `Modal` which
- * floats absolutely. Destructive confirms paint `Severity.Error`, everything
- * else paints `Severity.Info`.
+ * floats absolutely. Destructive confirms paint `Intent.Error`, everything
+ * else paints `Intent.Info`.
  *
  * The component doesn't bind keys. Wire enter/esc in your keymap layer and
  * call `action.onConfirm()` / `action.onCancel()` yourself.
@@ -37,7 +37,7 @@ export function ConfirmDialog(props: { action: () => ConfirmAction | null }): JS
           backgroundColor={theme.background}
           border
           borderStyle="rounded"
-          borderColor={severityColor(theme, action().destructive ? Severity.Error : Severity.Info)}
+          borderColor={intentColor(theme, action().destructive ? Intent.Error : Intent.Info)}
           title={action().title ?? " confirm "}
           titleAlignment="left"
         >

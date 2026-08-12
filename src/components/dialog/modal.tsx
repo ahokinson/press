@@ -1,5 +1,5 @@
 import type { Dimension } from "@terminal/dimension.ts"
-import { Severity, severityColor } from "@theme"
+import { Intent, intentColor } from "@theme"
 import { useTheme } from "@theme/provider.tsx"
 import { type JSX, type ParentProps, Show } from "solid-js"
 
@@ -8,8 +8,8 @@ export interface ModalProps extends ParentProps {
   when: () => boolean
   /** Title strip rendered into the top border. */
   title?: string
-  /** Semantic colour bucket for the border. Defaults to `Severity.Neutral`. */
-  severity?: Severity
+  /** Semantic colour bucket for the border. Defaults to `Intent.Neutral`. */
+  intent?: Intent
   /** Box sizing. Defaults to "50%" wide and 12 rows tall. */
   width?: Dimension
   height?: Dimension
@@ -23,7 +23,7 @@ export interface ModalProps extends ParentProps {
 }
 
 /**
- * Overlay frame: rounded border, themed colour by severity (or explicit
+ * Overlay frame: rounded border, themed colour by intent (or explicit
  * `borderColor`), background fill, children slot. No keybinding logic; wire
  * enter/esc in your keymap layer and toggle `when()` from there.
  *
@@ -32,7 +32,7 @@ export interface ModalProps extends ParentProps {
 export function Modal(props: ModalProps): JSX.Element {
   const theme = useTheme()
 
-  const border = (): string => severityColor(theme, props.severity ?? Severity.Neutral)
+  const border = (): string => intentColor(theme, props.intent ?? Intent.Neutral)
 
   return (
     <Show when={props.when()}>
