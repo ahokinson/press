@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { type Column, ColumnAlign, Table } from "@components/container/table.tsx"
+import { type Column, ColumnAlign, Table, TableHeader, TableRowCells } from "@components/container/table.tsx"
 import { testRender } from "@opentui/solid"
 
 interface Row {
@@ -87,5 +87,64 @@ describe("Table", () => {
     const frame = captureCharFrame()
     expect(frame).toContain("a")
     expect(frame).toContain("b")
+  })
+})
+
+describe("TableHeader", () => {
+  test("paints column labels standalone (for reuse above a scrolling body)", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(() => <TableHeader columns={columns} />, {
+      width: 20,
+      height: 3,
+    })
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("Name")
+    expect(frame).toContain("Qty")
+  })
+
+  test("decorates the active sort column with an arrow", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => <TableHeader columns={columns} sort={() => ({ key: "name", desc: false })} />,
+      { width: 20, height: 3 },
+    )
+    await renderOnce()
+    expect(captureCharFrame()).toContain("▲")
+  })
+})
+
+describe("flex column", () => {
+  const flexColumns: Column<Row>[] = [
+    { key: "name", label: "Name", width: 0, flex: true, render: (row) => <text>{row.name}</text> },
+    { key: "qty", label: "Qty", width: 6, align: ColumnAlign.Right, render: (row) => <text>{row.qty}</text> },
+  ]
+
+  test("a flex column grows to fill and still renders header + cells", async () => {
+    const rows: Row[] = [{ name: "a-long-flexible-name", qty: 9 }]
+    const { captureCharFrame, renderOnce } = await testRender(() => <Table columns={flexColumns} rows={() => rows} />, {
+      width: 40,
+      height: 4,
+    })
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("Name")
+    expect(frame).toContain("a-long-flexible-name")
+    expect(frame).toContain("9")
+  })
+})
+
+describe("TableRowCells", () => {
+  test("renders each column's cell for a row, no outer selection box", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <box flexDirection="row">
+          <TableRowCells columns={columns} row={{ name: "widget", qty: 42 }} />
+        </box>
+      ),
+      { width: 20, height: 3 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("widget")
+    expect(frame).toContain("42")
   })
 })

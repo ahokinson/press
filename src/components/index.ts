@@ -25,7 +25,17 @@ export {
   type SectionsProps,
 } from "@components/container/sections.tsx"
 export { Separated, type SeparatedProps } from "@components/container/separated.tsx"
-export { type Column, ColumnAlign, type SortState, Table, type TableProps } from "@components/container/table.tsx"
+export {
+  type Column,
+  ColumnAlign,
+  type SortState,
+  Table,
+  TableHeader,
+  type TableHeaderProps,
+  type TableProps,
+  TableRowCells,
+  type TableRowCellsProps,
+} from "@components/container/table.tsx"
 export {
   type TabDescriptor,
   TabOrientation,
