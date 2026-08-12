@@ -63,3 +63,4 @@ export {
   type StatusBarProps,
 } from "@components/feedback/status/index.tsx"
 export { Toast, type ToastProps } from "@components/feedback/toast.tsx"
+export { Toasts, type ToastsProps } from "@components/feedback/toasts.tsx"
