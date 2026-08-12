@@ -3,9 +3,9 @@ import { Skeleton } from "@components/atom/skeleton.tsx"
 import { createScrollboxOptions } from "@components/container/scroll/index.ts"
 import { Section } from "@components/container/section.tsx"
 import type { SectionKey } from "@models/cursor/filterable.ts"
-import type { ScrollRef } from "@signals"
+import { createScrollboxSync, type ScrollRef } from "@signals"
 import { useTheme } from "@theme/provider.tsx"
-import { createMemo, For, type JSX, Show } from "solid-js"
+import { createEffect, createMemo, For, type JSX, Show } from "solid-js"
 
 /**
  * Snapshot of one section's rendered slice. Treat as immutable. `<Sections>`
@@ -34,6 +34,23 @@ export interface SectionsProps<T, K extends SectionKey> {
    * when `label` is non-null. Return `null` to skip the header for an entry.
    */
   renderSectionHeader?: (entry: SectionEntry<T, K>) => JSX.Element
+  /**
+   * Whether the list owns focus. When it returns false the selection highlight
+   * is suppressed (the cursor row still reports `selected` to `renderItem`).
+   * Defaults to always-focused, preserving the highlight for callers that
+   * don't track focus. Mirrors `<List>`'s `focused`.
+   */
+  focused?: () => boolean
+  /** Background for the selected row. Defaults to `theme.backgroundSelection`. */
+  selectedBg?: string
+  /**
+   * Per-row background override. Receives the row's global index and whether it is the (focused)
+   * selected row; return `undefined` for no fill. When set it fully replaces the default
+   * selected-row background, so the caller owns both striping (zebra) and the selection color.
+   */
+  rowBackground?: (globalIndex: number, selected: boolean) => string | undefined
+  /** Rows of context kept above/below the cursor before the list scrolls. Default 1. */
+  contextRows?: number
   /** Rendered when `sections()` is empty or has zero total items. */
   emptyState?: JSX.Element
   /** Shown in place of the scrollbox while truthy (e.g., before first data arrives). */
@@ -47,18 +64,52 @@ export interface SectionsProps<T, K extends SectionKey> {
  * Collapsible-sections scrollbox. Consumes a precomputed `sections` accessor
  * and renders one row per item plus an optional header per section.
  *
- * The component doesn't bind keys. The caller drives `cursor` and routes
- * selection highlighting through `renderItem(item, index, selected)`.
+ * Keeps the active row inside the viewport itself: it knows its own layout
+ * (a one-row header per labeled section, optional inter-section spacers), so it
+ * maps `cursor` to a visual Y and drives scroll internally — no caller-side
+ * offset math. Assumes single-line items and one-row headers. `setScrollRef`
+ * still exposes the raw scrollbox for callers that need it; don't scroll it
+ * separately. Doesn't bind keys — the caller drives `cursor`.
  */
 export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): JSX.Element {
   const theme = useTheme()
   const scrollboxOptions = createScrollboxOptions(theme)
   const spacer = () => props.spacerBetweenSections ?? true
+  const focused = () => props.focused?.() ?? true
+  const selectedBg = () => props.selectedBg ?? theme.backgroundSelection
 
   const totalItems = createMemo(() => {
     let n = 0
     for (const section of props.sections()) n += section.items.length
     return n
+  })
+
+  // Visual Y of the cursor row: sum each preceding section's header (one row
+  // when labeled) + inter-section spacer + its visible item count.
+  const cursorY = (): number => {
+    const secs = props.sections()
+    const cur = props.cursor()
+    let y = 0
+    for (let idx = 0; idx < secs.length; idx++) {
+      const entry = secs[idx]!
+      if (idx > 0 && spacer()) y += 1
+      if (entry.label != null) y += 1
+      const len = entry.collapsed ? 0 : entry.items.length
+      if (cur >= entry.startIndex && cur < entry.startIndex + len) return y + (cur - entry.startIndex)
+      y += len
+    }
+    return y
+  }
+
+  const sync = createScrollboxSync({ cursor: cursorY, contextRows: props.contextRows })
+  const bindScroll = (element: unknown): void => {
+    sync.bindRef(element)
+    props.setScrollRef?.(element as ScrollRef | null)
+  }
+  // Item/section changes can alter content extent without firing onSizeChange.
+  createEffect(() => {
+    totalItems()
+    sync.refresh()
   })
 
   const defaultHeader = (entry: SectionEntry<T, K>) =>
@@ -76,7 +127,7 @@ export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): J
       }
     >
       <Show when={totalItems() > 0} fallback={props.emptyState ?? <Empty message="No items" />}>
-        <scrollbox flexGrow={1} ref={props.setScrollRef} {...scrollboxOptions}>
+        <scrollbox flexGrow={1} ref={bindScroll} {...scrollboxOptions}>
           <box flexDirection="column">
             <For each={props.sections()}>
               {(entry, sectionIndex) => (
@@ -90,8 +141,16 @@ export function Sections<T, K extends SectionKey>(props: SectionsProps<T, K>): J
                       {(item, localIndex) => {
                         const globalIndex = createMemo(() => entry.startIndex + localIndex())
                         const selected = createMemo(() => globalIndex() === props.cursor())
+                        const rowBg = createMemo(() => {
+                          const isSelected = selected() && focused()
+                          return props.rowBackground
+                            ? props.rowBackground(globalIndex(), isSelected)
+                            : isSelected
+                              ? selectedBg()
+                              : undefined
+                        })
                         return (
-                          <box flexDirection="row" backgroundColor={selected() ? theme.backgroundSelection : undefined}>
+                          <box flexDirection="row" backgroundColor={rowBg()}>
                             {props.renderItem(item, globalIndex(), selected())}
                           </box>
                         )

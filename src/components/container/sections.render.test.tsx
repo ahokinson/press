@@ -79,6 +79,25 @@ describe("Sections (render)", () => {
     expect(captureCharFrame()).toContain("nothing here")
   })
 
+  test("still renders the cursor item when focused() is false (highlight suppressed)", async () => {
+    const { captureCharFrame, renderOnce } = await testRender(
+      () => (
+        <Sections
+          sections={() => entries()}
+          cursor={() => 0}
+          focused={() => false}
+          renderItem={(item) => <text>{item}</text>}
+        />
+      ),
+      { width: 30, height: 10 },
+    )
+    await renderOnce()
+    const frame = captureCharFrame()
+    expect(frame).toContain("a")
+    expect(frame).toContain("b")
+    expect(frame).toContain("c")
+  })
+
   test("custom renderSectionHeader is used", async () => {
     const { captureCharFrame, renderOnce } = await testRender(
       () => (
